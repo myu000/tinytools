@@ -5,11 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Tiny Tools — Creative & Focus Hub</title>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
   <link rel="apple-touch-icon" href="favicon.png"/>
-
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
 
   <style>
@@ -31,32 +28,27 @@
     }
     *{box-sizing:border-box;}
     html,body{height:100%;}
-    body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;transition:background .3s ease,color .3s ease;}
+    body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
 
-    /* Header */
-    header{background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;backdrop-filter:saturate(180%) blur(8px);}
+    header{background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;}
     .brand{display:flex;gap:12px;align-items:baseline;}
-    .brand h1{margin:0;font-family:'Sansita',sans-serif;font-size:1.6rem;}
-    .brand span{font-family:'Jura',sans-serif;font-size:1rem;opacity:0.9;}
+    .brand h1{margin:0;font-family:'Sansita',sans-serif;}
+    .brand span{font-family:'Jura',sans-serif;opacity:0.9;}
     .top-controls,.layout-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
     .select,.button{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;}
     .select{background:var(--select-bg);color:var(--text);}
     .button{background:var(--secondary);color:#fff;}
     .button.primary{background:var(--primary);}
-    .button:hover{filter:brightness(1.06);transform:translateY(-1px);}
+    .button:hover{filter:brightness(1.06);}
 
-    /* Page layout */
     .page{display:grid;grid-template-columns:1fr var(--dock-width);gap:var(--tile-gap);max-width:1500px;margin:40px auto;padding:0 40px;}
     @media (max-width:1100px){.page{grid-template-columns:1fr;} .dock{order:2;}}
-
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);align-content:start;}
 
-    /* Dock */
     .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;min-height:200px;}
     .dock h4{margin:0 0 10px;font-family:'Sansita',sans-serif;}
     .dock-area{display:grid;grid-template-columns:1fr;gap:12px;}
 
-    /* Cards */
     .card{
       position:relative;background:var(--glass);
       backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
@@ -64,15 +56,13 @@
       transition:transform .25s ease, box-shadow .25s ease, filter .25s ease; min-height:180px; user-select:none;
     }
     .card:hover{transform:translateY(-2px);filter:brightness(1.03);box-shadow:var(--shadow-2);}
-    .card h3{margin:0 0 16px;font-family:'Sansita',sans-serif;touch-action:none;cursor:grab;} /* Touch drag fix */
+    .card h3{margin:0 0 12px;font-family:'Sansita',sans-serif;touch-action:none;cursor:grab;} /* touch drag fix */
 
-    /* Tile menus */
     .menu{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.30);border:none;border-radius:8px;padding:6px 8px;cursor:pointer;font-family:'Jura',sans-serif;color:var(--text);}
     .menu-options{position:absolute;top:42px;right:8px;display:none;background:#fff;border-radius:10px;box-shadow:var(--shadow-1);overflow:hidden;min-width:210px;z-index:10;}
     .menu-options button{display:block;width:100%;padding:10px 12px;border:none;background:transparent;cursor:pointer;text-align:left;font-family:'Jura',sans-serif;color:#222;}
     .menu-options button:hover{background:rgba(0,0,0,0.06);}
 
-    /* Controls */
     .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
     .stack{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
     .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;color:var(--text);}
@@ -81,27 +71,21 @@
     .input,.select-inline,textarea{background:var(--input-bg);}
     textarea{width:100%;min-height:220px;resize:vertical;outline:none;}
 
-    /* Thumbs */
     .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
     .thumb{border-radius:12px;overflow:hidden;height:110px;position:relative;}
     .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
 
-    /* Player */
     .player{border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.18);}
     .player iframe{display:block;width:100%;height:300px;border:0;}
     @media (max-width:600px){.player iframe{height:200px;}}
 
-    /* Clock */
     #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;margin:10px 0 6px;}
 
-    /* Drag & drop */
     .drag-placeholder{outline:2px dashed rgba(63,111,99,0.6);border-radius:var(--tile-radius);min-height:160px;opacity:0.8;}
     .dragging-origin{outline:2px dashed rgba(63,111,99,0.35);}
 
-    /* Focus styles */
     .select:focus,.select-inline:focus,.input:focus,textarea:focus,.btn:focus,.button:focus{outline:2px solid var(--accent);outline-offset:2px;}
 
-    /* Mobile refinements */
     @media (max-width:480px){
       header{padding:14px 16px;grid-template-columns:1fr;gap:10px;}
       .page{padding:0 16px;margin:20px auto;}
@@ -111,10 +95,8 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="brand"><h1>Tiny Tools</h1><span>Creative & Focus Hub</span></div>
-
     <div class="top-controls">
       <select id="envSelect" class="select" title="Environment">
         <option value="relax">Relax</option>
@@ -126,7 +108,6 @@
       <button id="shuffleWallpaper" class="button">Shuffle wallpaper</button>
       <button id="themeToggle" class="button primary">Theme</button>
     </div>
-
     <div class="layout-controls">
       <select id="layoutSelect" class="select" title="Layout preset">
         <option value="balanced">Balanced</option>
@@ -139,10 +120,8 @@
     </div>
   </header>
 
-  <!-- Main page -->
   <div class="page">
     <main id="grid" class="grid">
-      <!-- Wallpapers Tile -->
       <section class="card tile" id="tile-wallpapers" data-tile="wallpapers" data-order="1">
         <button class="menu" onclick="toggleMenu('menu-wallpapers')">⁝</button>
         <div class="menu-options" id="menu-wallpapers">
@@ -151,11 +130,14 @@
           <button onclick="closeMenus()">Close menu</button>
         </div>
         <h3>Wallpapers</h3>
-        <p class="small">Curated mood sets. Shuffle or switch mood to change background.</p>
+        <p class="small">Click a thumbnail to set it as background, or upload your own.</p>
+        <div class="row">
+          <input type="file" id="wallpaperUpload" accept="image/*">
+          <button class="btn secondary" id="clearCustomWallpapers">Clear uploaded</button>
+        </div>
         <div id="wallpaperThumbs" class="thumbs"></div>
       </section>
 
-      <!-- Music Tile -->
       <section class="card tile" id="tile-music" data-tile="music" data-order="2">
         <button class="menu" onclick="toggleMenu('menu-music')">⁝</button>
         <div class="menu-options" id="menu-music">
@@ -165,29 +147,24 @@
         </div>
         <h3>Music Playlists</h3>
         <p class="small">Create playlists, add YouTube links, play, and auto‑advance.</p>
-
         <div class="row">
           <input id="playlistName" class="input" placeholder="New playlist name"/>
           <button class="btn" onclick="createPlaylist()">Create</button>
           <button class="btn secondary" onclick="deletePlaylist()">Delete playlist</button>
         </div>
-
         <div class="row">
           <select id="playlistSelect" class="select-inline" onchange="renderPlaylist()"></select>
           <button class="btn" onclick="renderPlaylist()">Refresh</button>
           <button class="btn primary" onclick="playPlaylist()">Play playlist</button>
         </div>
-
         <div class="row">
           <input id="musicUrl" class="input" placeholder="Paste YouTube URL (video or playlist)"/>
           <button class="btn secondary" onclick="addTrack()">Add track</button>
         </div>
-
         <div id="playlistTracks" class="stack"></div>
         <div id="musicPlayer" class="player"></div>
       </section>
 
-      <!-- Writing Tile -->
       <section class="card tile" id="tile-writing" data-tile="writing" data-order="3">
         <button class="menu" onclick="toggleMenu('menu-writing')">⁝</button>
         <div class="menu-options" id="menu-writing">
@@ -197,7 +174,6 @@
         </div>
         <h3>Writing</h3>
         <p class="small">Prompts, To‑Do, Free Writing, Brainstorm, Journal. Autosave + exports.</p>
-
         <div class="row">
           <select id="writerMode" class="select-inline" onchange="switchWriterMode()">
             <option value="prompts">Prompts</option>
@@ -207,11 +183,9 @@
             <option value="journal">Journal</option>
           </select>
         </div>
-
         <div id="writerArea"></div>
       </section>
 
-      <!-- Habits Tile -->
       <section class="card tile" id="tile-habits" data-tile="habits" data-order="4">
         <button class="menu" onclick="toggleMenu('menu-habits')">⁝</button>
         <div class="menu-options" id="menu-habits">
@@ -221,17 +195,14 @@
         </div>
         <h3>Habit Garden</h3>
         <p class="small">Grow streaks, earn badges, track daily history.</p>
-
         <div class="row">
           <input id="habitInput" class="input" placeholder="Add a new habit..."/>
           <button class="btn" onclick="addHabit()">Add habit</button>
           <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
         </div>
-
         <div id="habitList" class="stack"></div>
       </section>
 
-      <!-- Clock Tile -->
       <section class="card tile" id="tile-clock" data-tile="clock" data-order="5">
         <button class="menu" onclick="toggleMenu('menu-clock')">⁝</button>
         <div class="menu-options" id="menu-clock">
@@ -241,7 +212,6 @@
         </div>
         <h3>Clock Tool</h3>
         <p class="small">Pomodoro, Stopwatch, Countdown, Custom. Spacebar toggles when not typing.</p>
-
         <div class="row">
           <select id="modeSelect" class="select-inline" onchange="switchMode()">
             <option value="pomodoro">Pomodoro</option>
@@ -253,42 +223,35 @@
           <button class="btn secondary" onclick="pauseTimer()">Pause</button>
           <button class="btn" onclick="resetTimer()">Reset</button>
         </div>
-
         <div class="row" id="settingsRow">
           <div class="row" id="pomodoroSettings" style="display:none;width:100%;">
             <input id="workMinutes" class="input" type="number" min="1" value="25"/>
             <input id="breakMinutes" class="input" type="number" min="1" value="5"/>
             <button class="btn" onclick="completePomodoro()">Complete cycle</button>
           </div>
-
           <div class="row" id="customSettings" style="display:none;width:100%;">
             <input id="customHours" class="input" type="number" min="0" value="0"/>
             <input id="customMinutes" class="input" type="number" min="0" value="5"/>
             <input id="customSeconds" class="input" type="number" min="0" value="0"/>
           </div>
         </div>
-
         <div id="timeDisplay">00:25:00</div>
         <p id="stats" class="small">Completed Pomodoros: 0</p>
       </section>
     </main>
 
-    <!-- Dock -->
     <aside class="dock">
       <h4>Mini dock</h4>
       <div id="dockArea" class="dock-area"></div>
     </aside>
   </div>
 
-  <!-- YouTube IFrame API for autoplay -->
   <script src="https://www.youtube.com/iframe_api"></script>
 
   <script>
-    /* Menus */
     function toggleMenu(id){ closeMenus(); const m=document.getElementById(id); if(m) m.style.display='block'; }
     function closeMenus(){ document.querySelectorAll('.menu-options').forEach(m=>m.style.display='none'); }
 
-    /* Wallpaper sets */
     const wallpapers = {
       relax: [
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
@@ -314,35 +277,86 @@
         "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
         "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
         "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
-      ]
+      ],
+      custom: [] // populated from localStorage
     };
 
     const envSelect = document.getElementById('envSelect');
     const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
     const themeToggle = document.getElementById('themeToggle');
+    const wallpaperThumbs = document.getElementById('wallpaperThumbs');
+    const wallpaperUpload = document.getElementById('wallpaperUpload');
+    const clearCustomWallpapersBtn = document.getElementById('clearCustomWallpapers');
 
     function setBackground(url){
       document.body.style.backgroundImage = `url('${url}')`;
       localStorage.setItem('lastWallpaper', url);
     }
-    function applyEnvBackground(env){
-      const list = wallpapers[env] || wallpapers.default;
-      const pick = list[Math.floor(Math.random()*list.length)];
-      setBackground(pick);
 
-      const thumbs = document.getElementById('wallpaperThumbs');
-      thumbs.innerHTML = "";
+    function renderThumbnails(list){
+      wallpaperThumbs.innerHTML = "";
       list.forEach(url=>{
         const div = document.createElement('div');
         div.className = "thumb";
         div.innerHTML = `<img src="${url}" alt="wallpaper"/>`;
-        thumbs.appendChild(div);
+        div.addEventListener('click', ()=>setBackground(url));
+        wallpaperThumbs.appendChild(div);
       });
+    }
 
+    function applyEnvBackground(env){
+      const list = wallpapers[env] || wallpapers.default;
+      const pick = list[Math.floor(Math.random()*list.length)];
+      setBackground(pick);
+      renderThumbnails(list);
       localStorage.setItem('env', env);
     }
 
-    envSelect.addEventListener('change', (e)=>applyEnvBackground(e.target.value));
+    function loadCustomWallpapers(){
+      const custom = JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+      wallpapers.custom = custom;
+      if(custom.length){
+        const hasOption = Array.from(envSelect.options).some(o=>o.value==="custom");
+        if(!hasOption){
+          const opt=document.createElement('option');
+          opt.value="custom"; opt.textContent="Custom";
+          envSelect.appendChild(opt);
+        }
+      }
+    }
+
+    wallpaperUpload.addEventListener('change', e=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = ev=>{
+        const url = ev.target.result;
+        setBackground(url);
+        let custom = JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+        custom.push(url);
+        localStorage.setItem('customWallpapers', JSON.stringify(custom));
+        wallpapers.custom = custom;
+        renderThumbnails((wallpapers[envSelect.value]||wallpapers.default).concat(custom.length && envSelect.value!=='custom' ? [] : []));
+        // if current env is custom, re-render custom list; else just append thumbnail
+        const thumb = document.createElement('div');
+        thumb.className="thumb";
+        thumb.innerHTML = `<img src="${url}" alt="wallpaper"/>`;
+        thumb.addEventListener('click', ()=>setBackground(url));
+        wallpaperThumbs.appendChild(thumb);
+      };
+      reader.readAsDataURL(file);
+      wallpaperUpload.value = "";
+    });
+
+    clearCustomWallpapersBtn.addEventListener('click', ()=>{
+      localStorage.removeItem('customWallpapers');
+      wallpapers.custom = [];
+      const opt = Array.from(envSelect.options).find(o=>o.value==="custom");
+      if(opt) opt.remove();
+      applyEnvBackground(envSelect.value);
+    });
+
+    envSelect.addEventListener('change', e=>applyEnvBackground(e.target.value));
     shuffleWallpaperBtn.addEventListener('click', ()=>applyEnvBackground(envSelect.value));
     themeToggle.addEventListener('click', ()=>{
       const current = document.documentElement.getAttribute('data-theme') || 'light';
@@ -351,29 +365,31 @@
       localStorage.setItem('theme', next);
     });
 
-    /* Music playlists with autoplay + loop */
     let ytPlayer, currentPlaylist = [], currentIndex = 0;
-
     function onYouTubeIframeAPIReady(){
       ytPlayer = new YT.Player('musicPlayer', {
         height: '300',
         width: '100%',
         videoId: '',
         playerVars: {
-          autoplay: 1,
+          autoplay: 0,
           controls: 1,
           rel: 0,
           modestbranding: 1,
           playsinline: 1
         },
         events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
+          'onStateChange': onPlayerStateChange
         }
       });
     }
-    function onPlayerReady(){
-      try { ytPlayer.mute(); } catch(e){}
+    function onPlayerStateChange(event){
+      if(event.data === YT.PlayerState.ENDED){
+        currentIndex++;
+        if(currentIndex >= currentPlaylist.length) currentIndex = 0;
+        const nextId = extractId(currentPlaylist[currentIndex]);
+        if(nextId) ytPlayer.loadVideoById(nextId);
+      }
     }
 
     const playlistSelect = document.getElementById('playlistSelect');
@@ -391,6 +407,7 @@
       playlistSelect.value = name;
       renderPlaylist();
     }
+
     function deletePlaylist(){
       const name = playlistSelect.value; if (!name) return;
       const pls = getPlaylists();
@@ -398,6 +415,7 @@
       renderPlaylists();
       document.getElementById('playlistTracks').innerHTML = "";
     }
+
     function renderPlaylists(){
       const pls = getPlaylists(); playlistSelect.innerHTML = "";
       const names = Object.keys(pls);
@@ -410,6 +428,7 @@
         playlistSelect.appendChild(opt);
       });
     }
+
     function renderPlaylist(){
       const pls = getPlaylists();
       const name = playlistSelect.value;
@@ -427,6 +446,7 @@
         list.appendChild(row);
       });
     }
+
     function addTrack(){
       const name = playlistSelect.value;
       const raw = document.getElementById('musicUrl').value.trim();
@@ -437,6 +457,7 @@
       document.getElementById('musicUrl').value = "";
       renderPlaylist();
     }
+
     function removeTrack(name,i){
       const pls = getPlaylists(); if (!pls[name]) return;
       pls[name].splice(i,1); setPlaylists(pls); renderPlaylist();
@@ -448,29 +469,29 @@
       if (!name || !pls[name] || !pls[name].length) return;
       currentPlaylist = pls[name];
       currentIndex = 0;
-      ytPlayer.loadVideoById(extractId(currentPlaylist[0]));
+      const id = extractId(currentPlaylist[0]);
+      if(id && ytPlayer) ytPlayer.loadVideoById(id);
     }
+
     function playTrack(name,i){
       const pls = getPlaylists();
       currentPlaylist = pls[name] || [];
       currentIndex = i;
-      ytPlayer.loadVideoById(extractId(currentPlaylist[i]));
+      const id = extractId(currentPlaylist[i]);
+      if(id && ytPlayer) ytPlayer.loadVideoById(id);
     }
-    function onPlayerStateChange(event){
-      if (event.data === YT.PlayerState.ENDED) {
-        currentIndex++;
-        if (currentIndex >= currentPlaylist.length) currentIndex = 0; // loop
-        ytPlayer.loadVideoById(extractId(currentPlaylist[currentIndex]));
-      }
-    }
+
     function extractId(url){
       try{
         const u = new URL(url);
         if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
-        if (u.hostname.includes("youtube.com")) return u.searchParams.get("v") || '';
+        if (u.hostname.includes("youtube.com")) return u.searchParams.get("v") || "";
       }catch(e){}
-      return url;
+      // fallback: if user pasted an ID directly
+      if(/^[\w-]{11}$/.test(url)) return url;
+      return "";
     }
+
     function normalizeYouTubeUrl(input){
       try {
         const u = new URL(input);
@@ -486,7 +507,6 @@
       return input;
     }
 
-    /* Writing modes with autosave + exports */
     const writerArea = document.getElementById('writerArea');
     const promptsList = [
       "Write about a moment that changes everything.",
@@ -495,6 +515,7 @@
       "Start with a line of overheard dialogue.",
       "Describe a place that feels like home but isn’t."
     ];
+
     function switchWriterMode(){
       const mode = document.getElementById('writerMode').value;
       writerArea.innerHTML = "";
@@ -570,6 +591,7 @@
         renderJournal();
       }
     }
+
     function updateWordCount(textareaId,labelId){
       const el=document.getElementById(textareaId), lbl=document.getElementById(labelId);
       if(!el||!lbl) return; const words=el.value.trim().split(/\s+/).filter(Boolean).length;
@@ -642,7 +664,6 @@
       openPrintable('Journal',content);
     }
 
-    /* To‑Do */
     function getTodos(){return JSON.parse(localStorage.getItem('todos')||'[]');}
     function setTodos(list){localStorage.setItem('todos',JSON.stringify(list));}
     function addTodo(){
@@ -666,7 +687,6 @@
       });
     }
 
-    /* Habits */
     function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
     function setHabits(list){localStorage.setItem('habits',JSON.stringify(list));}
     function addHabit(){
@@ -705,7 +725,6 @@
       });
     }
 
-    /* Clock */
     let timer=null, timeLeft=1500, running=false;
     let mode=localStorage.getItem('clockMode')||"pomodoro";
     let pomodoroCompleted=parseInt(localStorage.getItem('pomodoroCompleted')||"0",10);
@@ -770,7 +789,6 @@
       }
     });
 
-    /* Drag & drop + touch fix */
     const grid=document.getElementById('grid');
     let drag={tile:null,handle:null,ghost:null,placeholderIndex:null,offsetX:0,offsetY:0};
 
@@ -825,7 +843,6 @@
       document.removeEventListener('pointermove',onDragMove); document.removeEventListener('pointerup',onDragEnd);
     }
 
-    /* Dock + layout */
     const dockArea=document.getElementById('dockArea');
     function titleFor(key){
       switch(key){case'wallpapers':return'Wallpapers';case'music':return'Music';case'writing':return'Writing';case'habits':return'Habits';case'clock':return'Clock';default:return key;}
@@ -902,16 +919,20 @@
       }catch(e){}
     }
 
-    /* Init */
     function init(){
       const savedTheme=localStorage.getItem('theme')||'light';
       document.documentElement.setAttribute('data-theme',savedTheme);
-      const envSaved=localStorage.getItem('env')||'relax'; envSelect.value=envSaved;
-      const last=localStorage.getItem('lastWallpaper'); if(last) setBackground(last);
+
+      loadCustomWallpapers();
+
+      const envSaved=localStorage.getItem('env')||'relax';
+      envSelect.value=envSaved;
+
+      const last=localStorage.getItem('lastWallpaper');
+      if(last) setBackground(last);
       applyEnvBackground(envSaved);
 
       renderPlaylists();
-
       switchWriterMode();
       renderHabits();
 
