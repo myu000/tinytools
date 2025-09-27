@@ -235,42 +235,48 @@
 
       <!-- Writing Tile -->
       <section id="writing" class="card tile" data-tile="writing">
-        <div class="tile-header">
-          <h3 class="tile-title">Writing</h3>
-          <button class="dots-btn">⋯</button>
-          <div class="tile-menu">
-            <button onclick="shrinkTile('writing')">Move to dock</button>
-            <button onclick="localStorage.clear(); location.reload()">Clear local data</button>
-          </div>
-        </div>
-        <div class="row">
-          <select id="writerMode" class="select-inline" onchange="renderWriterMode()">
-            <option value="prompts">Prompts</option>
-            <option value="todo">To‑Do</option>
-            <option value="free">Free</option>
-            <option value="brainstorm">Brainstorm</option>
-            <option value="journal">Journal</option>
-          </select>
-        </div>
-        <div id="writerArea" class="stack"></div>
-        <div id="brainstormVisible" class="stack" style="display:none;">
-          <p id="ideaText" class="small"></p>
-          <div class="row">
-            <button class="btn" onclick="generateIdea()">Generate idea</button>
-            <button class="btn secondary" onclick="clearIdeas()">Clear</button>
-          </div>
-          <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
-        </div>
-        <div id="journalVisible" class="stack" style="display:none;">
-          <textarea id="journalText" placeholder="Today's entry..."></textarea>
-          <div class="row">
-            <button class="btn" onclick="saveJournal()">Save entry</button>
-            <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
-            <button class="btn" onclick="exportJournalPrintable()">Printable</button>
-          </div>
-          <div id="journalEntries" class="stack"></div>
-        </div>
-      </section>
+  <div class="tile-header">
+    <h3 class="tile-title">Writing</h3>
+    <button class="dots-btn">⋯</button>
+    <div class="tile-menu">
+      <button onclick="shrinkTile('writing')">Move to dock</button>
+      <button onclick="localStorage.clear(); location.reload()">Clear local data</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <select id="writerMode" class="select-inline" onchange="renderWriterMode()">
+      <option value="prompts">Prompts</option>
+      <option value="todo">To‑Do</option>
+      <option value="free">Free</option>
+      <option value="brainstorm">Brainstorm</option>
+      <option value="journal">Journal</option>
+    </select>
+  </div>
+
+  <div id="writerArea" class="stack"></div>
+
+  <!-- Brainstorm Mode -->
+  <div id="brainstormVisible" class="stack" style="display:none;">
+    <p id="ideaText" class="small"></p>
+    <div class="row">
+      <button class="btn" onclick="generateIdea()">Generate idea</button>
+      <button class="btn secondary" onclick="clearIdeas()">Clear</button>
+    </div>
+    <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
+  </div>
+
+  <!-- Journal Mode -->
+  <div id="journalVisible" class="stack" style="display:none;">
+    <textarea id="journalText" placeholder="Today's entry..."></textarea>
+    <div class="row">
+      <button class="btn" onclick="saveJournal()">Save entry</button>
+      <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
+      <button class="btn" onclick="exportJournalPrintable()">Printable</button>
+    </div>
+    <div id="journalEntries" class="stack"></div>
+  </div>
+</section>
 
       <!-- Habits Tile -->
       <section id="habits" class="card tile" data-tile="habits">
@@ -671,24 +677,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   <!-- Part 4: Writing Logic -->
   <script>
   /* ---------------- WRITING ---------------- */
-    function generatePrompt(){
-  const pool = [
-    "Describe a moment that felt like magic.",
-    "Invent a tool that solves a tiny problem.",
-    "Write a letter to someone you admire.",
-    "What does silence mean to you?",
-    "Design a ritual for creative focus.",
-    "Imagine a dashboard that adapts to your mood.",
-    "Describe a place that feels like home.",
-    "Invent a character who hides a secret.",
-    "Write about a time you changed your mind.",
-    "Sketch a feature that blends music with memory."
-  ];
-  const random = pool[Math.floor(Math.random() * pool.length)];
-  const timestamp = new Date().toLocaleString();
-  return `${random} (${timestamp})`;
-}
-    function renderWriterMode(){
+
+function renderWriterMode() {
   const mode = document.getElementById('writerMode').value;
   const area = document.getElementById('writerArea');
   area.innerHTML = "";
@@ -702,11 +692,26 @@ document.addEventListener('DOMContentLoaded', ()=>{
     promptArea.className = "stack";
     area.appendChild(promptArea);
 
+    const genreRow = document.createElement('div');
+    genreRow.className = "row";
+
+    const genreSelect = document.createElement('select');
+    genreSelect.id = "genreSelect";
+    genreSelect.className = "select-inline";
+    ["Fantasy", "Mystery", "Romance", "Sci-Fi", "Drama", "Reflective", "Random"].forEach(g => {
+      const opt = document.createElement('option');
+      opt.value = g.toLowerCase();
+      opt.textContent = g;
+      genreSelect.appendChild(opt);
+    });
+    genreRow.appendChild(genreSelect);
+
     const promptBtn = document.createElement('button');
     promptBtn.className = "btn";
     promptBtn.textContent = "New Prompt";
     promptBtn.onclick = () => {
-      const prompt = generatePrompt();
+      const genre = genreSelect.value;
+      const prompt = generateGenrePrompt(genre);
       const div = document.createElement('div');
       div.className = "stack";
       const label = document.createElement('strong');
@@ -722,7 +727,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
       div.appendChild(ta);
       promptArea.prepend(div);
     };
-    area.appendChild(promptBtn);
+
+    genreRow.appendChild(promptBtn);
+    area.appendChild(genreRow);
 
     const exportBtn = document.createElement('button');
     exportBtn.className = "btn secondary";
@@ -752,120 +759,172 @@ document.addEventListener('DOMContentLoaded', ()=>{
     area.appendChild(clearBtn);
   }
 
-  // todo, free, brainstorm, journal — unchanged
-  if (mode === "todo") { /* keep your existing todo logic */ }
-  if (mode === "free") { /* keep your existing free writing logic */ }
-}
-    if (mode === "todo") {
-      const list = JSON.parse(localStorage.getItem('todoList') || '[]');
-      const input = document.createElement('input');
-      input.className = "input";
-      input.placeholder = "Add task";
-      const addBtn = document.createElement('button');
-      addBtn.className = "btn";
-      addBtn.textContent = "Add";
-      addBtn.onclick = () => {
-        if (input.value.trim()) {
-          list.push(input.value.trim());
-          localStorage.setItem('todoList', JSON.stringify(list));
-          renderWriterMode();
-        }
-      };
-      area.appendChild(input);
-      area.appendChild(addBtn);
-      list.forEach((task, i) => {
-        const row = document.createElement('div');
-        row.className = "row";
-        row.innerHTML = `<span style="flex:1;">${task}</span>`;
-        const del = document.createElement('button');
-        del.className = "btn secondary";
-        del.textContent = "✕";
-        del.onclick = () => {
-          list.splice(i, 1);
-          localStorage.setItem('todoList', JSON.stringify(list));
-          renderWriterMode();
-        };
-        row.appendChild(del);
-        area.appendChild(row);
-      });
-    }
-
-    if (mode === "free") {
-      const ta = document.createElement('textarea');
-      ta.placeholder = "Start writing...";
-      ta.value = localStorage.getItem('freeDraft') || "";
-      ta.oninput = () => { localStorage.setItem('freeDraft', ta.value); };
-      area.appendChild(ta);
-    }
-  }
-
-  /* ---------------- BRAINSTORM ---------------- */
-  function generateIdea(){
-    const ideas = [
-      "Design a tool that solves a tiny but annoying problem.",
-      "Invent a productivity ritual for creative people.",
-      "Imagine a dashboard that adapts to your mood.",
-      "Create a writing prompt generator with personality.",
-      "Sketch a feature that blends music with focus."
-    ];
-    const idea = ideas[Math.floor(Math.random() * ideas.length)];
-    document.getElementById('ideaText').textContent = idea;
-  }
-  function clearIdeas(){
-    document.getElementById('ideaText').textContent = "";
-    document.getElementById('brainstormDraft').value = "";
-  }
-
-  /* ---------------- JOURNAL ---------------- */
-  function saveJournal(){
-    const text = document.getElementById('journalText').value.trim();
-    if (!text) return;
-    const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-    const date = new Date().toLocaleDateString();
-    entries.unshift({ date, text });
-    localStorage.setItem('journalEntries', JSON.stringify(entries));
-    document.getElementById('journalText').value = "";
-    renderJournalEntries();
-  }
-  function renderJournalEntries(){
-    const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-    const list = document.getElementById('journalEntries');
-    list.innerHTML = "";
-    entries.forEach((entry, i) => {
-      const div = document.createElement('div');
-      div.className = "stack";
-      div.innerHTML = `<strong>${entry.date}</strong><p>${entry.text}</p>`;
+  if (mode === "todo") {
+    const list = JSON.parse(localStorage.getItem('todoList') || '[]');
+    const input = document.createElement('input');
+    input.className = "input";
+    input.placeholder = "Add task";
+    const addBtn = document.createElement('button');
+    addBtn.className = "btn";
+    addBtn.textContent = "Add";
+    addBtn.onclick = () => {
+      if (input.value.trim()) {
+        list.push(input.value.trim());
+        localStorage.setItem('todoList', JSON.stringify(list));
+        renderWriterMode();
+      }
+    };
+    area.appendChild(input);
+    area.appendChild(addBtn);
+    list.forEach((task, i) => {
+      const row = document.createElement('div');
+      row.className = "row";
+      row.innerHTML = `<span style="flex:1;">${task}</span>`;
       const del = document.createElement('button');
       del.className = "btn secondary";
-      del.textContent = "Delete";
+      del.textContent = "✕";
       del.onclick = () => {
-        entries.splice(i, 1);
-        localStorage.setItem('journalEntries', JSON.stringify(entries));
-        renderJournalEntries();
+        list.splice(i, 1);
+        localStorage.setItem('todoList', JSON.stringify(list));
+        renderWriterMode();
       };
-      div.appendChild(del);
-      list.appendChild(div);
+      row.appendChild(del);
+      area.appendChild(row);
     });
   }
-  function exportJournal(){
-    const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-    let text = entries.map(e => `${e.date}\n${e.text}\n\n`).join("");
-    const blob = new Blob([text], { type: "text/plain" });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = "journal.txt";
-    link.click();
+
+  if (mode === "free") {
+    const ta = document.createElement('textarea');
+    ta.placeholder = "Start writing...";
+    ta.value = localStorage.getItem('freeDraft') || "";
+    ta.oninput = () => {
+      localStorage.setItem('freeDraft', ta.value);
+    };
+    area.appendChild(ta);
   }
-  function exportJournalPrintable(){
-    const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-    let html = "<html><head><title>Journal</title></head><body>";
-    entries.forEach(e => { html += `<h3>${e.date}</h3><p>${e.text}</p><hr/>`; });
-    html += "</body></html>";
-    const win = window.open("", "_blank");
-    win.document.write(html);
-    win.document.close();
-    win.print();
-  }
+}
+
+function generateGenrePrompt(genre) {
+  const genres = {
+    fantasy: [
+      "Describe a hidden portal in an ordinary place.",
+      "Invent a magical creature with a tragic flaw.",
+      "Write about a kingdom ruled by dreams.",
+      "Create a spell that backfires in an unexpected way."
+    ],
+    mystery: [
+      "A locked room. A missing key. What happened?",
+      "Write a scene where a detective finds the wrong clue.",
+      "Describe a character who knows too much.",
+      "Invent a mystery that unfolds in reverse."
+    ],
+    romance: [
+      "Two strangers meet during a power outage.",
+      "Describe a love letter that was never sent.",
+      "Write about a relationship built on a lie.",
+      "Invent a moment where silence says everything."
+    ],
+    "sci-fi": [
+      "Design a future where memories are traded.",
+      "Write about a robot who dreams of freedom.",
+      "Describe a planet where time runs backward.",
+      "Invent a technology that changes emotions."
+    ],
+    drama: [
+      "Write a confrontation between parent and child.",
+      "Describe a moment of quiet betrayal.",
+      "Invent a scene where someone confesses too late.",
+      "Create a story where the truth is unbearable."
+    ],
+    reflective: [
+      "Write about a moment that changed your perspective.",
+      "Describe a place that feels like home.",
+      "What does vulnerability mean to you?",
+      "Write a letter to your future self.",
+      "Reflect on a decision you regret — or don’t."
+    ]
+  };
+
+  const pool = genre === "random"
+    ? Object.values(genres).flat()
+    : genres[genre] || genres.fantasy;
+
+  const random = pool[Math.floor(Math.random() * pool.length)];
+  const timestamp = new Date().toLocaleString();
+  return `${random} (${timestamp})`;
+}
+
+function generateIdea() {
+  const ideas = [
+    "Design a tool that solves a tiny but annoying problem.",
+    "Invent a productivity ritual for creative people.",
+    "Imagine a dashboard that adapts to your mood.",
+    "Create a writing prompt generator with personality.",
+    "Sketch a feature that blends music with focus."
+  ];
+  const idea = ideas[Math.floor(Math.random() * ideas.length)];
+  document.getElementById('ideaText').textContent = idea;
+}
+
+function clearIdeas() {
+  document.getElementById('ideaText').textContent = "";
+  document.getElementById('brainstormDraft').value = "";
+}
+
+function saveJournal() {
+  const text = document.getElementById('journalText').value.trim();
+  if (!text) return;
+  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+  const date = new Date().toLocaleDateString();
+  entries.unshift({ date, text });
+  localStorage.setItem('journalEntries', JSON.stringify(entries));
+  document.getElementById('journalText').value = "";
+  renderJournalEntries();
+}
+
+function renderJournalEntries() {
+  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+  const list = document.getElementById('journalEntries');
+  list.innerHTML = "";
+  entries.forEach((entry, i) => {
+    const div = document.createElement('div');
+    div.className = "stack";
+    div.innerHTML = `<strong>${entry.date}</strong><p>${entry.text}</p>`;
+    const del = document.createElement('button');
+    del.className = "btn secondary";
+    del.textContent = "Delete";
+    del.onclick = () => {
+      entries.splice(i, 1);
+      localStorage.setItem('journalEntries', JSON.stringify(entries));
+      renderJournalEntries();
+    };
+    div.appendChild(del);
+    list.appendChild(div);
+  });
+}
+
+function exportJournal() {
+  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+  let text = entries.map(e => `${e.date}\n${e.text}\n\n`).join("");
+  const blob = new Blob([text], { type: "text/plain" });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "journal.txt";
+  link.click();
+}
+
+function exportJournalPrintable() {
+  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+  let html = "<html><head><title>Journal</title></head><body style='font-family:sans-serif;padding:40px;max-width:700px;margin:auto;'>";
+  entries.forEach(e => {
+    html += `<h3>${e.date}</h3><p>${e.text.replace(/\n/g, "<br/>")}</p><hr/>`;
+  });
+  html += "</body></html>";
+  const win = window.open("", "_blank");
+  win.document.write(html);
+  win.document.close();
+  win.print();
+}
   </script>
 
   <!-- Part 5: Habits + Dock -->
@@ -1345,5 +1404,6 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
   </script>
 </body>
 </html>
+
 
 
