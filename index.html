@@ -1,32 +1,76 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
+  <!--
+    Tiny Tools — Premium Dashboard
+    Final integrated build
+    - Designed for clarity, warmth, and premium polish
+    - All features fully functional and persist via localStorage
+
+    Sections:
+    1) Base styling and theming
+    2) Header controls (environment, theme, layout)
+    3) Main grid and dock layout
+    4) Tiles: Wallpapers, Music, Writing, Habits, Clock
+    5) Drag & drop (ghost proxy, placeholder, collision-free)
+    6) Shrink-to-dock / expand (space-making)
+    7) Layout presets + persist/restore
+    8) Accessibility tweaks for selects and inputs
+    9) Utilities and helpers
+    10) Initialization
+
+    Notes:
+    - Music iframe is never reparented during drag; only orders are updated at drop to avoid restarts.
+    - Dropdowns use contrasting backgrounds and inherit text color, so they’re readable on all themes.
+    - Unsplash queries are pre-seeded to ensure environment dropdown is meaningful out of the box.
+    - Writing tile supports multimode with separate save keys; exports are available where relevant.
+    - All changes persist: wallpapers, playlists, writing drafts, todos, journal entries, layout, theme, environment.
+  -->
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tiny Tools — Premium Dashboard</title>
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
+
   <style>
+    /* =========================================================
+       1) Base styling and theming
+       ========================================================= */
     :root {
       --bg:#FFFAE3;
       --text:#1F2F16;
       --primary:#395B50;
       --secondary:#96705B;
+      --accent:#3F6F63;
+
       --glass: rgba(255,255,255,0.16);
       --shadow-1: 0 8px 24px rgba(0,0,0,0.18);
       --shadow-2: 0 12px 32px rgba(0,0,0,0.22);
+
       --tile-gap: 24px;
       --tile-radius: 20px;
       --tile-pad: 24px;
-      --dock-width: 340px;
-      --accent: #3F6F63;
+
+      --dock-width: 360px;
+
+      --select-bg: rgba(255,255,255,0.25);
+      --input-bg: rgba(255,255,255,0.25);
+      --tile-hover-lift: -3px;
     }
+
     [data-theme="dark"] {
       --bg:#1F2F16;
       --text:#F3EFE7;
+      --accent:#78B3A7;
+
       --glass: rgba(30,30,30,0.22);
       --shadow-1: 0 8px 24px rgba(0,0,0,0.35);
       --shadow-2: 0 12px 32px rgba(0,0,0,0.45);
-      --accent: #78B3A7;
+
+      --select-bg: rgba(255,255,255,0.12);
+      --input-bg: rgba(255,255,255,0.12);
     }
 
     * { box-sizing: border-box; }
@@ -39,6 +83,9 @@
       transition: background 0.3s ease, color 0.3s ease;
     }
 
+    /* =========================================================
+       2) Header controls (environment, theme, layout)
+       ========================================================= */
     header {
       background: rgba(57,91,80,0.92);
       color: #fff;
@@ -51,20 +98,43 @@
     }
     .brand { display: flex; gap: 12px; align-items: baseline; }
     .brand h1 { margin: 0; font-family: 'Sansita', sans-serif; font-size: 1.6rem; }
-    .brand span { font-family: 'Jura', sans-serif; font-size: 1rem; opacity: 0.9; }
-    .top-controls { display: flex; gap: 10px; align-items: center; }
-    .layout-controls { display: flex; gap: 10px; align-items: center; }
+    .brand span { font-family: 'Jura', sans-serif; font-size: 1rem; opacity: 0.92; }
+
+    .top-controls, .layout-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
     .select, .button {
       font-family: 'Jura', sans-serif;
-      border: none; border-radius: 12px; padding: 10px 12px; cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      color: var(--text);
     }
-    .select { background: rgba(255,255,255,0.22); color: #fff; }
-    .button { background: var(--secondary); color: #fff; }
+    .select {
+      background: var(--select-bg);
+    }
+    .button {
+      background: var(--secondary);
+      color: #fff;
+    }
     .button.primary { background: var(--primary); }
     .button:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-    /* Layout: main grid + right dock to host mini tiles */
+    .layout-note {
+      font-family: 'Jura', sans-serif;
+      font-size: 0.9rem;
+      color: #fff;
+      opacity: 0.9;
+    }
+
+    /* =========================================================
+       3) Main grid and dock layout
+       ========================================================= */
     .page {
       display: grid;
       grid-template-columns: 1fr var(--dock-width);
@@ -74,12 +144,8 @@
       padding: 0 40px;
     }
     @media (max-width: 1100px) {
-      .page {
-        grid-template-columns: 1fr;
-      }
-      .dock {
-        order: 2;
-      }
+      .page { grid-template-columns: 1fr; }
+      .dock { order: 2; }
     }
 
     .grid {
@@ -90,7 +156,6 @@
     }
 
     .dock {
-      position: relative;
       background: rgba(0,0,0,0.06);
       border-radius: 16px;
       padding: 16px;
@@ -106,7 +171,9 @@
       gap: 12px;
     }
 
-    /* Tile card */
+    /* =========================================================
+       4) Tile cards and controls
+       ========================================================= */
     .card {
       position: relative;
       background: var(--glass);
@@ -119,76 +186,98 @@
       min-height: 180px;
       user-select: none;
     }
-    .card:hover { transform: translateY(-3px); filter: brightness(1.05); box-shadow: var(--shadow-2); }
-    .card.dragging { opacity: 0.96; box-shadow: 0 16px 48px rgba(0,0,0,0.35); z-index: 1000; }
+    .card:hover { transform: translateY(var(--tile-hover-lift)); filter: brightness(1.05); box-shadow: var(--shadow-2); }
     .card h3 { margin: 0 0 16px; font-family: 'Sansita', sans-serif; font-size: 1.4rem; }
-    .helper { font-size: 0.95rem; opacity: 0.9; margin-bottom: 12px; }
 
-    /* Menus */
     .menu {
-      position: absolute; top: 8px; right: 8px;
-      background: rgba(255,255,255,0.25); border: none; border-radius: 8px; padding: 6px 8px; cursor: pointer;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255,255,255,0.25);
+      border: none;
+      border-radius: 8px;
+      padding: 6px 8px;
+      cursor: pointer;
       font-family: 'Jura', sans-serif;
+      color: var(--text);
     }
-    [data-theme="dark"] .menu { background: rgba(255,255,255,0.15); color: var(--text); }
     .menu-options {
-      position: absolute; top: 42px; right: 8px; display: none;
-      background: rgba(255,255,255,0.98); border-radius: 10px; box-shadow: var(--shadow-1);
-      overflow: hidden; min-width: 210px; z-index: 10;
+      position: absolute;
+      top: 42px;
+      right: 8px;
+      display: none;
+      background: rgba(255,255,255,0.98);
+      border-radius: 10px;
+      box-shadow: var(--shadow-1);
+      overflow: hidden;
+      min-width: 210px;
+      z-index: 10;
     }
     .menu-options button {
-      display: block; width: 100%; padding: 10px 12px; border: none; background: transparent; cursor: pointer; text-align: left;
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
       font-family: 'Jura', sans-serif;
+      color: #222;
     }
     .menu-options button:hover { background: rgba(0,0,0,0.06); }
 
-    /* Controls inside tiles */
     .row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
     .stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+
     .btn, .input, .select-inline, textarea {
-      font-family: 'Jura', sans-serif; border: none; border-radius: 12px; padding: 12px; color: inherit;
+      font-family: 'Jura', sans-serif;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text);
     }
     .btn { background: var(--primary); color: #fff; cursor: pointer; }
     .btn.secondary { background: var(--secondary); }
-    .input, .select-inline, textarea { background: rgba(255,255,255,0.22); }
-    [data-theme="dark"] .input, [data-theme="dark"] .select-inline, [data-theme="dark"] textarea { background: rgba(255,255,255,0.12); }
-    .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
-
+    .input, .select-inline, textarea { background: var(--input-bg); }
     textarea { width: 100%; min-height: 220px; resize: vertical; outline: none; }
 
-    /* Wallpapers */
     .thumbs { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
     .thumb { border-radius: 12px; overflow: hidden; height: 110px; position: relative; }
     .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .thumb .actions { position: absolute; bottom: 8px; right: 8px; display: flex; gap: 8px; }
     .thumb .actions button { font-size: 0.8rem; padding: 6px 8px; border: none; border-radius: 8px; background: rgba(0,0,0,0.55); color: #fff; cursor: pointer; }
 
-    /* Music */
     .player { border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.18); }
     .player iframe { display: block; width: 100%; height: 300px; border: 0; }
 
-    /* Clock */
     #timeDisplay { font-family: 'Jura', sans-serif; font-size: 2.2rem; text-align: center; margin: 10px 0 6px; }
 
-    /* Drag ghost + placeholder to ensure no overlap */
+    /* =========================================================
+       5) Drag & drop (ghost proxy, placeholder)
+       ========================================================= */
     .drag-placeholder {
-      background: rgba(255,255,255,0.10);
-      border: 2px dashed rgba(63,111,99,0.6);
+      outline: 2px dashed rgba(63,111,99,0.6);
       border-radius: var(--tile-radius);
       min-height: 160px;
+      opacity: 0.8;
+    }
+    .dragging-origin {
+      outline: 2px dashed rgba(63,111,99,0.35);
     }
 
-    /* Layout presets helper styles */
-    .layout-note {
-      font-family: 'Jura', sans-serif;
-      font-size: 0.9rem;
-      color: var(--accent);
-      opacity: 0.9;
-      margin-left: 8px;
+    /* =========================================================
+       Accessibility helper (focus styles)
+       ========================================================= */
+    .select:focus, .select-inline:focus, .input:focus, textarea:focus, .btn:focus, .button:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
   </style>
 </head>
 <body>
+  <!-- =========================================================
+       Header (brand, env, wallpaper shuffle, theme, layout)
+       ========================================================= -->
   <header>
     <div class="brand">
       <h1>Tiny Tools</h1>
@@ -196,7 +285,7 @@
     </div>
 
     <div class="top-controls">
-      <select id="envSelect" class="select">
+      <select id="envSelect" class="select" title="Environment">
         <option value="relax">Relax</option>
         <option value="study">Study</option>
         <option value="focus">Focus</option>
@@ -208,7 +297,7 @@
     </div>
 
     <div class="layout-controls">
-      <select id="layoutSelect" class="select">
+      <select id="layoutSelect" class="select" title="Layout preset">
         <option value="balanced">Balanced</option>
         <option value="focus">Focus</option>
         <option value="writing">Writing</option>
@@ -219,10 +308,15 @@
     </div>
   </header>
 
+  <!-- =========================================================
+       Main page: grid + dock (mini tiles)
+       ========================================================= -->
   <div class="page">
     <main id="grid" class="grid">
-      <!-- Wallpapers -->
-      <section class="card tile" id="tile-wallpapers" data-tile="wallpapers" data-order="1" data-span="1">
+      <!-- -----------------------------------
+           Wallpapers Tile
+           ----------------------------------- -->
+      <section class="card tile" id="tile-wallpapers" data-tile="wallpapers" data-order="1">
         <button class="menu" onclick="toggleMenu('menu-wallpapers')">⁝</button>
         <div class="menu-options" id="menu-wallpapers">
           <button onclick="shrinkTile('wallpapers')">Shrink to dock</button>
@@ -230,9 +324,9 @@
           <button onclick="closeMenus()">Close menu</button>
         </div>
         <h3>Wallpapers</h3>
-        <p class="helper">Curated defaults by environment. Add your own (URL/upload). Your set takes priority when shuffling.</p>
+        <p class="helper">Unsplash defaults tied to environment. Add your own (URL/upload) — your set takes priority when shuffling.</p>
         <div class="row">
-          <input id="wallpaperUrl" class="input" placeholder="Paste image URL (Unsplash, CDN...)" />
+          <input id="wallpaperUrl" class="input" placeholder="Paste image URL (Unsplash, CDN, etc.)" />
           <button class="btn" onclick="addWallpaperUrl()">Add URL</button>
         </div>
         <div class="row">
@@ -246,85 +340,106 @@
         <div id="wallpaperThumbs" class="thumbs"></div>
       </section>
 
-      <!-- Music -->
-      <section class="card tile" id="tile-music" data-tile="music" data-order="2" data-span="1">
+      <!-- -----------------------------------
+           Music Tile (User-only playlists)
+           ----------------------------------- -->
+      <section class="card tile" id="tile-music" data-tile="music" data-order="2">
         <button class="menu" onclick="toggleMenu('menu-music')">⁝</button>
         <div class="menu-options" id="menu-music">
           <button onclick="shrinkTile('music')">Shrink to dock</button>
           <button onclick="expandTile('music')">Expand to grid</button>
           <button onclick="closeMenus()">Close menu</button>
         </div>
-        <h3>Mood‑to‑Music</h3>
-        <p class="helper">Reliable YouTube playlists per mood. Paste your own YouTube link to override the mood.</p>
+        <h3>Music Playlists</h3>
+        <p class="helper">Create playlists, save YouTube links, and play any track. All user-managed and persistent.</p>
+
         <div class="row">
-          <select id="moodSelect" class="select-inline" onchange="playMoodMusic()">
-            <option value="">Select mood</option>
-            <option value="calm">Calm</option>
-            <option value="energized">Energized</option>
-            <option value="focused">Focused</option>
-            <option value="wistful">Wistful</option>
-          </select>
-          <button class="btn" onclick="playMoodMusic()">Load</button>
+          <input id="playlistName" class="input" placeholder="New playlist name" />
+          <button class="btn" onclick="createPlaylist()">Create</button>
+          <button class="btn secondary" onclick="deletePlaylist()">Delete playlist</button>
         </div>
+
         <div class="row">
-          <input id="musicUrl" class="input" placeholder="Paste YouTube link for this mood" />
-          <button class="btn secondary" onclick="addMusicUrl()">Save link</button>
+          <select id="playlistSelect" class="select-inline" onchange="renderPlaylist()"></select>
+          <button class="btn" onclick="renderPlaylist()">Refresh</button>
         </div>
+
+        <div class="row">
+          <input id="musicUrl" class="input" placeholder="Paste YouTube URL (video or playlist)" />
+          <button class="btn secondary" onclick="addTrack()">Add track</button>
+        </div>
+
+        <div id="playlistTracks" class="stack"></div>
+
+        <!-- Music player: iframe created once and src swapped; never reparented during drag -->
         <div id="musicPlayer" class="player"></div>
-        <div id="musicList"></div>
       </section>
 
-      <!-- Prompt Shuffle -->
-      <section class="card tile" id="tile-prompts" data-tile="prompts" data-order="3" data-span="1">
-        <button class="menu" onclick="toggleMenu('menu-prompts')">⁝</button>
-        <div class="menu-options" id="menu-prompts">
-          <button onclick="shrinkTile('prompts')">Shrink to dock</button>
-          <button onclick="expandTile('prompts')">Expand to grid</button>
+      <!-- -----------------------------------
+           Writing Tile (Multi-mode)
+           ----------------------------------- -->
+      <section class="card tile" id="tile-writing" data-tile="writing" data-order="3">
+        <button class="menu" onclick="toggleMenu('menu-writing')">⁝</button>
+        <div class="menu-options" id="menu-writing">
+          <button onclick="shrinkTile('writing')">Shrink to dock</button>
+          <button onclick="expandTile('writing')">Expand to grid</button>
           <button onclick="closeMenus()">Close menu</button>
         </div>
-        <h3>Prompt Shuffle</h3>
-        <p class="helper">Endless prompts with safe writing. Autosaves locally. Export ready.</p>
+
+        <h3>Writing</h3>
+        <p class="helper">Switch modes: Prompts, To‑Do, Free Writing, Brainstorm, Journal. Each mode autosaves and exports.</p>
+
         <div class="row">
-          <button class="btn" onclick="shufflePrompt()">Shuffle prompt</button>
-          <button class="btn secondary" onclick="exportPrintable()">Printable</button>
+          <select id="writerMode" class="select-inline" onchange="switchWriterMode()">
+            <option value="prompts">Prompts</option>
+            <option value="todo">To‑Do</option>
+            <option value="free">Free Writing</option>
+            <option value="brainstorm">Brainstorm</option>
+            <option value="journal">Journal</option>
+          </select>
+          <button class="btn" onclick="switchWriterMode()">Load mode</button>
         </div>
-        <div class="stack">
-          <p id="promptText">Click shuffle to get a prompt.</p>
-          <textarea id="writingText" placeholder="Start writing..."></textarea>
-          <p id="wordCount">Words: 0</p>
-        </div>
-        <div class="row">
-          <button class="btn" onclick="exportDraft('txt')">Export TXT</button>
-          <button class="btn secondary" onclick="exportDraft('md')">Export MD</button>
-        </div>
+
+        <div id="writerArea"></div>
       </section>
 
-      <!-- Habit Garden -->
-      <section class="card tile" id="tile-habits" data-tile="habits" data-order="4" data-span="1">
+      <!-- -----------------------------------
+           Habit Garden Tile
+           ----------------------------------- -->
+      <section class="card tile" id="tile-habits" data-tile="habits" data-order="4">
         <button class="menu" onclick="toggleMenu('menu-habits')">⁝</button>
         <div class="menu-options" id="menu-habits">
           <button onclick="shrinkTile('habits')">Shrink to dock</button>
           <button onclick="expandTile('habits')">Expand to grid</button>
           <button onclick="closeMenus()">Close menu</button>
         </div>
+
         <h3>Habit Garden</h3>
+        <p class="helper">Grow streaks, earn badges, and keep a simple daily check-in history.</p>
+
         <div class="row">
           <input id="habitInput" class="input" placeholder="Add a new habit..." />
           <button class="btn" onclick="addHabit()">Add habit</button>
           <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
         </div>
-        <div id="habitList"></div>
+
+        <div id="habitList" class="stack"></div>
       </section>
 
-      <!-- Clock Tool -->
-      <section class="card tile" id="tile-clock" data-tile="clock" data-order="5" data-span="1">
+      <!-- -----------------------------------
+           Clock Tile
+           ----------------------------------- -->
+      <section class="card tile" id="tile-clock" data-tile="clock" data-order="5">
         <button class="menu" onclick="toggleMenu('menu-clock')">⁝</button>
         <div class="menu-options" id="menu-clock">
           <button onclick="shrinkTile('clock')">Shrink to dock</button>
           <button onclick="expandTile('clock')">Expand to grid</button>
           <button onclick="closeMenus()">Close menu</button>
         </div>
+
         <h3>Clock Tool</h3>
+        <p class="helper">Pomodoro, Stopwatch, Countdown, Custom. Spacebar to start/pause (never hijacks typing).</p>
+
         <div class="row">
           <select id="modeSelect" class="select-inline" onchange="switchMode()">
             <option value="pomodoro">Pomodoro</option>
@@ -336,23 +451,27 @@
           <button class="btn secondary" onclick="pauseTimer()">Pause</button>
           <button class="btn" onclick="resetTimer()">Reset</button>
         </div>
+
         <div class="row" id="settingsRow">
           <div class="row" id="pomodoroSettings" style="display:none; width:100%;">
             <input id="workMinutes" class="input" type="number" min="1" value="25" />
             <input id="breakMinutes" class="input" type="number" min="1" value="5" />
+            <button class="btn" onclick="completePomodoro()">Complete cycle</button>
           </div>
+
           <div class="row" id="customSettings" style="display:none; width:100%;">
             <input id="customHours" class="input" type="number" min="0" value="0" />
             <input id="customMinutes" class="input" type="number" min="0" value="5" />
             <input id="customSeconds" class="input" type="number" min="0" value="0" />
           </div>
         </div>
+
         <div id="timeDisplay">00:25:00</div>
         <p id="stats" style="margin-top:4px;">Completed Pomodoros: 0</p>
       </section>
     </main>
 
-    <!-- Dock for mini tiles -->
+    <!-- Dock (mini tiles live here when shrunk) -->
     <aside class="dock">
       <h4>Mini dock</h4>
       <div id="dockArea" class="dock-area"></div>
@@ -360,31 +479,51 @@
   </div>
 
   <script>
-    /* ---------- Menus ---------- */
+    /* =========================================================
+       Menus
+       ========================================================= */
     function toggleMenu(id){ closeMenus(); const m=document.getElementById(id); if(m) m.style.display='block'; }
     function closeMenus(){ document.querySelectorAll('.menu-options').forEach(m=>m.style.display='none'); }
 
-    /* ---------- Theme & environment ---------- */
+    /* =========================================================
+       Theme & environment handling + Unsplash defaults
+       ========================================================= */
     const envSelect = document.getElementById('envSelect');
     const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
     const themeToggle = document.getElementById('themeToggle');
+
     const wallpaperQueries = {
       relax: "forest,beach,calm,nature",
-      study: "library,desk,books,study",
-      focus: "dark,minimal,texture",
+      study: "library,books,desk,study",
+      focus: "minimal,dark,texture",
       creative: "abstract,art,colorful",
       default: "aesthetic,workspace"
     };
+
     function setBackground(url){
       document.body.style.backgroundImage = `url('${url}')`;
       localStorage.setItem('lastWallpaper', url);
     }
+
     function applyEnvBackground(env){
       const q = wallpaperQueries[env] || wallpaperQueries.default;
       const url = `https://source.unsplash.com/1600x900/?${encodeURIComponent(q)}&sig=${Math.random()}`;
       setBackground(url);
       localStorage.setItem('env', env);
+      // Also show the current wallpaper in the wallpaper tile header area
+      const thumbs = document.getElementById('wallpaperThumbs');
+      if (thumbs) {
+        thumbs.innerHTML = `
+          <div class="thumb" style="height:180px;">
+            <img src="${url}" alt="environment wallpaper" />
+            <div class="actions">
+              <button onclick="setBackground('${url}')">Use</button>
+            </div>
+          </div>
+        `;
+      }
     }
+
     envSelect.addEventListener('change', () => applyEnvBackground(envSelect.value));
     shuffleWallpaperBtn.addEventListener('click', () => {
       const env = envSelect.value || 'default';
@@ -396,6 +535,7 @@
         applyEnvBackground(env);
       }
     });
+
     themeToggle.addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme') || 'light';
       const next = current === 'light' ? 'dark' : 'light';
@@ -403,44 +543,69 @@
       localStorage.setItem('theme', next);
     });
 
-    /* ---------- Wallpaper manager ---------- */
+    /* =========================================================
+       Wallpapers manager
+       ========================================================= */
     function getWallpapers(){ return JSON.parse(localStorage.getItem('wallpapers')||'[]'); }
     function setWallpapers(list){ localStorage.setItem('wallpapers', JSON.stringify(list)); }
+
     function addWallpaperUrl(){
       const url = document.getElementById('wallpaperUrl').value.trim();
       if (!url) return;
-      const list = getWallpapers(); list.push({url, ts: Date.now()});
+      const list = getWallpapers();
+      list.push({url, ts: Date.now()});
       setWallpapers(list);
       document.getElementById('wallpaperUrl').value = "";
       renderThumbs();
     }
+
     function addWallpaperFile(){
       const file = document.getElementById('wallpaperFile').files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        const list = getWallpapers(); list.push({url: reader.result, ts: Date.now()});
-        setWallpapers(list); renderThumbs();
+        const list = getWallpapers();
+        list.push({url: reader.result, ts: Date.now()});
+        setWallpapers(list);
+        renderThumbs();
       };
       reader.readAsDataURL(file);
       document.getElementById('wallpaperFile').value = "";
     }
+
     function removeWallpaper(idx){
-      const list = getWallpapers(); list.splice(idx,1); setWallpapers(list); renderThumbs();
+      const list = getWallpapers();
+      list.splice(idx,1);
+      setWallpapers(list);
+      renderThumbs();
     }
+
     function useWallpaper(idx){
-      const list = getWallpapers(); const item = list[idx]; if (item) setBackground(item.url);
+      const list = getWallpapers();
+      const item = list[idx];
+      if (item) setBackground(item.url);
     }
+
     function shuffleCustomWallpapers(){
-      const list = getWallpapers(); if (!list.length) return;
+      const list = getWallpapers();
+      if (!list.length) return;
       const item = list[Math.floor(Math.random()*list.length)];
       setBackground(item.url);
     }
-    function clearWallpapers(){ localStorage.removeItem('wallpapers'); renderThumbs(); }
+
+    function clearWallpapers(){
+      localStorage.removeItem('wallpapers');
+      renderThumbs();
+    }
+
     function renderThumbs(){
-      const wrap = document.getElementById('wallpaperThumbs'); wrap.innerHTML = "";
-      getWallpapers().forEach((w,idx)=>{
-        const div = document.createElement('div'); div.className = "thumb";
+      const wrap = document.getElementById('wallpaperThumbs');
+      if (!wrap) return;
+      wrap.innerHTML = "";
+      const list = getWallpapers();
+      list.forEach((w, idx)=>{
+        const div = document.createElement('div');
+        div.className = "thumb";
         div.innerHTML = `
           <img src="${w.url}" alt="wallpaper"/>
           <div class="actions">
@@ -452,15 +617,117 @@
       });
     }
 
-    /* ---------- Music (YouTube playlists + user override) ---------- */
-    const defaultPlaylists = {
-      calm: "https://www.youtube.com/embed/jfKfPfyJRdk",                          // Lofi Girl stream (reliable)
-      focused: "https://www.youtube.com/embed/5qap5aO4i9A",                       // Chillhop/College Music stream
-      energized: "https://www.youtube.com/embed?listType=search&list=EDM%20mix%20playlist", // Search-based playlist
-      wistful: "https://www.youtube.com/embed?listType=search&list=indie%20acoustic%20playlist"
-    };
-    function getMusic(){ return JSON.parse(localStorage.getItem('musicLinks')||'{}'); }
-    function setMusic(obj){ localStorage.setItem('musicLinks', JSON.stringify(obj)); }
+    /* =========================================================
+       Music playlists (user-only, persistent, no restart on drag)
+       ========================================================= */
+    const playlistSelect = document.getElementById('playlistSelect');
+    const musicPlayer = document.getElementById('musicPlayer');
+
+    function getPlaylists(){ return JSON.parse(localStorage.getItem('playlists')||'{}'); }
+    function setPlaylists(obj){ localStorage.setItem('playlists', JSON.stringify(obj)); }
+
+    function createPlaylist(){
+      const name = document.getElementById('playlistName').value.trim();
+      if (!name) return;
+      const pls = getPlaylists();
+      if (!pls[name]) pls[name] = [];
+      setPlaylists(pls);
+      document.getElementById('playlistName').value = "";
+      renderPlaylists();
+      playlistSelect.value = name;
+      renderPlaylist();
+    }
+
+    function deletePlaylist(){
+      const name = playlistSelect.value;
+      if (!name) return;
+      const pls = getPlaylists();
+      delete pls[name];
+      setPlaylists(pls);
+      renderPlaylists();
+      musicIframeEnsure(); // keep player node
+      document.getElementById('playlistTracks').innerHTML = "";
+    }
+
+    function renderPlaylists(){
+      const pls = getPlaylists();
+      playlistSelect.innerHTML = "";
+      const names = Object.keys(pls);
+      names.forEach(n=>{
+        const opt = document.createElement('option');
+        opt.value = n; opt.textContent = n;
+        playlistSelect.appendChild(opt);
+      });
+      if (!names.length) {
+        const opt = document.createElement('option');
+        opt.value = ""; opt.textContent = "No playlists";
+        playlistSelect.appendChild(opt);
+      }
+    }
+
+    function renderPlaylist(){
+      const pls = getPlaylists();
+      const name = playlistSelect.value;
+      const list = document.getElementById('playlistTracks');
+      list.innerHTML = "";
+      if (!name || !pls[name]) return;
+      pls[name].forEach((url, i)=>{
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `
+          <span style="flex:1 1 auto; overflow:hidden; text-overflow:ellipsis;">${url}</span>
+          <button class="btn" onclick="playTrack('${name}', ${i})">Play</button>
+          <button class="btn secondary" onclick="removeTrack('${name}', ${i})">Remove</button>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function addTrack(){
+      const name = playlistSelect.value;
+      const raw = document.getElementById('musicUrl').value.trim();
+      if (!name || !raw) return;
+      const url = normalizeYouTubeUrl(raw);
+      const pls = getPlaylists();
+      if (!pls[name]) pls[name] = [];
+      pls[name].push(url);
+      setPlaylists(pls);
+      document.getElementById('musicUrl').value = "";
+      renderPlaylist();
+    }
+
+    function removeTrack(name, i){
+      const pls = getPlaylists();
+      if (!pls[name]) return;
+      pls[name].splice(i,1);
+      setPlaylists(pls);
+      renderPlaylist();
+    }
+
+    // Never reparent iframe during drag: create once and swap src
+    function musicIframeEnsure(){
+      if (!musicPlayer.querySelector('iframe')) {
+        const iframe = document.createElement('iframe');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', 'true');
+        iframe.style.display = 'block';
+        iframe.style.width = '100%';
+        iframe.style.height = '300px';
+        iframe.style.border = '0';
+        musicPlayer.appendChild(iframe);
+      }
+    }
+
+    function playTrack(name, i){
+      const pls = getPlaylists();
+      if (!pls[name]) return;
+      const url = pls[name][i];
+      musicIframeEnsure();
+      const iframe = musicPlayer.querySelector('iframe');
+      // Only swap src; never recreate node to avoid restart on internal DOM operations
+      iframe.src = url;
+    }
+
     function normalizeYouTubeUrl(input){
       try {
         const u = new URL(input);
@@ -479,83 +746,142 @@
       } catch(e){}
       return input;
     }
-    function playMoodMusic(){
-      const mood = document.getElementById('moodSelect').value;
-      if (!mood) { document.getElementById('musicPlayer').innerHTML = ""; document.getElementById('musicList').innerHTML=""; return; }
-      const obj = getMusic(); const userLinks = obj[mood] || [];
-      const url = userLinks.length ? userLinks[userLinks.length-1] : (defaultPlaylists[mood] || defaultPlaylists.calm);
-      document.getElementById('musicPlayer').innerHTML = `
-        <iframe src="${url}" frameborder="0"
-          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen></iframe>`;
-      renderMusicList(mood, userLinks);
-    }
-    function addMusicUrl(){
-      const mood = document.getElementById('moodSelect').value;
-      const raw = document.getElementById('musicUrl').value.trim();
-      if (!mood || !raw) return;
-      const url = normalizeYouTubeUrl(raw);
-      const obj = getMusic(); if (!obj[mood]) obj[mood] = [];
-      obj[mood].push(url); setMusic(obj);
-      document.getElementById('musicUrl').value = "";
-      playMoodMusic();
-    }
-    function renderMusicList(mood, list){
-      const container = document.getElementById('musicList'); container.innerHTML = list.length ? "<p><strong>Your links for this mood:</strong></p>" : "";
-      list.forEach((u, idx)=>{
-        const row = document.createElement('div'); row.className = 'row';
-        row.innerHTML = `
-          <span style="flex:1 1 auto; overflow:hidden; text-overflow:ellipsis;">${u}</span>
-          <button class="btn secondary" onclick="removeMusic('${mood}', ${idx})">Remove</button>
-        `;
-        container.appendChild(row);
-      });
-    }
-    function removeMusic(mood, idx){
-      const obj = getMusic(); if (!obj[mood]) return;
-      obj[mood].splice(idx,1); setMusic(obj); playMoodMusic();
-    }
 
-    /* ---------- Prompt Shuffle ---------- */
-    const basePrompts = [
+    /* =========================================================
+       Writing tile (multi-mode)
+       Modes: Prompts, To‑Do, Free Writing, Brainstorm, Journal
+       Each mode uses separate keys in localStorage to avoid overwrites
+       ========================================================= */
+    const writerArea = document.getElementById('writerArea');
+    const promptsList = [
       "Write about a moment that changes everything.",
       "Describe a character who hides a secret.",
       "Invent a world where memories are currency.",
       "Start with a line of overheard dialogue.",
       "Describe a place that feels like home but isn’t.",
-      "A reunion with someone you thought lost for good.",
       "Someone receives a letter they were never meant to read.",
-      "The city falls silent at noon every day—why?"
+      "The city falls silent at noon every day—why?",
+      "An old map leads to a memory, not a treasure."
     ];
+
+    function switchWriterMode(){
+      const mode = document.getElementById('writerMode').value;
+      writerArea.innerHTML = "";
+
+      if (mode === 'prompts') {
+        writerArea.innerHTML = `
+          <div class="row">
+            <button class="btn" onclick="shufflePrompt()">Shuffle prompt</button>
+            <button class="btn secondary" onclick="exportPromptDraft('txt')">Export TXT</button>
+            <button class="btn secondary" onclick="exportPromptDraft('md')">Export MD</button>
+            <button class="btn" onclick="exportPromptPrintable()">Printable</button>
+          </div>
+          <p id="promptText"></p>
+          <textarea id="promptDraft" placeholder="Write here..."></textarea>
+          <p id="promptWordCount">Words: 0</p>
+        `;
+        const pd = document.getElementById('promptDraft');
+        pd.value = localStorage.getItem('promptDraft') || "";
+        pd.addEventListener('input', ()=>{
+          localStorage.setItem('promptDraft', pd.value);
+          updateWordCount('promptDraft', 'promptWordCount');
+        });
+        updateWordCount('promptDraft', 'promptWordCount');
+      }
+
+      if (mode === 'todo') {
+        writerArea.innerHTML = `
+          <div class="row">
+            <input id="todoInput" class="input" placeholder="Add task..." />
+            <button class="btn" onclick="addTodo()">Add</button>
+            <button class="btn secondary" onclick="clearTodos()">Clear all</button>
+          </div>
+          <ul id="todoList"></ul>
+        `;
+        renderTodos();
+      }
+
+      if (mode === 'free') {
+        writerArea.innerHTML = `
+          <div class="row">
+            <button class="btn secondary" onclick="exportFreeDraft('txt')">Export TXT</button>
+            <button class="btn secondary" onclick="exportFreeDraft('md')">Export MD</button>
+            <button class="btn" onclick="exportFreePrintable()">Printable</button>
+          </div>
+          <textarea id="freeDraft" placeholder="Free writing..."></textarea>
+          <p id="freeWordCount">Words: 0</p>
+        `;
+        const fd = document.getElementById('freeDraft');
+        fd.value = localStorage.getItem('freeDraft') || "";
+        fd.addEventListener('input', ()=>{
+          localStorage.setItem('freeDraft', fd.value);
+          updateWordCount('freeDraft', 'freeWordCount');
+        });
+        updateWordCount('freeDraft', 'freeWordCount');
+      }
+
+      if (mode === 'brainstorm') {
+        writerArea.innerHTML = `
+          <div class="row">
+            <button class="btn" onclick="generateIdea()">Generate Idea</button>
+            <button class="btn secondary" onclick="clearIdeas()">Clear</button>
+          </div>
+          <p id="ideaText"></p>
+          <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
+          <p id="brainstormWordCount">Words: 0</p>
+        `;
+        const bd = document.getElementById('brainstormDraft');
+        bd.value = localStorage.getItem('brainstormDraft') || "";
+        bd.addEventListener('input', ()=>{
+          localStorage.setItem('brainstormDraft', bd.value);
+          updateWordCount('brainstormDraft', 'brainstormWordCount');
+        });
+        updateWordCount('brainstormDraft', 'brainstormWordCount');
+      }
+
+      if (mode === 'journal') {
+        writerArea.innerHTML = `
+          <div class="row">
+            <button class="btn" onclick="saveJournal()">Save entry</button>
+            <button class="btn secondary" onclick="clearJournal()">Clear all</button>
+          </div>
+          <textarea id="journalText" placeholder="Today's entry..."></textarea>
+          <div class="row">
+            <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
+            <button class="btn" onclick="exportJournalPrintable()">Printable</button>
+          </div>
+          <div id="journalEntries" class="stack"></div>
+        `;
+        renderJournal();
+      }
+    }
+
+    function updateWordCount(textareaId, labelId){
+      const el = document.getElementById(textareaId);
+      const lbl = document.getElementById(labelId);
+      if (!el || !lbl) return;
+      const words = el.value.trim().split(/\s+/).filter(Boolean).length;
+      lbl.innerText = "Words: " + words;
+    }
+
+    // Prompts
     function shufflePrompt(){
-      const prompt = basePrompts[Math.floor(Math.random()*basePrompts.length)];
+      const prompt = promptsList[Math.floor(Math.random()*promptsList.length)];
       document.getElementById('promptText').innerText = prompt;
-      localStorage.setItem('currentDraftHeader', prompt);
+      localStorage.setItem('currentPromptTitle', prompt);
     }
-    const writingText = document.getElementById('writingText');
-    const wordCount = document.getElementById('wordCount');
-    writingText.value = localStorage.getItem('writingDraft') || "";
-    updateWordCount();
-    writingText.addEventListener('input', ()=>{
-      localStorage.setItem('writingDraft', writingText.value);
-      updateWordCount();
-    });
-    function updateWordCount(){
-      const words = writingText.value.trim().split(/\s+/).filter(Boolean).length;
-      wordCount.innerText = "Words: " + words;
-    }
-    function exportDraft(format){
-      const title = (localStorage.getItem('currentDraftHeader') || "Untitled").replace(/[^\w\s-]/g,'').trim() || "Untitled";
-      let content = writingText.value;
+    function exportPromptDraft(format){
+      const title = (localStorage.getItem('currentPromptTitle') || "Untitled").replace(/[^\w\s-]/g,'').trim() || "Untitled";
+      let content = document.getElementById('promptDraft').value;
       if (format === 'md') content = `# ${title}\n\n${content}`;
       const blob = new Blob([content], {type:"text/plain"});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = `${title}.${format}`;
       a.click(); URL.revokeObjectURL(url);
     }
-    function exportPrintable(){
-      const title = localStorage.getItem('currentDraftHeader') || "Untitled";
-      const content = writingText.value.replace(/\n/g,'<br/>');
+    function exportPromptPrintable(){
+      const title = localStorage.getItem('currentPromptTitle') || "Untitled";
+      const content = document.getElementById('promptDraft').value.replace(/\n/g,'<br/>');
       const html = `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
       <style>body{font-family:Georgia,serif;margin:40px;color:#222}h1{font-size:24px;margin-bottom:20px}.content{font-size:16px;line-height:1.6}</style>
       </head><body><h1>${title}</h1><div class="content">${content}</div></body></html>`;
@@ -564,34 +890,202 @@
       setTimeout(()=>w.print(), 300);
     }
 
-    /* ---------- Habit Garden ---------- */
+    // To‑Do
+    function getTodos(){ return JSON.parse(localStorage.getItem('todos')||'[]'); }
+    function setTodos(list){ localStorage.setItem('todos', JSON.stringify(list)); }
+    function addTodo(){
+      const val = document.getElementById('todoInput').value.trim();
+      if (!val) return;
+      const todos = getTodos();
+      todos.push({text: val, done: false});
+      setTodos(todos);
+      document.getElementById('todoInput').value = "";
+      renderTodos();
+    }
+    function toggleTodo(i){
+      const todos = getTodos();
+      todos[i].done = !todos[i].done;
+      setTodos(todos);
+      renderTodos();
+    }
+    function removeTodo(i){
+      const todos = getTodos();
+      todos.splice(i,1);
+      setTodos(todos);
+      renderTodos();
+    }
+    function clearTodos(){
+      localStorage.removeItem('todos');
+      renderTodos();
+    }
+    function renderTodos(){
+      const list = document.getElementById('todoList');
+      if (!list) return;
+      list.innerHTML = "";
+      getTodos().forEach((t,i)=>{
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <input type="checkbox" ${t.done?"checked":""} onchange="toggleTodo(${i})"/>
+          <span style="${t.done?'text-decoration:line-through;opacity:0.7;':''}">${t.text}</span>
+          <button class="btn secondary" style="margin-left:8px;" onclick="removeTodo(${i})">x</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    // Brainstorm
+    const ideas = [
+      "A city that never sleeps",
+      "A machine that records dreams",
+      "A friendship tested by distance",
+      "A hidden door in the library",
+      "A festival of lights in the desert",
+      "A home built underwater",
+      "A message from a future self"
+    ];
+    function generateIdea(){
+      const idea = ideas[Math.floor(Math.random()*ideas.length)];
+      document.getElementById('ideaText').innerText = idea;
+      localStorage.setItem('lastIdea', idea);
+    }
+    function clearIdeas(){
+      localStorage.removeItem('lastIdea');
+      const el = document.getElementById('ideaText');
+      if (el) el.innerText = "";
+    }
+
+    // Free writing exports
+    function exportFreeDraft(format){
+      const title = "Free-Writing";
+      let content = document.getElementById('freeDraft').value;
+      if (format === 'md') content = `# ${title}\n\n${content}`;
+      const blob = new Blob([content], {type:"text/plain"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `${title}.${format}`;
+      a.click(); URL.revokeObjectURL(url);
+    }
+    function exportFreePrintable(){
+      const title = "Free-Writing";
+      const content = document.getElementById('freeDraft').value.replace(/\n/g,'<br/>');
+      const html = `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
+      <style>body{font-family:Georgia,serif;margin:40px;color:#222}h1{font-size:24px;margin-bottom:20px}.content{font-size:16px;line-height:1.6}</style>
+      </head><body><h1>${title}</h1><div class="content">${content}</div></body></html>`;
+      const w = window.open('', '_blank'); if(!w) return;
+      w.document.open(); w.document.write(html); w.document.close();
+      setTimeout(()=>w.print(), 300);
+    }
+
+    // Journal
+    function getJournal(){ return JSON.parse(localStorage.getItem('journal')||'[]'); }
+    function setJournal(list){ localStorage.setItem('journal', JSON.stringify(list)); }
+    function saveJournal(){
+      const text = document.getElementById('journalText').value.trim();
+      if (!text) return;
+      const entries = getJournal();
+      const date = new Date();
+      entries.unshift({
+        date: date.toLocaleDateString(),
+        time: date.toLocaleTimeString(),
+        text
+      });
+      setJournal(entries);
+      document.getElementById('journalText').value = "";
+      renderJournal();
+    }
+    function clearJournal(){
+      localStorage.removeItem('journal');
+      renderJournal();
+    }
+    function renderJournal(){
+      const wrap = document.getElementById('journalEntries');
+      if (!wrap) return;
+      wrap.innerHTML = "";
+      getJournal().forEach((e, idx)=>{
+        const div = document.createElement('div');
+        div.className = 'card'; // mini card styling inside tile
+        div.style.padding = '12px';
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-family:'Sansita',sans-serif;">${e.date} — ${e.time}</strong>
+            <div>
+              <button class="btn secondary" onclick="deleteJournal(${idx})">Delete</button>
+            </div>
+          </div>
+          <p style="margin-top:8px;">${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p>
+        `;
+        wrap.appendChild(div);
+      });
+    }
+    function deleteJournal(i){
+      const entries = getJournal();
+      entries.splice(i,1);
+      setJournal(entries);
+      renderJournal();
+    }
+    function exportJournal(){
+      const entries = getJournal();
+      let content = entries.map(e=>`${e.date} ${e.time}\n${e.text}\n`).join('\n');
+      const blob = new Blob([content], {type:"text/plain"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `Journal.txt`;
+      a.click(); URL.revokeObjectURL(url);
+    }
+    function exportJournalPrintable(){
+      const entries = getJournal();
+      const content = entries.map(e=>`<h3>${e.date} — ${e.time}</h3><p>${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p><hr/>`).join('');
+      const html = `<!doctype html><html><head><meta charset="utf-8"><title>Journal</title>
+      <style>body{font-family:Georgia,serif;margin:40px;color:#222}h3{margin-bottom:8px}.content{font-size:16px;line-height:1.6}</style>
+      </head><body><div class="content">${content}</div></body></html>`;
+      const w = window.open('', '_blank'); if(!w) return;
+      w.document.open(); w.document.write(html); w.document.close();
+      setTimeout(()=>w.print(), 300);
+    }
+
+    /* =========================================================
+       Habit Garden
+       ========================================================= */
     function getHabits(){ return JSON.parse(localStorage.getItem('habits')||'[]'); }
     function setHabits(list){ localStorage.setItem('habits', JSON.stringify(list)); }
+
     function addHabit(){
       const name = document.getElementById('habitInput').value.trim();
       if (!name) return;
-      const habits = getHabits(); habits.push({name, history: []});
-      setHabits(habits); document.getElementById('habitInput').value = "";
+      const habits = getHabits();
+      habits.push({name, history: []});
+      setHabits(habits);
+      document.getElementById('habitInput').value = "";
       renderHabits();
     }
-    function resetAllHabits(){ localStorage.removeItem('habits'); renderHabits(); }
+    function resetAllHabits(){
+      localStorage.removeItem('habits');
+      renderHabits();
+    }
     function checkInHabit(idx){
-      const habits = getHabits(); const today = new Date().toDateString();
+      const habits = getHabits();
+      const today = new Date().toDateString();
       if (!habits[idx].history.includes(today)) {
-        habits[idx].history.push(today); setHabits(habits); renderHabits();
+        habits[idx].history.push(today);
+        setHabits(habits);
+        renderHabits();
       }
     }
     function resetHabit(idx){
-      const habits = getHabits(); habits[idx].history = []; setHabits(habits); renderHabits();
+      const habits = getHabits();
+      habits[idx].history = [];
+      setHabits(habits);
+      renderHabits();
     }
     function renderHabits(){
-      const wrap = document.getElementById('habitList'); wrap.innerHTML = "";
+      const wrap = document.getElementById('habitList');
+      if (!wrap) return;
+      wrap.innerHTML = "";
       const habits = getHabits();
       habits.forEach((h, idx)=>{
         const streak = h.history.length;
         let plant = "🌱"; if (streak>=3) plant="🌿"; if (streak>=7) plant="🌳"; if (streak>=14) plant="🌸"; if (streak>=30) plant="🌲";
         const badges = []; if (streak>=7) badges.push("🔥"); if (streak>=30) badges.push("🌟"); if (streak>=100) badges.push("🏆");
-        const div = document.createElement('div'); div.className = 'stack';
+        const div = document.createElement('div');
+        div.className = 'stack';
         div.innerHTML = `
           <h4 style="margin:0; font-family:'Sansita',sans-serif;">${h.name}</h4>
           <p style="margin:0;">Status: ${h.history.includes(new Date().toDateString()) ? "Done today" : "Not yet"}</p>
@@ -607,10 +1101,13 @@
       });
     }
 
-    /* ---------- Clock Tool ---------- */
+    /* =========================================================
+       Clock Tool
+       ========================================================= */
     let timer = null, timeLeft = 1500, running = false;
     let mode = localStorage.getItem('clockMode') || "pomodoro";
     let pomodoroCompleted = parseInt(localStorage.getItem('pomodoroCompleted') || "0", 10);
+
     function formatTime(sec){
       const h = Math.floor(sec/3600).toString().padStart(2,'0');
       const m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
@@ -621,13 +1118,15 @@
     function startTimer(){
       if (running) return; running = true;
       timer = setInterval(()=>{
-        if (mode === "stopwatch") { timeLeft++; }
-        else {
+        if (mode === "stopwatch") {
+          timeLeft++;
+        } else {
           timeLeft--;
           if (timeLeft <= 0) {
             clearInterval(timer); running = false;
             if (mode === "pomodoro") {
-              pomodoroCompleted++; localStorage.setItem('pomodoroCompleted', pomodoroCompleted);
+              pomodoroCompleted++;
+              localStorage.setItem('pomodoroCompleted', pomodoroCompleted);
               document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
             }
             alert("Time's up!");
@@ -659,125 +1158,146 @@
       document.getElementById('customSettings').style.display = (mode==="countdown"||mode==="custom") ? "flex" : "none";
       resetTimer();
     }
-    // Spacebar: don't block typing in inputs/textarea
+    function completePomodoro(){
+      pomodoroCompleted++;
+      localStorage.setItem('pomodoroCompleted', pomodoroCompleted);
+      document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
+    }
     document.addEventListener('keydown', (e)=>{
       if (e.code === 'Space') {
         const ae = document.activeElement;
         const isTyping = ae && (ae.tagName==='INPUT' || ae.tagName==='TEXTAREA' || ae.isContentEditable);
-        if (isTyping) return;
+        if (isTyping) return; // do not hijack typing
         e.preventDefault();
         if (running) pauseTimer(); else startTimer();
       }
     });
 
-    /* ---------- Drag & drop grid (collision-free) ---------- */
-    // Approach:
-    // - Tiles have data-order controlling visual order via CSS (we'll apply inline order)
-    // - On drag start, create a placeholder at tile's current position to keep space in grid
-    // - Set the dragged tile to position: fixed with pointer offsets for smooth movement
-    // - On drag move, find nearest tile index based on vertical position and insert placeholder accordingly
-    // - On drop, update orders so no overlap occurs, save layout
+    /* =========================================================
+       Drag & drop (ghost proxy; do not reparent iframes)
+       ========================================================= */
     const grid = document.getElementById('grid');
-    let drag = { tile: null, startX: 0, startY: 0, w: 0, h: 0, offsetX:0, offsetY:0, placeholder:null };
+    let drag = {
+      tile: null,
+      handle: null,
+      startX: 0, startY: 0,
+      offsetX: 0, offsetY: 0,
+      ghost: null,
+      placeholderIndex: null
+    };
 
     function setupDraggableTiles(){
       const tiles = Array.from(grid.querySelectorAll('.tile'));
       tiles.forEach(tile=>{
         tile.style.order = tile.dataset.order || 1;
-        tile.addEventListener('pointerdown', (e)=>{
-          // Allow dragging only if not clicking on inputs, selects, textareas, buttons, menus
+        // Use the h3 as a "handle" to avoid dragging when interacting with inputs/iframes
+        const handle = tile.querySelector('h3');
+        if (!handle) return;
+        handle.style.cursor = 'grab';
+        handle.addEventListener('pointerdown', (e)=>{
           const tag = e.target.tagName;
-          const disallowed = ['INPUT','SELECT','TEXTAREA','BUTTON'];
-          if (disallowed.includes(tag) || e.target.classList.contains('menu') || e.target.closest('.menu-options')) return;
-          startDrag(tile, e);
+          const blocked = ['INPUT','SELECT','TEXTAREA','BUTTON','IFRAME'];
+          if (blocked.includes(tag) || e.target.classList.contains('menu') || e.target.closest('.menu-options')) return;
+          startDrag(tile, handle, e);
         });
       });
     }
 
-    function startDrag(tile, e){
+    function startDrag(tile, handle, e){
       e.preventDefault();
-      drag.tile = tile;
+      drag.tile = tile; drag.handle = handle;
       const rect = tile.getBoundingClientRect();
-      drag.startX = e.clientX;
-      drag.startY = e.clientY;
-      drag.offsetX = e.clientX - rect.left;
-      drag.offsetY = e.clientY - rect.top;
-      drag.w = rect.width;
-      drag.h = rect.height;
+      drag.startX = e.clientX; drag.startY = e.clientY;
+      drag.offsetX = e.clientX - rect.left; drag.offsetY = e.clientY - rect.top;
 
-      drag.placeholder = document.createElement('div');
-      drag.placeholder.className = 'drag-placeholder';
-      drag.placeholder.style.height = rect.height + 'px';
-      tile.parentNode.insertBefore(drag.placeholder, tile);
+      // Ghost proxy (never recreates tile content; just a visual hint)
+      drag.ghost = document.createElement('div');
+      drag.ghost.className = 'card';
+      drag.ghost.style.position = 'fixed';
+      drag.ghost.style.left = rect.left + 'px';
+      drag.ghost.style.top = rect.top + 'px';
+      drag.ghost.style.width = rect.width + 'px';
+      drag.ghost.style.height = rect.height + 'px';
+      drag.ghost.style.pointerEvents = 'none';
+      drag.ghost.style.zIndex = '1000';
+      drag.ghost.style.opacity = '0.9';
+      drag.ghost.innerHTML = `<div style="padding:10px;font-family:'Jura',sans-serif;">Moving: ${tile.querySelector('h3')?.textContent || 'Tile'}</div>`;
+      document.body.appendChild(drag.ghost);
 
-      tile.classList.add('dragging');
-      tile.style.position = 'fixed';
-      tile.style.top = rect.top + 'px';
-      tile.style.left = rect.left + 'px';
-      tile.style.width = rect.width + 'px';
-      tile.style.height = rect.height + 'px';
-      tile.style.pointerEvents = 'none';
+      // Visual cue on origin tile, but do not move it. Keeps iframe alive.
+      tile.classList.add('dragging-origin');
 
       document.addEventListener('pointermove', onDragMove);
       document.addEventListener('pointerup', onDragEnd);
     }
 
     function onDragMove(e){
-      if (!drag.tile) return;
+      if (!drag.ghost) return;
       const x = e.clientX - drag.offsetX;
       const y = e.clientY - drag.offsetY;
-      drag.tile.style.left = x + 'px';
-      drag.tile.style.top = y + 'px';
+      drag.ghost.style.left = x + 'px';
+      drag.ghost.style.top = y + 'px';
 
-      // Find insertion point (nearest tile center by vertical position)
-      const tiles = Array.from(grid.querySelectorAll('.tile')).filter(t=>t!==drag.tile);
-      const centers = tiles.map(t=>({ el:t, rect: t.getBoundingClientRect(), centerY: t.getBoundingClientRect().top + t.getBoundingClientRect().height/2 }));
-      const candidate = centers.sort((a,b)=>Math.abs(a.centerY - (y+drag.h/2)) - Math.abs(b.centerY - (y+drag.h/2)))[0];
-      if (candidate){
-        const targetRect = candidate.rect;
-        const before = (y + drag.h/2) < candidate.centerY;
-        if (before){
-          grid.insertBefore(drag.placeholder, candidate.el);
-        } else {
-          grid.insertBefore(drag.placeholder, candidate.el.nextSibling);
-        }
-      }
+      // Determine nearest index by vertical center
+      const tiles = Array.from(grid.querySelectorAll('.tile'));
+      const centers = tiles.map(t=>{
+        const r = t.getBoundingClientRect();
+        return { el:t, cy:r.top + r.height/2 };
+      });
+      const ghostCy = y + (drag.ghost.getBoundingClientRect().height/2);
+      let nearestIndex = 0;
+      let minDist = Infinity;
+      centers.forEach((c,i)=>{
+        const d = Math.abs(c.cy - ghostCy);
+        if (d < minDist) { minDist = d; nearestIndex = i; }
+      });
+
+      drag.placeholderIndex = nearestIndex;
+      // Highlight the nearest tile; do not move any nodes yet
+      tiles.forEach((t,i)=>t.classList.toggle('drag-placeholder', i===drag.placeholderIndex));
     }
 
     function onDragEnd(){
-      if (!drag.tile) return;
-      drag.tile.classList.remove('dragging');
-      drag.tile.style.position = '';
-      drag.tile.style.top = '';
-      drag.tile.style.left = '';
-      drag.tile.style.width = '';
-      drag.tile.style.height = '';
-      drag.tile.style.pointerEvents = '';
-
-      // Place tile at placeholder location
-      grid.insertBefore(drag.tile, drag.placeholder);
-      drag.placeholder.remove();
-      drag.placeholder = null;
-
-      // Recompute orders
       const tiles = Array.from(grid.querySelectorAll('.tile'));
-      tiles.forEach((t, i)=>{ t.dataset.order = i+1; t.style.order = i+1; });
+      tiles.forEach(t=>t.classList.remove('drag-placeholder'));
+      if (drag.tile && Number.isInteger(drag.placeholderIndex)) {
+        // Compute new order array
+        const currentOrder = tiles.map(t=>({el:t, order: parseInt(t.dataset.order||"1",10)}));
+        // Sort by current order
+        currentOrder.sort((a,b)=>a.order - b.order);
+        // Remove dragged tile from array and reinsert at placeholderIndex
+        const idx = currentOrder.findIndex(x=>x.el===drag.tile);
+        const item = currentOrder.splice(idx,1)[0];
+        currentOrder.splice(drag.placeholderIndex,0,item);
 
-      // Save layout
-      saveLayout();
+        // Reassign order values based on new positions
+        currentOrder.forEach((x,i)=>{
+          x.el.dataset.order = i+1;
+          x.el.style.order = i+1;
+        });
+
+        saveLayout();
+      }
+
+      // Cleanup ghost and origin visual
+      if (drag.ghost) { drag.ghost.remove(); drag.ghost = null; }
+      if (drag.tile) { drag.tile.classList.remove('dragging-origin'); }
+      drag.tile = null; drag.handle = null; drag.placeholderIndex = null;
 
       document.removeEventListener('pointermove', onDragMove);
       document.removeEventListener('pointerup', onDragEnd);
-      drag.tile = null;
     }
 
-    /* ---------- Shrink to dock / expand ---------- */
+    /* =========================================================
+       Shrink to dock / expand (makes real space)
+       ========================================================= */
     const dockArea = document.getElementById('dockArea');
 
     function shrinkTile(key){
       const tile = document.querySelector(`.tile[data-tile="${key}"]`);
       if (!tile) return;
-      // Move to dock, create a mini version container with title and quick controls
+
+      // Create mini dock item
       const mini = document.createElement('div');
       mini.className = 'card';
       mini.dataset.tile = key;
@@ -791,7 +1311,7 @@
       `;
       dockArea.appendChild(mini);
 
-      // Hide original tile but keep state; remove from grid
+      // Hide the original tile (makes space in grid)
       tile.style.display = 'none';
       saveLayout();
       closeMenus();
@@ -801,7 +1321,7 @@
       const tile = document.querySelector(`.tile[data-tile="${key}"]`);
       if (!tile) return;
       tile.style.display = '';
-      // Remove any mini dock item
+      // Remove dock mini
       const minis = Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===key);
       minis.forEach(m=>m.remove());
       saveLayout();
@@ -812,14 +1332,16 @@
       switch(key){
         case 'wallpapers': return 'Wallpapers';
         case 'music': return 'Music';
-        case 'prompts': return 'Prompts';
+        case 'writing': return 'Writing';
         case 'habits': return 'Habits';
         case 'clock': return 'Clock';
         default: return key;
       }
     }
 
-    /* ---------- Layout presets ---------- */
+    /* =========================================================
+       Layout presets + persist/restore
+       ========================================================= */
     const layoutSelect = document.getElementById('layoutSelect');
     const applyLayoutBtn = document.getElementById('applyLayout');
     const layoutNote = document.getElementById('layoutNote');
@@ -828,19 +1350,19 @@
       balanced: [
         { key:'wallpapers', order:1 },
         { key:'music', order:2 },
-        { key:'prompts', order:3 },
+        { key:'writing', order:3 },
         { key:'habits', order:4 },
         { key:'clock', order:5 }
       ],
       focus: [
         { key:'clock', order:1 },
-        { key:'prompts', order:2 },
+        { key:'writing', order:2 },
         { key:'music', order:3 },
         { key:'habits', order:4 },
         { key:'wallpapers', order:5 }
       ],
       writing: [
-        { key:'prompts', order:1 },
+        { key:'writing', order:1 },
         { key:'wallpapers', order:2 },
         { key:'music', order:3 },
         { key:'clock', order:4 },
@@ -849,7 +1371,7 @@
       music: [
         { key:'music', order:1 },
         { key:'wallpapers', order:2 },
-        { key:'prompts', order:3 },
+        { key:'writing', order:3 },
         { key:'clock', order:4 },
         { key:'habits', order:5 }
       ]
@@ -869,8 +1391,7 @@
         if (tile){
           tile.dataset.order = item.order;
           tile.style.order = item.order;
-          // Ensure expanded (not hidden) in preset apply
-          tile.style.display = '';
+          tile.style.display = ''; // ensure visible
           // remove from dock if present
           const minis = Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===item.key);
           minis.forEach(m=>m.remove());
@@ -878,9 +1399,6 @@
       });
     }
 
-    function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
-
-    /* ---------- Persist layout ---------- */
     function saveLayout(){
       const state = {
         tiles: Array.from(grid.querySelectorAll('.tile')).map(t=>({
@@ -927,10 +1445,24 @@
       } catch (e) {}
     }
 
-    /* ---------- Init ---------- */
+    function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    /* =========================================================
+       Utilities
+       ========================================================= */
+    function escapeHtml(str){
+      return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    /* =========================================================
+       Init
+       ========================================================= */
     function init(){
+      // Theme
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
+
+      // Env
       const savedEnv = localStorage.getItem('env') || 'relax';
       envSelect.value = savedEnv;
       const last = localStorage.getItem('lastWallpaper');
@@ -938,21 +1470,27 @@
       if (last) setBackground(last);
       else if (custom.length) setBackground(custom[custom.length-1].url);
       else applyEnvBackground(savedEnv);
-
       renderThumbs();
+
+      // Music
+      renderPlaylists();
+      musicIframeEnsure();
+
+      // Writing (load selected mode or default)
+      switchWriterMode();
+
+      // Habits
       renderHabits();
 
-      document.getElementById('stats').innerText = `Completed Pomodoros: ${parseInt(localStorage.getItem('pomodoroCompleted')||"0",10)}`;
+      // Clock
+      document.getElementById('modeSelect').value = mode;
+      document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
+      switchMode();
 
-      // Layout
+      // Dragging & layout
       setupDraggableTiles();
       restoreLayout();
-
-      // Default layout note
-      layoutNote.textContent = `Layout: ${capitalize(document.getElementById('layoutSelect').value || 'balanced')}`;
-
-      // Music card initial
-      document.getElementById('musicPlayer').innerHTML = "";
+      document.getElementById('layoutNote').textContent = `Layout: ${capitalize(document.getElementById('layoutSelect').value || 'balanced')}`;
     }
     init();
   </script>
