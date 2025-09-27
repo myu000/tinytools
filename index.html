@@ -257,14 +257,16 @@
   <div id="writerArea" class="stack"></div>
 
   <!-- Brainstorm Mode -->
-  <div id="brainstormVisible" class="stack" style="display:none;">
-    <p id="ideaText" class="small"></p>
-    <div class="row">
-      <button class="btn" onclick="generateIdea()">Generate idea</button>
-      <button class="btn secondary" onclick="clearIdeas()">Clear</button>
-    </div>
-    <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
+<div id="brainstormVisible" class="stack" style="display:none;">
+  <p id="ideaText" class="small"></p>
+  <div class="row">
+    <button class="btn" onclick="generateIdea()">Generate idea</button>
+    <button class="btn secondary" onclick="clearIdeas()">Clear</button>
+    <button class="btn" onclick="saveBrainstorm()">Save Notes</button>
+    <button class="btn secondary" onclick="exportBrainstorm()">Export Notes</button>
   </div>
+  <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
+</div>
 
   <!-- Journal Mode -->
   <div id="journalVisible" class="stack" style="display:none;">
@@ -686,6 +688,7 @@ function renderWriterMode() {
   document.getElementById('brainstormVisible').style.display = (mode === "brainstorm") ? "block" : "none";
   document.getElementById('journalVisible').style.display = (mode === "journal") ? "block" : "none";
 
+  /* ---------- PROMPTS MODE ---------- */
   if (mode === "prompts") {
     const saved = JSON.parse(localStorage.getItem('promptResponses') || '{}');
     const promptArea = document.createElement('div');
@@ -712,6 +715,7 @@ function renderWriterMode() {
     promptBtn.onclick = () => {
       const genre = genreSelect.value;
       const prompt = generateGenrePrompt(genre);
+      promptArea.innerHTML = ""; // clear previous
       const div = document.createElement('div');
       div.className = "stack";
       const label = document.createElement('strong');
@@ -725,40 +729,20 @@ function renderWriterMode() {
       };
       div.appendChild(label);
       div.appendChild(ta);
-      promptArea.prepend(div);
+      promptArea.appendChild(div);
     };
+
+    const responsesBtn = document.createElement('button');
+    responsesBtn.className = "btn secondary";
+    responsesBtn.textContent = "Responses";
+    responsesBtn.onclick = () => { showResponses(); };
 
     genreRow.appendChild(promptBtn);
+    genreRow.appendChild(responsesBtn);
     area.appendChild(genreRow);
-
-    const exportBtn = document.createElement('button');
-    exportBtn.className = "btn secondary";
-    exportBtn.textContent = "Export All Responses";
-    exportBtn.onclick = () => {
-      let text = "";
-      for (let key in saved) {
-        text += key + "\n" + saved[key] + "\n\n";
-      }
-      const blob = new Blob([text], { type: "text/plain" });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = "prompts.txt";
-      link.click();
-    };
-    area.appendChild(exportBtn);
-
-    const clearBtn = document.createElement('button');
-    clearBtn.className = "btn secondary";
-    clearBtn.textContent = "Clear All Responses";
-    clearBtn.onclick = () => {
-      if (confirm("Clear all saved prompt responses?")) {
-        localStorage.removeItem('promptResponses');
-        renderWriterMode();
-      }
-    };
-    area.appendChild(clearBtn);
   }
 
+  /* ---------- TO-DO MODE ---------- */
   if (mode === "todo") {
     const list = JSON.parse(localStorage.getItem('todoList') || '[]');
     const input = document.createElement('input');
@@ -793,17 +777,54 @@ function renderWriterMode() {
     });
   }
 
+  /* ---------- FREE MODE ---------- */
   if (mode === "free") {
     const ta = document.createElement('textarea');
     ta.placeholder = "Start writing...";
     ta.value = localStorage.getItem('freeDraft') || "";
-    ta.oninput = () => {
-      localStorage.setItem('freeDraft', ta.value);
-    };
     area.appendChild(ta);
+
+    const btnRow = document.createElement('div');
+    btnRow.className = "row";
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = "btn";
+    saveBtn.textContent = "Save Draft";
+    saveBtn.onclick = () => {
+      localStorage.setItem('freeDraft', ta.value);
+      alert("Draft saved ✅");
+    };
+
+    const discardBtn = document.createElement('button');
+    discardBtn.className = "btn secondary";
+    discardBtn.textContent = "Discard Draft";
+    discardBtn.onclick = () => {
+      ta.value = "";
+      localStorage.removeItem('freeDraft');
+      alert("Draft discarded 🗑️");
+    };
+
+    const exportBtn = document.createElement('button');
+    exportBtn.className = "btn";
+    exportBtn.textContent = "Export Draft";
+    exportBtn.onclick = () => {
+      const text = ta.value.trim();
+      if (!text) { alert("Nothing to export."); return; }
+      const blob = new Blob([text], { type: "text/plain" });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = "free_draft.txt";
+      link.click();
+    };
+
+    btnRow.appendChild(saveBtn);
+    btnRow.appendChild(discardBtn);
+    btnRow.appendChild(exportBtn);
+    area.appendChild(btnRow);
   }
 }
 
+/* ---------- PROMPTS HELPERS ---------- */
 function generateGenrePrompt(genre) {
   const genres = {
     fantasy: [
@@ -854,76 +875,76 @@ function generateGenrePrompt(genre) {
   return `${random} (${timestamp})`;
 }
 
-function generateIdea() {
-  const ideas = [
-    "Design a tool that solves a tiny but annoying problem.",
-    "Invent a productivity ritual for creative people.",
-    "Imagine a dashboard that adapts to your mood.",
-    "Create a writing prompt generator with personality.",
-    "Sketch a feature that blends music with focus."
-  ];
-  const idea = ideas[Math.floor(Math.random() * ideas.length)];
-  document.getElementById('ideaText').textContent = idea;
-}
+function showResponses() {
+  const saved = JSON.parse(localStorage.getItem('promptResponses') || '{}');
+  const area = document.getElementById('writerArea');
+  area.innerHTML = "<h4>Saved Responses</h4>";
 
-function clearIdeas() {
-  document.getElementById('ideaText').textContent = "";
-  document.getElementById('brainstormDraft').value = "";
-}
+  const list = document.createElement('div');
+  list.className = "stack";
 
-function saveJournal() {
-  const text = document.getElementById('journalText').value.trim();
-  if (!text) return;
-  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-  const date = new Date().toLocaleDateString();
-  entries.unshift({ date, text });
-  localStorage.setItem('journalEntries', JSON.stringify(entries));
-  document.getElementById('journalText').value = "";
-  renderJournalEntries();
-}
+  Object.keys(saved).forEach((prompt, i) => {
+    const row = document.createElement('div');
+    row.className = "stack";
+    const checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.id = "resp-" + i;
+    const label = document.createElement('label');
+    label.htmlFor = "resp-" + i;
+    label.textContent = prompt;
+    const ta = document.createElement('textarea');
+    ta.value = saved[prompt];
+    ta.readOnly = true;
 
-function renderJournalEntries() {
-  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-  const list = document.getElementById('journalEntries');
-  list.innerHTML = "";
-  entries.forEach((entry, i) => {
-    const div = document.createElement('div');
-    div.className = "stack";
-    div.innerHTML = `<strong>${entry.date}</strong><p>${entry.text}</p>`;
-    const del = document.createElement('button');
-    del.className = "btn secondary";
-    del.textContent = "Delete";
-    del.onclick = () => {
-      entries.splice(i, 1);
-      localStorage.setItem('journalEntries', JSON.stringify(entries));
-      renderJournalEntries();
+    const delBtn = document.createElement('button');
+    delBtn.className = "btn secondary";
+    delBtn.textContent = "Delete";
+    delBtn.onclick = () => {
+      delete saved[prompt];
+      localStorage.setItem('promptResponses', JSON.stringify(saved));
+      showResponses();
     };
-    div.appendChild(del);
-    list.appendChild(div);
-  });
-}
 
-function exportJournal() {
-  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-  let text = entries.map(e => `${e.date}\n${e.text}\n\n`).join("");
-  const blob = new Blob([text], { type: "text/plain" });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = "journal.txt";
-  link.click();
-}
-
-function exportJournalPrintable() {
-  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-  let html = "<html><head><title>Journal</title></head><body style='font-family:sans-serif;padding:40px;max-width:700px;margin:auto;'>";
-  entries.forEach(e => {
-    html += `<h3>${e.date}</h3><p>${e.text.replace(/\n/g, "<br/>")}</p><hr/>`;
+    row.appendChild(checkbox);
+    row.appendChild(label);
+    row.appendChild(ta);
+    row.appendChild(delBtn);
+    list.appendChild(row);
   });
-  html += "</body></html>";
-  const win = window.open("", "_blank");
-  win.document.write(html);
-  win.document.close();
-  win.print();
+
+  area.appendChild(list);
+
+    const exportBtn = document.createElement('button');
+  exportBtn.className = "btn";
+  exportBtn.textContent = "Export Selected";
+  exportBtn.onclick = () => {
+    const checkboxes = list.querySelectorAll("input[type=checkbox]:checked");
+    let text = "";
+    checkboxes.forEach(cb => {
+      const label = cb.nextSibling.textContent;
+      text += label + "\n" + saved[label] + "\n\n";
+    });
+    if (!text) { 
+      alert("No responses selected."); 
+      return; 
+    }
+    const blob = new Blob([text], { type: "text/plain" });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "selected_responses.txt";
+    link.click();
+  };
+
+  area.appendChild(exportBtn);
+
+  const backBtn = document.createElement('button');
+  backBtn.className = "btn secondary";
+  backBtn.textContent = "Back to Prompts";
+  backBtn.onclick = () => {
+    renderWriterMode(); // reload prompts mode
+  };
+
+  area.appendChild(backBtn);
 }
   </script>
 
@@ -1404,6 +1425,7 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
   </script>
 </body>
 </html>
+
 
 
 
