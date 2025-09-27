@@ -3,74 +3,189 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tiny Tools — Dashboard</title>
+  <title>Tiny Tools — Premium Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:#FFFAE3; --text:#1F2F16;
-      --primary:#395B50; --secondary:#96705B;
-      --glass: rgba(255,255,255,0.12);
+      --bg:#FFFAE3;
+      --text:#1F2F16;
+      --primary:#395B50;
+      --secondary:#96705B;
+      --glass: rgba(255,255,255,0.16);
+      --shadow-1: 0 8px 24px rgba(0,0,0,0.18);
+      --shadow-2: 0 12px 32px rgba(0,0,0,0.22);
+      --tile-gap: 24px;
+      --tile-radius: 20px;
+      --tile-pad: 24px;
+      --dock-width: 340px;
+      --accent: #3F6F63;
     }
-    [data-theme="dark"] { --bg:#1F2F16; --text:#F3EFE7; }
+    [data-theme="dark"] {
+      --bg:#1F2F16;
+      --text:#F3EFE7;
+      --glass: rgba(30,30,30,0.22);
+      --shadow-1: 0 8px 24px rgba(0,0,0,0.35);
+      --shadow-2: 0 12px 32px rgba(0,0,0,0.45);
+      --accent: #78B3A7;
+    }
 
     * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
-      margin:0; font-family:'Forum',serif; color:var(--text);
-      background:var(--bg) center/cover fixed no-repeat;
+      margin: 0;
+      font-family: 'Forum', serif;
+      color: var(--text);
+      background: var(--bg) center/cover fixed no-repeat;
       transition: background 0.3s ease, color 0.3s ease;
     }
 
     header {
-      background:rgba(57,91,80,0.92); color:#fff;
-      padding:18px 40px; display:flex; justify-content:space-between; align-items:center;
-      backdrop-filter:saturate(180%) blur(8px);
+      background: rgba(57,91,80,0.92);
+      color: #fff;
+      padding: 18px 40px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 16px;
+      align-items: center;
+      backdrop-filter: saturate(180%) blur(8px);
     }
-    .brand { display:flex; gap:12px; align-items:baseline; }
-    .brand h1 { margin:0; font-family:'Sansita',sans-serif; font-size:1.6rem; }
-    .brand span { font-family:'Jura',sans-serif; font-size:1rem; opacity:0.9; }
-    .top-controls { display:flex; gap:12px; align-items:center; }
+    .brand { display: flex; gap: 12px; align-items: baseline; }
+    .brand h1 { margin: 0; font-family: 'Sansita', sans-serif; font-size: 1.6rem; }
+    .brand span { font-family: 'Jura', sans-serif; font-size: 1rem; opacity: 0.9; }
+    .top-controls { display: flex; gap: 10px; align-items: center; }
+    .layout-controls { display: flex; gap: 10px; align-items: center; }
 
-    .dashboard {
-      display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr));
-      gap:32px; max-width:1400px; margin:40px auto; padding:0 40px;
+    .select, .button {
+      font-family: 'Jura', sans-serif;
+      border: none; border-radius: 12px; padding: 10px 12px; cursor: pointer;
+    }
+    .select { background: rgba(255,255,255,0.22); color: #fff; }
+    .button { background: var(--secondary); color: #fff; }
+    .button.primary { background: var(--primary); }
+    .button:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+    /* Layout: main grid + right dock to host mini tiles */
+    .page {
+      display: grid;
+      grid-template-columns: 1fr var(--dock-width);
+      gap: var(--tile-gap);
+      max-width: 1500px;
+      margin: 40px auto;
+      padding: 0 40px;
+    }
+    @media (max-width: 1100px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+      .dock {
+        order: 2;
+      }
     }
 
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: var(--tile-gap);
+      align-content: start;
+    }
+
+    .dock {
+      position: relative;
+      background: rgba(0,0,0,0.06);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 200px;
+    }
+    .dock h4 {
+      margin: 0 0 10px;
+      font-family: 'Sansita', sans-serif;
+    }
+    .dock-area {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    /* Tile card */
     .card {
-      background:var(--glass);
+      position: relative;
+      background: var(--glass);
       backdrop-filter: blur(18px) saturate(160%);
       -webkit-backdrop-filter: blur(18px) saturate(160%);
-      border-radius:20px; padding:28px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.18);
+      border-radius: var(--tile-radius);
+      padding: var(--tile-pad);
+      box-shadow: var(--shadow-1);
       transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+      min-height: 180px;
+      user-select: none;
     }
-    .card:hover { transform:translateY(-3px); filter:brightness(1.05); box-shadow:0 12px 32px rgba(0,0,0,0.24); }
-    .card h3 { margin:0 0 16px; font-family:'Sansita',sans-serif; font-size:1.4rem; }
+    .card:hover { transform: translateY(-3px); filter: brightness(1.05); box-shadow: var(--shadow-2); }
+    .card.dragging { opacity: 0.96; box-shadow: 0 16px 48px rgba(0,0,0,0.35); z-index: 1000; }
+    .card h3 { margin: 0 0 16px; font-family: 'Sansita', sans-serif; font-size: 1.4rem; }
+    .helper { font-size: 0.95rem; opacity: 0.9; margin-bottom: 12px; }
 
-    .row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
-    .stack { display:flex; flex-direction:column; gap:12px; margin-bottom:16px; }
-
-    .btn, .input, .select, textarea {
-      font-family:'Jura',sans-serif; border:none; border-radius:12px; padding:12px; color:inherit;
+    /* Menus */
+    .menu {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(255,255,255,0.25); border: none; border-radius: 8px; padding: 6px 8px; cursor: pointer;
+      font-family: 'Jura', sans-serif;
     }
-    .btn { background:var(--primary); color:#fff; cursor:pointer; }
-    .btn.secondary { background:var(--secondary); }
-    .select, .input, textarea { background:rgba(255,255,255,0.20); }
-    [data-theme="dark"] .select, [data-theme="dark"] .input, [data-theme="dark"] textarea { background:rgba(255,255,255,0.12); }
-    .btn:hover { filter:brightness(1.08); transform:translateY(-1px); }
+    [data-theme="dark"] .menu { background: rgba(255,255,255,0.15); color: var(--text); }
+    .menu-options {
+      position: absolute; top: 42px; right: 8px; display: none;
+      background: rgba(255,255,255,0.98); border-radius: 10px; box-shadow: var(--shadow-1);
+      overflow: hidden; min-width: 210px; z-index: 10;
+    }
+    .menu-options button {
+      display: block; width: 100%; padding: 10px 12px; border: none; background: transparent; cursor: pointer; text-align: left;
+      font-family: 'Jura', sans-serif;
+    }
+    .menu-options button:hover { background: rgba(0,0,0,0.06); }
 
-    textarea { width:100%; min-height:220px; resize:vertical; }
+    /* Controls inside tiles */
+    .row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+    .btn, .input, .select-inline, textarea {
+      font-family: 'Jura', sans-serif; border: none; border-radius: 12px; padding: 12px; color: inherit;
+    }
+    .btn { background: var(--primary); color: #fff; cursor: pointer; }
+    .btn.secondary { background: var(--secondary); }
+    .input, .select-inline, textarea { background: rgba(255,255,255,0.22); }
+    [data-theme="dark"] .input, [data-theme="dark"] .select-inline, [data-theme="dark"] textarea { background: rgba(255,255,255,0.12); }
+    .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-    #timeDisplay { font-family:'Jura',sans-serif; font-size:2.2rem; text-align:center; margin:12px 0 8px; }
+    textarea { width: 100%; min-height: 220px; resize: vertical; outline: none; }
 
-    .thumbs { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:12px; }
-    .thumb { border-radius:12px; overflow:hidden; height:110px; position:relative; }
-    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .thumb .actions { position:absolute; bottom:8px; right:8px; display:flex; gap:8px; }
-    .thumb .actions button { font-size:0.8rem; padding:6px 8px; border:none; border-radius:8px; background:rgba(0,0,0,0.55); color:#fff; cursor:pointer; }
+    /* Wallpapers */
+    .thumbs { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .thumb { border-radius: 12px; overflow: hidden; height: 110px; position: relative; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb .actions { position: absolute; bottom: 8px; right: 8px; display: flex; gap: 8px; }
+    .thumb .actions button { font-size: 0.8rem; padding: 6px 8px; border: none; border-radius: 8px; background: rgba(0,0,0,0.55); color: #fff; cursor: pointer; }
 
-    .player { border-radius:12px; overflow:hidden; background:rgba(0,0,0,0.20); }
-    .player iframe { display:block; width:100%; height:315px; border:0; }
-    .helper { font-size:0.92rem; opacity:0.85; margin-bottom:16px; }
+    /* Music */
+    .player { border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.18); }
+    .player iframe { display: block; width: 100%; height: 300px; border: 0; }
+
+    /* Clock */
+    #timeDisplay { font-family: 'Jura', sans-serif; font-size: 2.2rem; text-align: center; margin: 10px 0 6px; }
+
+    /* Drag ghost + placeholder to ensure no overlap */
+    .drag-placeholder {
+      background: rgba(255,255,255,0.10);
+      border: 2px dashed rgba(63,111,99,0.6);
+      border-radius: var(--tile-radius);
+      min-height: 160px;
+    }
+
+    /* Layout presets helper styles */
+    .layout-note {
+      font-family: 'Jura', sans-serif;
+      font-size: 0.9rem;
+      color: var(--accent);
+      opacity: 0.9;
+      margin-left: 8px;
+    }
   </style>
 </head>
 <body>
@@ -79,122 +194,176 @@
       <h1>Tiny Tools</h1>
       <span>Creative & Focus Hub</span>
     </div>
+
     <div class="top-controls">
-      <select id="envSelect" class="select" title="Environment">
+      <select id="envSelect" class="select">
         <option value="relax">Relax</option>
         <option value="study">Study</option>
         <option value="focus">Focus</option>
         <option value="creative">Creative</option>
         <option value="default">Default</option>
       </select>
-      <button id="shuffleWallpaper" class="btn secondary">Shuffle wallpaper</button>
-      <button id="themeToggle" class="btn">Theme</button>
+      <button id="shuffleWallpaper" class="button">Shuffle wallpaper</button>
+      <button id="themeToggle" class="button primary">Theme</button>
+    </div>
+
+    <div class="layout-controls">
+      <select id="layoutSelect" class="select">
+        <option value="balanced">Balanced</option>
+        <option value="focus">Focus</option>
+        <option value="writing">Writing</option>
+        <option value="music">Music</option>
+      </select>
+      <button id="applyLayout" class="button">Apply layout</button>
+      <span id="layoutNote" class="layout-note">Layout: Balanced</span>
     </div>
   </header>
 
-  <main class="dashboard">
-    <!-- Wallpapers -->
-    <section class="card" id="wallpaperCard">
-      <h3>Wallpapers</h3>
-      <p class="helper">Curated defaults by environment. Add your own images by URL or upload. Your set takes priority when shuffling.</p>
-      <div class="row">
-        <input id="wallpaperUrl" class="input" placeholder="Paste image URL (Unsplash, Pinterest, CDN...)" />
-        <button class="btn" onclick="addWallpaperUrl()">Add URL</button>
-      </div>
-      <div class="row">
-        <input id="wallpaperFile" class="input" type="file" accept="image/*" />
-        <button class="btn secondary" onclick="addWallpaperFile()">Upload</button>
-      </div>
-      <div class="row">
-        <button class="btn" onclick="shuffleCustomWallpapers()">Shuffle mine</button>
-        <button class="btn secondary" onclick="clearWallpapers()">Clear all</button>
-      </div>
-      <div id="wallpaperThumbs" class="thumbs"></div>
-    </section>
-
-    <!-- Mood-to-Music (YouTube playlists, user override) -->
-    <section class="card" id="musicCard">
-      <h3>Mood‑to‑Music</h3>
-      <p class="helper">Curated YouTube playlists per mood. Paste your own YouTube link to override the default for the selected mood.</p>
-      <div class="row">
-        <select id="moodSelect" class="select" onchange="playMoodMusic()">
-          <option value="">Select mood</option>
-          <option value="calm">Calm</option>
-          <option value="energized">Energized</option>
-          <option value="focused">Focused</option>
-          <option value="wistful">Wistful</option>
-        </select>
-        <button class="btn" onclick="playMoodMusic()">Load playlist</button>
-      </div>
-      <div class="row">
-        <input id="musicUrl" class="input" placeholder="Paste YouTube link to override mood playlist" />
-        <button class="btn secondary" onclick="addMusicUrl()">Save link for mood</button>
-      </div>
-      <div id="musicPlayer" class="player"></div>
-      <div id="musicList"></div>
-    </section>
-
-    <!-- Prompt Shuffle -->
-    <section class="card" id="promptCard">
-      <h3>Prompt Shuffle</h3>
-      <p class="helper">Endless prompts with safe writing. Autosaves locally. Quick export below.</p>
-      <div class="row">
-        <button class="btn" onclick="shufflePrompt()">Shuffle prompt</button>
-        <button class="btn secondary" onclick="exportPrintable()">Printable</button>
-      </div>
-      <div class="stack">
-        <p id="promptText">Click shuffle to get a prompt.</p>
-        <textarea id="writingText" placeholder="Start writing..."></textarea>
-        <p id="wordCount">Words: 0</p>
-      </div>
-      <div class="row">
-        <button class="btn" onclick="exportDraft('txt')">Export TXT</button>
-        <button class="btn secondary" onclick="exportDraft('md')">Export MD</button>
-      </div>
-    </section>
-
-    <!-- Habit Garden -->
-    <section class="card" id="habitCard">
-      <h3>Habit Garden</h3>
-      <div class="row">
-        <input id="habitInput" class="input" placeholder="Add a new habit..." />
-        <button class="btn" onclick="addHabit()">Add habit</button>
-        <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
-      </div>
-      <div id="habitList"></div>
-    </section>
-
-    <!-- Clock Tool -->
-    <section class="card" id="clockCard">
-      <h3>Clock Tool</h3>
-      <div class="row">
-        <select id="modeSelect" class="select" onchange="switchMode()">
-          <option value="pomodoro">Pomodoro</option>
-          <option value="stopwatch">Stopwatch</option>
-          <option value="countdown">Countdown</option>
-          <option value="custom">Custom</option>
-        </select>
-        <button class="btn" onclick="startTimer()">Start</button>
-        <button class="btn secondary" onclick="pauseTimer()">Pause</button>
-        <button class="btn" onclick="resetTimer()">Reset</button>
-      </div>
-      <div class="row" id="settingsRow">
-        <div class="row" id="pomodoroSettings" style="display:none; width:100%;">
-          <input id="workMinutes" class="input" type="number" min="1" value="25" /> 
-          <input id="breakMinutes" class="input" type="number" min="1" value="5" />
+  <div class="page">
+    <main id="grid" class="grid">
+      <!-- Wallpapers -->
+      <section class="card tile" id="tile-wallpapers" data-tile="wallpapers" data-order="1" data-span="1">
+        <button class="menu" onclick="toggleMenu('menu-wallpapers')">⁝</button>
+        <div class="menu-options" id="menu-wallpapers">
+          <button onclick="shrinkTile('wallpapers')">Shrink to dock</button>
+          <button onclick="expandTile('wallpapers')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
         </div>
-        <div class="row" id="customSettings" style="display:none; width:100%;">
-          <input id="customHours" class="input" type="number" min="0" value="0" />
-          <input id="customMinutes" class="input" type="number" min="0" value="5" />
-          <input id="customSeconds" class="input" type="number" min="0" value="0" />
+        <h3>Wallpapers</h3>
+        <p class="helper">Curated defaults by environment. Add your own (URL/upload). Your set takes priority when shuffling.</p>
+        <div class="row">
+          <input id="wallpaperUrl" class="input" placeholder="Paste image URL (Unsplash, CDN...)" />
+          <button class="btn" onclick="addWallpaperUrl()">Add URL</button>
         </div>
-      </div>
-      <div id="timeDisplay">00:25:00</div>
-      <p id="stats" style="margin-top:4px;">Completed Pomodoros: 0</p>
-    </section>
-  </main>
+        <div class="row">
+          <input id="wallpaperFile" class="input" type="file" accept="image/*" />
+          <button class="btn secondary" onclick="addWallpaperFile()">Upload</button>
+        </div>
+        <div class="row">
+          <button class="btn" onclick="shuffleCustomWallpapers()">Shuffle mine</button>
+          <button class="btn secondary" onclick="clearWallpapers()">Clear all</button>
+        </div>
+        <div id="wallpaperThumbs" class="thumbs"></div>
+      </section>
+
+      <!-- Music -->
+      <section class="card tile" id="tile-music" data-tile="music" data-order="2" data-span="1">
+        <button class="menu" onclick="toggleMenu('menu-music')">⁝</button>
+        <div class="menu-options" id="menu-music">
+          <button onclick="shrinkTile('music')">Shrink to dock</button>
+          <button onclick="expandTile('music')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
+        <h3>Mood‑to‑Music</h3>
+        <p class="helper">Reliable YouTube playlists per mood. Paste your own YouTube link to override the mood.</p>
+        <div class="row">
+          <select id="moodSelect" class="select-inline" onchange="playMoodMusic()">
+            <option value="">Select mood</option>
+            <option value="calm">Calm</option>
+            <option value="energized">Energized</option>
+            <option value="focused">Focused</option>
+            <option value="wistful">Wistful</option>
+          </select>
+          <button class="btn" onclick="playMoodMusic()">Load</button>
+        </div>
+        <div class="row">
+          <input id="musicUrl" class="input" placeholder="Paste YouTube link for this mood" />
+          <button class="btn secondary" onclick="addMusicUrl()">Save link</button>
+        </div>
+        <div id="musicPlayer" class="player"></div>
+        <div id="musicList"></div>
+      </section>
+
+      <!-- Prompt Shuffle -->
+      <section class="card tile" id="tile-prompts" data-tile="prompts" data-order="3" data-span="1">
+        <button class="menu" onclick="toggleMenu('menu-prompts')">⁝</button>
+        <div class="menu-options" id="menu-prompts">
+          <button onclick="shrinkTile('prompts')">Shrink to dock</button>
+          <button onclick="expandTile('prompts')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
+        <h3>Prompt Shuffle</h3>
+        <p class="helper">Endless prompts with safe writing. Autosaves locally. Export ready.</p>
+        <div class="row">
+          <button class="btn" onclick="shufflePrompt()">Shuffle prompt</button>
+          <button class="btn secondary" onclick="exportPrintable()">Printable</button>
+        </div>
+        <div class="stack">
+          <p id="promptText">Click shuffle to get a prompt.</p>
+          <textarea id="writingText" placeholder="Start writing..."></textarea>
+          <p id="wordCount">Words: 0</p>
+        </div>
+        <div class="row">
+          <button class="btn" onclick="exportDraft('txt')">Export TXT</button>
+          <button class="btn secondary" onclick="exportDraft('md')">Export MD</button>
+        </div>
+      </section>
+
+      <!-- Habit Garden -->
+      <section class="card tile" id="tile-habits" data-tile="habits" data-order="4" data-span="1">
+        <button class="menu" onclick="toggleMenu('menu-habits')">⁝</button>
+        <div class="menu-options" id="menu-habits">
+          <button onclick="shrinkTile('habits')">Shrink to dock</button>
+          <button onclick="expandTile('habits')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
+        <h3>Habit Garden</h3>
+        <div class="row">
+          <input id="habitInput" class="input" placeholder="Add a new habit..." />
+          <button class="btn" onclick="addHabit()">Add habit</button>
+          <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
+        </div>
+        <div id="habitList"></div>
+      </section>
+
+      <!-- Clock Tool -->
+      <section class="card tile" id="tile-clock" data-tile="clock" data-order="5" data-span="1">
+        <button class="menu" onclick="toggleMenu('menu-clock')">⁝</button>
+        <div class="menu-options" id="menu-clock">
+          <button onclick="shrinkTile('clock')">Shrink to dock</button>
+          <button onclick="expandTile('clock')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
+        <h3>Clock Tool</h3>
+        <div class="row">
+          <select id="modeSelect" class="select-inline" onchange="switchMode()">
+            <option value="pomodoro">Pomodoro</option>
+            <option value="stopwatch">Stopwatch</option>
+            <option value="countdown">Countdown</option>
+            <option value="custom">Custom</option>
+          </select>
+          <button class="btn" onclick="startTimer()">Start</button>
+          <button class="btn secondary" onclick="pauseTimer()">Pause</button>
+          <button class="btn" onclick="resetTimer()">Reset</button>
+        </div>
+        <div class="row" id="settingsRow">
+          <div class="row" id="pomodoroSettings" style="display:none; width:100%;">
+            <input id="workMinutes" class="input" type="number" min="1" value="25" />
+            <input id="breakMinutes" class="input" type="number" min="1" value="5" />
+          </div>
+          <div class="row" id="customSettings" style="display:none; width:100%;">
+            <input id="customHours" class="input" type="number" min="0" value="0" />
+            <input id="customMinutes" class="input" type="number" min="0" value="5" />
+            <input id="customSeconds" class="input" type="number" min="0" value="0" />
+          </div>
+        </div>
+        <div id="timeDisplay">00:25:00</div>
+        <p id="stats" style="margin-top:4px;">Completed Pomodoros: 0</p>
+      </section>
+    </main>
+
+    <!-- Dock for mini tiles -->
+    <aside class="dock">
+      <h4>Mini dock</h4>
+      <div id="dockArea" class="dock-area"></div>
+    </aside>
+  </div>
 
   <script>
+    /* ---------- Menus ---------- */
+    function toggleMenu(id){ closeMenus(); const m=document.getElementById(id); if(m) m.style.display='block'; }
+    function closeMenus(){ document.querySelectorAll('.menu-options').forEach(m=>m.style.display='none'); }
+
     /* ---------- Theme & environment ---------- */
     const envSelect = document.getElementById('envSelect');
     const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
@@ -285,26 +454,42 @@
 
     /* ---------- Music (YouTube playlists + user override) ---------- */
     const defaultPlaylists = {
-      calm: "https://www.youtube.com/embed/jfKfPfyJRdk",     // Lofi hip hop radio
-      energized: "https://www.youtube.com/embed/ZXzS3qQK7tY", // EDM/energy playlist (example)
-      focused: "https://www.youtube.com/embed/5qap5aO4i9A",   // Study beats
-      wistful: "https://www.youtube.com/embed/TWtKXoGQfHI"    // Indie/acoustic (example)
+      calm: "https://www.youtube.com/embed/jfKfPfyJRdk",                          // Lofi Girl stream (reliable)
+      focused: "https://www.youtube.com/embed/5qap5aO4i9A",                       // Chillhop/College Music stream
+      energized: "https://www.youtube.com/embed?listType=search&list=EDM%20mix%20playlist", // Search-based playlist
+      wistful: "https://www.youtube.com/embed?listType=search&list=indie%20acoustic%20playlist"
     };
     function getMusic(){ return JSON.parse(localStorage.getItem('musicLinks')||'{}'); }
     function setMusic(obj){ localStorage.setItem('musicLinks', JSON.stringify(obj)); }
-
+    function normalizeYouTubeUrl(input){
+      try {
+        const u = new URL(input);
+        if (u.hostname.includes("youtu.be")) {
+          const id = u.pathname.slice(1);
+          return `https://www.youtube.com/embed/${id}`;
+        }
+        if (u.hostname.includes("youtube.com")) {
+          if (u.pathname.includes("/embed/")) return input;
+          const id = u.searchParams.get("v");
+          const list = u.searchParams.get("list");
+          if (list && !id) return `https://www.youtube.com/embed?listType=playlist&list=${list}`;
+          if (id && list) return `https://www.youtube.com/embed/${id}?list=${list}`;
+          if (id) return `https://www.youtube.com/embed/${id}`;
+        }
+      } catch(e){}
+      return input;
+    }
     function playMoodMusic(){
       const mood = document.getElementById('moodSelect').value;
       if (!mood) { document.getElementById('musicPlayer').innerHTML = ""; document.getElementById('musicList').innerHTML=""; return; }
-      const userLinks = getMusic()[mood] || [];
-      const url = userLinks.length ? userLinks[userLinks.length-1] : defaultPlaylists[mood];
+      const obj = getMusic(); const userLinks = obj[mood] || [];
+      const url = userLinks.length ? userLinks[userLinks.length-1] : (defaultPlaylists[mood] || defaultPlaylists.calm);
       document.getElementById('musicPlayer').innerHTML = `
         <iframe src="${url}" frameborder="0"
           allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>`;
       renderMusicList(mood, userLinks);
     }
-
     function addMusicUrl(){
       const mood = document.getElementById('moodSelect').value;
       const raw = document.getElementById('musicUrl').value.trim();
@@ -316,40 +501,19 @@
       playMoodMusic();
     }
     function renderMusicList(mood, list){
-      const container = document.getElementById('musicList');
-      container.innerHTML = list.length ? "<p><strong>Your links for this mood:</strong></p>" : "";
+      const container = document.getElementById('musicList'); container.innerHTML = list.length ? "<p><strong>Your links for this mood:</strong></p>" : "";
       list.forEach((u, idx)=>{
-        const row = document.createElement('div'); row.className='row';
-        row.innerHTML = `<span style="flex:1 1 auto; overflow:hidden; text-overflow:ellipsis;">${u}</span>
-                         <button class="btn secondary" onclick="removeMusic('${mood}', ${idx})">Remove</button>`;
+        const row = document.createElement('div'); row.className = 'row';
+        row.innerHTML = `
+          <span style="flex:1 1 auto; overflow:hidden; text-overflow:ellipsis;">${u}</span>
+          <button class="btn secondary" onclick="removeMusic('${mood}', ${idx})">Remove</button>
+        `;
         container.appendChild(row);
       });
     }
     function removeMusic(mood, idx){
       const obj = getMusic(); if (!obj[mood]) return;
       obj[mood].splice(idx,1); setMusic(obj); playMoodMusic();
-    }
-    function normalizeYouTubeUrl(input){
-      // Accept full YouTube URLs and convert to embed format
-      // Examples supported: https://www.youtube.com/watch?v=ID, https://youtu.be/ID, playlist links with list=...
-      try {
-        const u = new URL(input);
-        if (u.hostname.includes("youtu.be")) {
-          const id = u.pathname.slice(1);
-          return `https://www.youtube.com/embed/${id}`;
-        }
-        if (u.hostname.includes("youtube.com")) {
-          const id = u.searchParams.get("v");
-          const list = u.searchParams.get("list");
-          if (list && !id) return `https://www.youtube.com/embed?listType=playlist&list=${list}`;
-          if (id && list) return `https://www.youtube.com/embed/${id}?list=${list}`;
-          if (id) return `https://www.youtube.com/embed/${id}`;
-          // If already embed
-          if (u.pathname.includes("/embed/")) return input;
-        }
-      } catch(e){}
-      // Fallback: assume it's already an embed or compatible
-      return input;
     }
 
     /* ---------- Prompt Shuffle ---------- */
@@ -359,7 +523,9 @@
       "Invent a world where memories are currency.",
       "Start with a line of overheard dialogue.",
       "Describe a place that feels like home but isn’t.",
-      "A reunion with someone you thought lost for good."
+      "A reunion with someone you thought lost for good.",
+      "Someone receives a letter they were never meant to read.",
+      "The city falls silent at noon every day—why?"
     ];
     function shufflePrompt(){
       const prompt = basePrompts[Math.floor(Math.random()*basePrompts.length)];
@@ -411,7 +577,12 @@
     function resetAllHabits(){ localStorage.removeItem('habits'); renderHabits(); }
     function checkInHabit(idx){
       const habits = getHabits(); const today = new Date().toDateString();
-      if (!habits[idx].history.includes(today)) { habits[idx].history.push(today); setHabits(habits); renderHabits(); }
+      if (!habits[idx].history.includes(today)) {
+        habits[idx].history.push(today); setHabits(habits); renderHabits();
+      }
+    }
+    function resetHabit(idx){
+      const habits = getHabits(); habits[idx].history = []; setHabits(habits); renderHabits();
     }
     function renderHabits(){
       const wrap = document.getElementById('habitList'); wrap.innerHTML = "";
@@ -420,8 +591,7 @@
         const streak = h.history.length;
         let plant = "🌱"; if (streak>=3) plant="🌿"; if (streak>=7) plant="🌳"; if (streak>=14) plant="🌸"; if (streak>=30) plant="🌲";
         const badges = []; if (streak>=7) badges.push("🔥"); if (streak>=30) badges.push("🌟"); if (streak>=100) badges.push("🏆");
-        const div = document.createElement('div');
-        div.className = "stack";
+        const div = document.createElement('div'); div.className = 'stack';
         div.innerHTML = `
           <h4 style="margin:0; font-family:'Sansita',sans-serif;">${h.name}</h4>
           <p style="margin:0;">Status: ${h.history.includes(new Date().toDateString()) ? "Done today" : "Not yet"}</p>
@@ -435,9 +605,6 @@
         `;
         wrap.appendChild(div);
       });
-    }
-    function resetHabit(idx){
-      const habits = getHabits(); habits[idx].history = []; setHabits(habits); renderHabits();
     }
 
     /* ---------- Clock Tool ---------- */
@@ -492,7 +659,273 @@
       document.getElementById('customSettings').style.display = (mode==="countdown"||mode==="custom") ? "flex" : "none";
       resetTimer();
     }
-    document.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); if(running) pauseTimer(); else startTimer(); } });
+    // Spacebar: don't block typing in inputs/textarea
+    document.addEventListener('keydown', (e)=>{
+      if (e.code === 'Space') {
+        const ae = document.activeElement;
+        const isTyping = ae && (ae.tagName==='INPUT' || ae.tagName==='TEXTAREA' || ae.isContentEditable);
+        if (isTyping) return;
+        e.preventDefault();
+        if (running) pauseTimer(); else startTimer();
+      }
+    });
+
+    /* ---------- Drag & drop grid (collision-free) ---------- */
+    // Approach:
+    // - Tiles have data-order controlling visual order via CSS (we'll apply inline order)
+    // - On drag start, create a placeholder at tile's current position to keep space in grid
+    // - Set the dragged tile to position: fixed with pointer offsets for smooth movement
+    // - On drag move, find nearest tile index based on vertical position and insert placeholder accordingly
+    // - On drop, update orders so no overlap occurs, save layout
+    const grid = document.getElementById('grid');
+    let drag = { tile: null, startX: 0, startY: 0, w: 0, h: 0, offsetX:0, offsetY:0, placeholder:null };
+
+    function setupDraggableTiles(){
+      const tiles = Array.from(grid.querySelectorAll('.tile'));
+      tiles.forEach(tile=>{
+        tile.style.order = tile.dataset.order || 1;
+        tile.addEventListener('pointerdown', (e)=>{
+          // Allow dragging only if not clicking on inputs, selects, textareas, buttons, menus
+          const tag = e.target.tagName;
+          const disallowed = ['INPUT','SELECT','TEXTAREA','BUTTON'];
+          if (disallowed.includes(tag) || e.target.classList.contains('menu') || e.target.closest('.menu-options')) return;
+          startDrag(tile, e);
+        });
+      });
+    }
+
+    function startDrag(tile, e){
+      e.preventDefault();
+      drag.tile = tile;
+      const rect = tile.getBoundingClientRect();
+      drag.startX = e.clientX;
+      drag.startY = e.clientY;
+      drag.offsetX = e.clientX - rect.left;
+      drag.offsetY = e.clientY - rect.top;
+      drag.w = rect.width;
+      drag.h = rect.height;
+
+      drag.placeholder = document.createElement('div');
+      drag.placeholder.className = 'drag-placeholder';
+      drag.placeholder.style.height = rect.height + 'px';
+      tile.parentNode.insertBefore(drag.placeholder, tile);
+
+      tile.classList.add('dragging');
+      tile.style.position = 'fixed';
+      tile.style.top = rect.top + 'px';
+      tile.style.left = rect.left + 'px';
+      tile.style.width = rect.width + 'px';
+      tile.style.height = rect.height + 'px';
+      tile.style.pointerEvents = 'none';
+
+      document.addEventListener('pointermove', onDragMove);
+      document.addEventListener('pointerup', onDragEnd);
+    }
+
+    function onDragMove(e){
+      if (!drag.tile) return;
+      const x = e.clientX - drag.offsetX;
+      const y = e.clientY - drag.offsetY;
+      drag.tile.style.left = x + 'px';
+      drag.tile.style.top = y + 'px';
+
+      // Find insertion point (nearest tile center by vertical position)
+      const tiles = Array.from(grid.querySelectorAll('.tile')).filter(t=>t!==drag.tile);
+      const centers = tiles.map(t=>({ el:t, rect: t.getBoundingClientRect(), centerY: t.getBoundingClientRect().top + t.getBoundingClientRect().height/2 }));
+      const candidate = centers.sort((a,b)=>Math.abs(a.centerY - (y+drag.h/2)) - Math.abs(b.centerY - (y+drag.h/2)))[0];
+      if (candidate){
+        const targetRect = candidate.rect;
+        const before = (y + drag.h/2) < candidate.centerY;
+        if (before){
+          grid.insertBefore(drag.placeholder, candidate.el);
+        } else {
+          grid.insertBefore(drag.placeholder, candidate.el.nextSibling);
+        }
+      }
+    }
+
+    function onDragEnd(){
+      if (!drag.tile) return;
+      drag.tile.classList.remove('dragging');
+      drag.tile.style.position = '';
+      drag.tile.style.top = '';
+      drag.tile.style.left = '';
+      drag.tile.style.width = '';
+      drag.tile.style.height = '';
+      drag.tile.style.pointerEvents = '';
+
+      // Place tile at placeholder location
+      grid.insertBefore(drag.tile, drag.placeholder);
+      drag.placeholder.remove();
+      drag.placeholder = null;
+
+      // Recompute orders
+      const tiles = Array.from(grid.querySelectorAll('.tile'));
+      tiles.forEach((t, i)=>{ t.dataset.order = i+1; t.style.order = i+1; });
+
+      // Save layout
+      saveLayout();
+
+      document.removeEventListener('pointermove', onDragMove);
+      document.removeEventListener('pointerup', onDragEnd);
+      drag.tile = null;
+    }
+
+    /* ---------- Shrink to dock / expand ---------- */
+    const dockArea = document.getElementById('dockArea');
+
+    function shrinkTile(key){
+      const tile = document.querySelector(`.tile[data-tile="${key}"]`);
+      if (!tile) return;
+      // Move to dock, create a mini version container with title and quick controls
+      const mini = document.createElement('div');
+      mini.className = 'card';
+      mini.dataset.tile = key;
+      mini.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="font-family:'Sansita',sans-serif;">${titleFor(key)}</strong>
+          <div>
+            <button class="button primary" onclick="expandTile('${key}')">Expand</button>
+          </div>
+        </div>
+      `;
+      dockArea.appendChild(mini);
+
+      // Hide original tile but keep state; remove from grid
+      tile.style.display = 'none';
+      saveLayout();
+      closeMenus();
+    }
+
+    function expandTile(key){
+      const tile = document.querySelector(`.tile[data-tile="${key}"]`);
+      if (!tile) return;
+      tile.style.display = '';
+      // Remove any mini dock item
+      const minis = Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===key);
+      minis.forEach(m=>m.remove());
+      saveLayout();
+      closeMenus();
+    }
+
+    function titleFor(key){
+      switch(key){
+        case 'wallpapers': return 'Wallpapers';
+        case 'music': return 'Music';
+        case 'prompts': return 'Prompts';
+        case 'habits': return 'Habits';
+        case 'clock': return 'Clock';
+        default: return key;
+      }
+    }
+
+    /* ---------- Layout presets ---------- */
+    const layoutSelect = document.getElementById('layoutSelect');
+    const applyLayoutBtn = document.getElementById('applyLayout');
+    const layoutNote = document.getElementById('layoutNote');
+
+    const layouts = {
+      balanced: [
+        { key:'wallpapers', order:1 },
+        { key:'music', order:2 },
+        { key:'prompts', order:3 },
+        { key:'habits', order:4 },
+        { key:'clock', order:5 }
+      ],
+      focus: [
+        { key:'clock', order:1 },
+        { key:'prompts', order:2 },
+        { key:'music', order:3 },
+        { key:'habits', order:4 },
+        { key:'wallpapers', order:5 }
+      ],
+      writing: [
+        { key:'prompts', order:1 },
+        { key:'wallpapers', order:2 },
+        { key:'music', order:3 },
+        { key:'clock', order:4 },
+        { key:'habits', order:5 }
+      ],
+      music: [
+        { key:'music', order:1 },
+        { key:'wallpapers', order:2 },
+        { key:'prompts', order:3 },
+        { key:'clock', order:4 },
+        { key:'habits', order:5 }
+      ]
+    };
+
+    applyLayoutBtn.addEventListener('click', ()=>{
+      const preset = layoutSelect.value || 'balanced';
+      applyLayoutPreset(preset);
+      layoutNote.textContent = `Layout: ${capitalize(preset)}`;
+      saveLayout();
+    });
+
+    function applyLayoutPreset(name){
+      const config = layouts[name] || layouts.balanced;
+      config.forEach(item=>{
+        const tile = document.querySelector(`.tile[data-tile="${item.key}"]`);
+        if (tile){
+          tile.dataset.order = item.order;
+          tile.style.order = item.order;
+          // Ensure expanded (not hidden) in preset apply
+          tile.style.display = '';
+          // remove from dock if present
+          const minis = Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===item.key);
+          minis.forEach(m=>m.remove());
+        }
+      });
+    }
+
+    function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    /* ---------- Persist layout ---------- */
+    function saveLayout(){
+      const state = {
+        tiles: Array.from(grid.querySelectorAll('.tile')).map(t=>({
+          key: t.dataset.tile,
+          order: parseInt(t.dataset.order, 10),
+          hidden: t.style.display==='none'
+        })),
+        dock: Array.from(dockArea.querySelectorAll('.card')).map(m=>m.dataset.tile)
+      };
+      localStorage.setItem('layoutState', JSON.stringify(state));
+    }
+
+    function restoreLayout(){
+      const raw = localStorage.getItem('layoutState'); if (!raw) return;
+      try {
+        const state = JSON.parse(raw);
+        // set orders
+        state.tiles.forEach(item=>{
+          const tile = document.querySelector(`.tile[data-tile="${item.key}"]`);
+          if (tile){
+            tile.dataset.order = item.order;
+            tile.style.order = item.order;
+            tile.style.display = item.hidden ? 'none' : '';
+          }
+        });
+        // rebuild dock
+        state.dock.forEach(key=>{
+          const tile = document.querySelector(`.tile[data-tile="${key}"]`);
+          if (tile && tile.style.display==='none'){
+            const mini = document.createElement('div');
+            mini.className = 'card';
+            mini.dataset.tile = key;
+            mini.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="font-family:'Sansita',sans-serif;">${titleFor(key)}</strong>
+                <div>
+                  <button class="button primary" onclick="expandTile('${key}')">Expand</button>
+                </div>
+              </div>
+            `;
+            dockArea.appendChild(mini);
+          }
+        });
+      } catch (e) {}
+    }
 
     /* ---------- Init ---------- */
     function init(){
@@ -500,7 +933,6 @@
       document.documentElement.setAttribute('data-theme', savedTheme);
       const savedEnv = localStorage.getItem('env') || 'relax';
       envSelect.value = savedEnv;
-
       const last = localStorage.getItem('lastWallpaper');
       const custom = getWallpapers();
       if (last) setBackground(last);
@@ -510,11 +942,16 @@
       renderThumbs();
       renderHabits();
 
-      document.getElementById('modeSelect').value = mode;
-      document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
-      switchMode();
+      document.getElementById('stats').innerText = `Completed Pomodoros: ${parseInt(localStorage.getItem('pomodoroCompleted')||"0",10)}`;
 
-      // Music: no mood selected by default; user picks mood
+      // Layout
+      setupDraggableTiles();
+      restoreLayout();
+
+      // Default layout note
+      layoutNote.textContent = `Layout: ${capitalize(document.getElementById('layoutSelect').value || 'balanced')}`;
+
+      // Music card initial
       document.getElementById('musicPlayer').innerHTML = "";
     }
     init();
