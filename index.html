@@ -938,6 +938,60 @@ function showResponses() {
 
   area.appendChild(backBtn);
 }
+    function saveJournal(){
+const text = document.getElementById('journalText').value.trim();
+if (!text) return;
+const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+const date = new Date().toLocaleDateString();
+entries.unshift({date,text});
+localStorage.setItem('journalEntries', JSON.stringify(entries));
+document.getElementById('journalText').value="";
+renderJournalEntries();
+toast("Entry saved");
+}
+
+function renderJournalEntries(){
+const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+const list = document.getElementById('journalEntries');
+if (!list) return;
+list.innerHTML="";
+if (!entries.length){
+  const p=document.createElement('p');
+  p.className='muted';
+  p.textContent="No entries yet.";
+  list.appendChild(p);
+  return;
+}
+entries.forEach((entry,i)=>{
+  const div=document.createElement('div');
+  div.className='stack';
+  const top=document.createElement('div');
+  top.className='row';
+  const date=document.createElement('strong');
+  date.textContent = entry.date;
+  const del=document.createElement('button');
+  del.className='btn secondary';
+  del.textContent='Delete';
+  del.onclick=()=>{
+    const arr=JSON.parse(localStorage.getItem('journalEntries')||'[]');
+    arr.splice(i,1);
+    localStorage.setItem('journalEntries', JSON.stringify(arr));
+    renderJournalEntries();
+  };
+  top.appendChild(date);
+  top.appendChild(del);
+  const p=document.createElement('p');
+  p.textContent = entry.text;
+  div.appendChild(top);
+  div.appendChild(p);
+  list.appendChild(div);
+});
+}
+     const originalSaveJournal = saveJournal;
+  saveJournal = function(){
+    originalSaveJournal();
+    localStorage.removeItem('journalDraft');
+  };
   </script>
 
   <!-- Part 5: Habits + Dock -->
@@ -1192,12 +1246,6 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
       jt.value = localStorage.getItem('journalDraft') || "";
     }
   }
-
-  const originalSaveJournal = saveJournal;
-  saveJournal = function(){
-    originalSaveJournal();
-    localStorage.removeItem('journalDraft');
-  };
 
   function initHabitsAutosave(){
     renderHabits();
