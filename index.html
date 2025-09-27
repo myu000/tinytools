@@ -6,162 +6,46 @@
   <title>Tiny Tools — Final Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #FFFAE3;
-      --text: #1F2F16;
-      --primary: #395B50;
-      --secondary: #96705B;
-      --glass: rgba(255,255,255,0.78);
-      --shadow-1: 0 6px 16px rgba(0,0,0,0.12);
-      --shadow-2: 0 12px 32px rgba(0,0,0,0.10);
-    }
-    [data-theme="dark"] {
-      --bg: #1F2F16;
-      --text: #F3EFE7;
-      --glass: rgba(30,30,30,0.65);
-      --shadow-1: 0 6px 16px rgba(0,0,0,0.35);
-      --shadow-2: 0 12px 32px rgba(0,0,0,0.25);
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: 'Forum', serif;
-      color: var(--text);
-      background: var(--bg) center/cover fixed no-repeat;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-
-    header {
-      background: rgba(57,91,80,0.92);
-      color: #fff;
-      padding: 14px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: saturate(180%) blur(8px);
-    }
-    .brand { display: flex; gap: 10px; align-items: baseline; }
-    .brand h1 { margin: 0; font-family: 'Sansita', sans-serif; font-size: 1.6rem; }
-    .brand span { font-family: 'Jura', sans-serif; font-size: 0.95rem; opacity: 0.9; }
-    .top-controls { display: flex; gap: 10px; align-items: center; }
-
-    .select-inline, .button {
-      font-family: 'Jura', sans-serif;
-      border: none; border-radius: 10px; padding: 8px 12px; cursor: pointer;
-    }
-    .select-inline { background: #fff; color: #233; }
-    .button { background: var(--secondary); color: #fff; }
-    .button.primary { background: var(--primary); }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 20px;
-      max-width: 1200px;
-      margin: 28px auto;
-      padding: 0 20px;
-    }
-
-    .card {
-      background: var(--glass);
-      backdrop-filter: blur(12px) saturate(140%);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: var(--shadow-1), var(--shadow-2);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
-      position: relative;
-    }
-    .card:hover { transform: translateY(-4px); filter: brightness(1.06); }
-    .card h3 { font-family: 'Sansita', sans-serif; margin: 0 0 10px; font-size: 1.22rem; }
-    .card p { margin: 0 0 10px; }
-
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-    .input, .select, .btn {
-      font-family: 'Jura', sans-serif; padding: 10px; border-radius: 10px; border: none; width: 100%;
-    }
-    .input, .select { background: rgba(255,255,255,0.92); }
-    [data-theme="dark"] .input, [data-theme="dark"] .select { background: rgba(255,255,255,0.12); color: var(--text);}
-    .btn { background: var(--primary); color: #fff; cursor: pointer; }
-    .btn.secondary { background: var(--secondary); }
-    .btn:hover { filter: brightness(1.06); }
-
-    .menu {
-      position: absolute; top: 12px; right: 12px;
-      font-family: 'Jura', sans-serif; font-weight: 600;
-      background: rgba(255,255,255,0.95); color: #233;
-      border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer;
-    }
-    [data-theme="dark"] .menu { background: rgba(255,255,255,0.12); color: var(--text); }
-    .menu-options {
-      display: none; position: absolute; top: 44px; right: 12px;
-      background: rgba(255,255,255,0.95); border-radius: 10px; box-shadow: var(--shadow-1);
-      overflow: hidden;
-    }
-    .menu-options button {
-      display: block; width: 200px; padding: 10px 12px; border: none; background: transparent; cursor: pointer; text-align: left;
-      font-family: 'Jura', sans-serif;
-    }
-    .menu-options button:hover { background: rgba(0,0,0,0.06); }
-
-    .mini { position: fixed; z-index: 999; width: 320px; bottom: 20px; right: 20px; }
-    .mini.top-right { top: 20px; right: 20px; bottom: auto; }
-    .mini.bottom-left { bottom: 20px; left: 20px; right: auto; }
-    .mini .content { max-height: 240px; overflow: auto; }
-
-    .player { margin-top: 10px; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.15); }
-    .player iframe { display: block; width: 100%; height: 300px; border: 0; }
-    #timeDisplay { font-family: 'Jura', sans-serif; font-size: 2.2rem; text-align: center; margin: 14px 0; }
-
-    .favorites { margin-top: 12px; font-family: 'Jura', sans-serif; }
-    .favorite-item {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 8px; padding: 8px; border-radius: 10px; margin-top: 6px; background: rgba(255,255,255,0.6);
-    }
-
-    .habit { margin-top: 12px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.6); }
-    .habit h4 { margin: 0 0 6px; font-family: 'Sansita', sans-serif; }
-    .badges { margin-top: 6px; font-size: 1.15rem; }
-
-    .thumbs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; margin-top: 10px; }
-    .thumb { border-radius: 10px; overflow: hidden; height: 90px; position: relative; }
-    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .thumb .thumb-actions {
-      position: absolute; bottom: 6px; right: 6px; display: flex; gap: 6px;
-    }
-    .thumb .thumb-actions button {
-      font-size: 0.8rem; padding: 4px 6px; border: none; border-radius: 6px; background: rgba(0,0,0,0.5); color: #fff; cursor: pointer;
-    }
+    :root { --bg:#FFFAE3; --text:#1F2F16; --primary:#395B50; --secondary:#96705B; }
+    [data-theme="dark"] { --bg:#1F2F16; --text:#F3EFE7; }
+    body { margin:0; font-family:'Forum',serif; background:var(--bg) center/cover fixed no-repeat; color:var(--text); transition:background 0.3s ease,color 0.3s ease; }
+    header { background:rgba(57,91,80,0.92); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; backdrop-filter:saturate(180%) blur(8px); }
+    .brand h1{margin:0;font-family:'Sansita',sans-serif;}
+    .dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;max-width:1200px;margin:28px auto;padding:0 20px;}
+    .card{background:rgba(255,255,255,0.15);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;}
+    .card:hover{transform:translateY(-4px);filter:brightness(1.05);box-shadow:0 12px 32px rgba(0,0,0,0.25);}
+    .btn,.input,.select{font-family:'Jura',sans-serif;padding:10px;border-radius:10px;border:none;}
+    .btn{background:var(--primary);color:#fff;cursor:pointer;} .btn.secondary{background:var(--secondary);}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+    #timeDisplay{font-family:'Jura',sans-serif;font-size:2rem;text-align:center;margin:14px 0;}
+    .player audio{width:100%;}
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:10px;}
+    .thumb{border-radius:10px;overflow:hidden;height:90px;position:relative;}
+    .thumb img{width:100%;height:100%;object-fit:cover;}
+    .thumb button{position:absolute;bottom:6px;right:6px;font-size:0.8rem;padding:4px 6px;border:none;border-radius:6px;background:rgba(0,0,0,0.5);color:#fff;}
   </style>
 </head>
 <body>
   <header>
-    <div class="brand">
-      <h1>Tiny Tools</h1>
-      <span>Creative & Focus Hub</span>
-    </div>
-    <div class="top-controls">
-      <select id="envSelect" class="select-inline">
-        <option value="relax">Relax</option>
-        <option value="study">Study</option>
-        <option value="focus">Focus</option>
-        <option value="creative">Creative</option>
+    <div class="brand"><h1>Tiny Tools</h1><span>Creative & Focus Hub</span></div>
+    <div>
+      <select id="envSelect" class="select">
+        <option value="relax">Relax</option><option value="study">Study</option>
+        <option value="focus">Focus</option><option value="creative">Creative</option>
         <option value="default">Default</option>
       </select>
-      <button id="shuffleWallpaper" class="button">Shuffle wallpaper</button>
-      <button id="themeToggle" class="button primary">Theme</button>
+      <button id="shuffleWallpaper" class="btn secondary">Shuffle wallpaper</button>
+      <button id="themeToggle" class="btn">Theme</button>
     </div>
   </header>
 
   <main class="dashboard">
-    <!-- Wallpaper manager -->
-    <section class="card" id="wallpaperCard">
+    <!-- Wallpapers -->
+    <section class="card">
       <h3>Wallpapers</h3>
-      <p>Add by URL or upload; your set takes priority when shuffling. Defaults always available.</p>
       <div class="row">
-        <input id="wallpaperUrl" class="input" placeholder="Paste image URL (Unsplash, Pinterest, etc.)" />
-        <button class="btn" onclick="addWallpaperUrl()">Add URL</button>
+        <input id="wallpaperUrl" class="input" placeholder="Paste image URL" />
+        <button class="btn" onclick="addWallpaperUrl()">Add</button>
       </div>
       <div class="row">
         <input id="wallpaperFile" class="input" type="file" accept="image/*" />
@@ -169,530 +53,256 @@
       </div>
       <div class="row">
         <button class="btn" onclick="shuffleCustomWallpapers()">Shuffle mine</button>
-        <button class="btn secondary" onclick="clearWallpapers()">Clear all</button>
+        <button class="btn secondary" onclick="clearWallpapers()">Clear</button>
       </div>
       <div id="wallpaperThumbs" class="thumbs"></div>
     </section>
 
-    <!-- Mood-to-Music -->
+    <!-- Music -->
     <section class="card" id="musicCard">
-      <button class="menu" onclick="toggleMenu('musicMenu')">⋮</button>
-      <div class="menu-options" id="musicMenu">
-        <button onclick="shrinkTile('musicCard','bottom-right')">Shrink to mini</button>
-        <button onclick="expandTile('musicCard')">Expand</button>
-        <button onclick="closeMenus()">Close menu</button>
-      </div>
       <h3>Mood‑to‑Music</h3>
-      <p>Choose mood + sub‑genre, optionally add an artist. Generate to play full tracks.</p>
+      <select id="moodSelect" class="select" onchange="playMoodMusic()">
+        <option value="">Select mood</option>
+        <option value="calm">Calm</option>
+        <option value="energized">Energized</option>
+        <option value="focused">Focused</option>
+        <option value="wistful">Wistful</option>
+      </select>
       <div class="row">
-        <select id="moodSelect" class="select" onchange="updateSubgenres()">
-          <option value="">Select mood</option>
-          <option value="calm">Calm</option>
-          <option value="energized">Energized</option>
-          <option value="focused">Focused</option>
-          <option value="wistful">Wistful</option>
-        </select>
-        <select id="subgenreSelect" class="select"><option value="">Sub‑genre</option></select>
-      </div>
-      <input id="artistInput" class="input" placeholder="Optional: Artist name" />
-      <div class="row">
-        <button class="btn" onclick="generateMusic()">Generate</button>
-        <button class="btn secondary" onclick="shuffleMusic()">Shuffle</button>
+        <input id="musicUrl" class="input" placeholder="Paste MP3 URL" />
+        <button class="btn" onclick="addMusicUrl()">Add</button>
       </div>
       <div class="row">
-        <button class="btn" onclick="saveMusicFavorite()">Save combo</button>
-        <button class="btn secondary" onclick="clearMusic()">Clear</button>
+        <input id="musicFile" class="input" type="file" accept="audio/*" />
+        <button class="btn secondary" onclick="addMusicFile()">Upload</button>
       </div>
-      <div id="musicPlayer" class="player content"></div>
-      <div class="favorites" id="musicFavorites"></div>
+      <div id="musicPlayer" class="player"></div>
     </section>
 
     <!-- Prompt Shuffle -->
-    <section class="card" id="promptCard">
-      <button class="menu" onclick="toggleMenu('promptMenu')">⋮</button>
-      <div class="menu-options" id="promptMenu">
-        <button onclick="shrinkTile('promptCard','bottom-right')">Shrink to mini</button>
-        <button onclick="expandTile('promptCard')">Expand</button>
-        <button onclick="closeMenus()">Close menu</button>
-      </div>
+    <section class="card">
       <h3>Prompt Shuffle</h3>
-      <p>Endless, relevant prompts with safe writing and export options.</p>
-      <div class="row">
-        <select id="genreSelect" class="select">
-          <option value="random">Random Genre</option>
-          <option value="fantasy">Fantasy</option>
-          <option value="scifi">Sci‑Fi</option>
-          <option value="romance">Romance</option>
-          <option value="mystery">Mystery</option>
-          <option value="horror">Horror</option>
-          <option value="slice">Slice‑of‑Life</option>
-        </select>
-        <select id="typeSelect" class="select">
-          <option value="random">Random Type</option>
-          <option value="dialogue">Dialogue</option>
-          <option value="scene">Scene</option>
-          <option value="character">Character</option>
-          <option value="world">World‑building</option>
-        </select>
-      </div>
-      <div class="row">
-        <button class="btn" onclick="shufflePrompt()">Shuffle prompt</button>
-        <button class="btn secondary" onclick="snapshotDraft()">Snapshot</button>
-      </div>
+      <button class="btn" onclick="shufflePrompt()">Shuffle prompt</button>
       <p id="promptText">Click shuffle to get a prompt.</p>
-      <div id="writingArea">
-        <textarea id="writingText" placeholder="Start writing here..."></textarea>
-        <p id="wordCount">Words: 0</p>
-        <div class="row">
-          <button class="btn" onclick="exportDraft('txt')">Export TXT</button>
-          <button class="btn" onclick="exportDraft('md')">Export MD</button>
-        </div>
-        <button class="btn" style="width:100%;" onclick="exportPrintable()">Open printable view</button>
-      </div>
-      <div class="favorites" id="promptFavorites"></div>
-      <div class="favorites" id="draftsList"></div>
-      <div class="favorites" id="trashList"></div>
+      <div id="writingArea"><textarea id="writingText" placeholder="Start writing..."></textarea><p id="wordCount">Words: 0</p></div>
     </section>
 
     <!-- Habit Garden -->
-    <section class="card" id="habitCard">
-      <button class="menu" onclick="toggleMenu('habitMenu')">⋮</button>
-      <div class="menu-options" id="habitMenu">
-        <button onclick="shrinkTile('habitCard','bottom-left')">Shrink to mini</button>
-        <button onclick="expandTile('habitCard')">Expand</button>
-        <button onclick="closeMenus()">Close menu</button>
-      </div>
-      <h3>Habit Garden</h3>
-      <input id="habitInput" class="input" placeholder="Add a new habit..." />
-      <div class="row">
-        <button class="btn" onclick="addHabit()">Add habit</button>
-        <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
-      </div>
-      <div id="habitList"></div>
-    </section>
+    <section class="card"><h3>Habit Garden</h3><input id="habitInput" class="input" placeholder="Add habit..." /><button class="btn" onclick="addHabit()">Add</button><div id="habitList"></div></section>
 
     <!-- Clock Tool -->
-    <section class="card" id="clockCard">
-      <button class="menu" onclick="toggleMenu('clockMenu')">⋮</button>
-      <div class="menu-options" id="clockMenu">
-        <button onclick="shrinkTile('clockCard','top-right')">Shrink to mini</button>
-        <button onclick="expandTile('clockCard')">Expand</button>
-        <button onclick="closeMenus()">Close menu</button>
-      </div>
-      <h3>Clock Tool</h3>
-      <select id="modeSelect" class="select" onchange="switchMode()">
-        <option value="pomodoro">Pomodoro</option>
-        <option value="stopwatch">Stopwatch</option>
-        <option value="countdown">Countdown</option>
-        <option value="custom">Custom</option>
-      </select>
-      <div id="pomodoroSettings" style="display:none; margin-top:8px;">
-        <input id="workMinutes" class="input" type="number" min="1" value="25" /> Work (min)
-        <input id="breakMinutes" class="input" type="number" min="1" value="5" /> Break (min)
-      </div>
-      <div id="customSettings" style="display:none; margin-top:8px;">
-        <input id="customHours" class="input" type="number" min="0" value="0" /> h
-        <input id="customMinutes" class="input" type="number" min="0" value="5" /> m
-        <input id="customSeconds" class="input" type="number" min="0" value="0" /> s
-      </div>
+    <section class="card"><h3>Clock Tool</h3>
+      <select id="modeSelect" class="select" onchange="switchMode()"><option value="pomodoro">Pomodoro</option><option value="stopwatch">Stopwatch</option><option value="countdown">Countdown</option></select>
       <div id="timeDisplay">00:25:00</div>
-      <div class="row">
-        <button class="btn" onclick="startTimer()">Start</button>
-        <button class="btn secondary" onclick="pauseTimer()">Pause</button>
-      </div>
-      <button class="btn" style="width:100%;" onclick="resetTimer()">Reset</button>
-      <div id="stats" style="margin-top:10px; font-family:'Jura', sans-serif;"></div>
+      <button class="btn" onclick="startTimer()">Start</button><button class="btn secondary" onclick="pauseTimer()">Pause</button><button class="btn" onclick="resetTimer()">Reset</button>
+      <div id="stats"></div>
     </section>
   </main>
 
   <script>
-    /* ---------- Theme/env + curated defaults ---------- */
-    const envSelect = document.getElementById('envSelect');
-    const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
-    const themeToggle = document.getElementById('themeToggle');
-    const wallpaperQueries = {
-      relax: "forest,beach,calm,nature",
-      study: "library,desk,books,study",
-      focus: "dark,minimal,texture",
-      creative: "abstract,art,colorful",
-      default: "aesthetic,workspace"
-    };
-    function setBackground(url){
-      document.body.style.backgroundImage = `url('${url}')`;
-      localStorage.setItem('lastWallpaper', url);
-    }
-    function applyEnvBackground(env) {
-      const q = wallpaperQueries[env] || wallpaperQueries.default;
-      const url = `https://source.unsplash.com/1600x900/?${encodeURIComponent(q)}&sig=${Math.random()}`;
-      setBackground(url);
-      localStorage.setItem('env', env);
-    }
-    envSelect.addEventListener('change', () => applyEnvBackground(envSelect.value));
-    shuffleWallpaperBtn.addEventListener('click', () => {
-      const env = envSelect.value || 'default';
-      const custom = getWallpapers();
-      if (custom.length) {
-        const pick = custom[Math.floor(Math.random()*custom.length)];
-        setBackground(pick.url);
-      } else {
-        applyEnvBackground(env);
-      }
-    });
-    themeToggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = current === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
-    (function initThemeEnv() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      const savedEnv = localStorage.getItem('env') || 'relax';
-      envSelect.value = savedEnv;
-      const last = localStorage.getItem('lastWallpaper');
-      const custom = getWallpapers();
-      if (last) setBackground(last);
-      else if (custom.length) setBackground(custom[custom.length-1].url);
-      else applyEnvBackground(savedEnv);
-    })();
+    /* Wallpapers */
+    const envSelect=document.getElementById('envSelect'), shuffleWallpaperBtn=document.getElementById('shuffleWallpaper');
+    const wallpaperQueries={relax:"forest,beach",study:"library,desk",focus:"dark,minimal",creative:"abstract,art",default:"aesthetic,workspace"};
+    function getWallpapers(){return JSON.parse(localStorage.getItem('wallpapers')||'[]');}
+    function setWallpapers(list){localStorage.setItem('wallpapers',JSON.stringify(list));}
+    function setBackground(url){document.body.style.backgroundImage=`url('${url}')`;localStorage.setItem('lastWallpaper',url);}
+    function applyEnvBackground(env){const q=wallpaperQueries[env]||wallpaperQueries.default;const url=`https://source.unsplash.com/1600x900/?${encodeURIComponent(q)}&sig=${Math.random()}`;setBackground(url);localStorage.setItem('env',env);}
+    shuffleWallpaperBtn.addEventListener('click',()=>{const env=envSelect.value||'default';const custom=getWallpapers();if(custom.length){const pick=custom[Math.floor(Math.random()*custom.length)    ... // continuing from shuffleWallpaperBtn.addEventListener
 
-    /* ---------- Menus + mini ---------- */
-    function toggleMenu(id){ closeMenus(); const m=document.getElementById(id); if(m) m.style.display='block'; }
-    function closeMenus(){ document.querySelectorAll('.menu-options').forEach(m=>m.style.display='none'); }
-    function shrinkTile(cardId,pos){
-      const c=document.getElementById(cardId); c.classList.add('mini'); c.classList.remove('top-right','bottom-left');
-      if(pos==='top-right') c.classList.add('top-right'); if(pos==='bottom-left') c.classList.add('bottom-left'); closeMenus();
-    }
-    function expandTile(cardId){ const c=document.getElementById(cardId); c.classList.remove('mini','top-right','bottom-left'); closeMenus(); }
+    }); // end shuffleWallpaperBtn
 
-    /* ---------- Wallpaper manager ---------- */
-    function getWallpapers(){ return JSON.parse(localStorage.getItem('wallpapers')||'[]'); }
-    function setWallpapers(list){ localStorage.setItem('wallpapers', JSON.stringify(list)); }
     function addWallpaperUrl(){
-      const url=document.getElementById('wallpaperUrl').value.trim(); if(!url) return;
-      const list=getWallpapers(); list.push({url, ts:Date.now()}); setWallpapers(list);
-      document.getElementById('wallpaperUrl').value=''; renderThumbs();
+      const url=document.getElementById('wallpaperUrl').value.trim();
+      if(!url) return;
+      const list=getWallpapers(); list.push({url});
+      setWallpapers(list); renderThumbs();
+      document.getElementById('wallpaperUrl').value='';
     }
     function addWallpaperFile(){
-      const file=document.getElementById('wallpaperFile').files[0]; if(!file) return;
+      const file=document.getElementById('wallpaperFile').files[0];
+      if(!file) return;
       const reader=new FileReader();
-      reader.onload=()=>{ const list=getWallpapers(); list.push({url:reader.result, ts:Date.now()}); setWallpapers(list); renderThumbs(); };
-      reader.readAsDataURL(file); document.getElementById('wallpaperFile').value='';
+      reader.onload=()=>{
+        const list=getWallpapers(); list.push({url:reader.result});
+        setWallpapers(list); renderThumbs();
+      };
+      reader.readAsDataURL(file);
     }
-    function removeWallpaper(idx){ const list=getWallpapers(); list.splice(idx,1); setWallpapers(list); renderThumbs(); }
-    function useWallpaper(idx){ const list=getWallpapers(); const item=list[idx]; if(item) setBackground(item.url); }
+    function removeWallpaper(idx){
+      const list=getWallpapers(); list.splice(idx,1);
+      setWallpapers(list); renderThumbs();
+    }
+    function useWallpaper(idx){
+      const list=getWallpapers(); const item=list[idx];
+      if(item) setBackground(item.url);
+    }
     function shuffleCustomWallpapers(){
       const list=getWallpapers(); if(!list.length) return;
       const item=list[Math.floor(Math.random()*list.length)];
       setBackground(item.url);
     }
-    function clearWallpapers(){ localStorage.removeItem('wallpapers'); renderThumbs(); }
+    function clearWallpapers(){
+      localStorage.removeItem('wallpapers'); renderThumbs();
+    }
     function renderThumbs(){
       const wrap=document.getElementById('wallpaperThumbs'); wrap.innerHTML='';
       getWallpapers().forEach((w,idx)=>{
         const div=document.createElement('div'); div.className='thumb';
-        div.innerHTML = `
+        div.innerHTML=`
           <img src="${w.url}" alt="wallpaper"/>
-          <div class="thumb-actions">
-            <button onclick="useWallpaper(${idx})">Use</button>
-            <button onclick="removeWallpaper(${idx})">Delete</button>
-          </div>
+          <button onclick="useWallpaper(${idx})">Use</button>
+          <button style="left:6px;right:auto;" onclick="removeWallpaper(${idx})">Delete</button>
         `;
         wrap.appendChild(div);
       });
     }
 
-    /* ---------- Mood-to-Music ---------- */
-    const subgenresByMood = {
-      calm: ["Lo‑fi","Ambient","Acoustic","Chillhop","Instrumental"],
-      energized: ["EDM","Rock","Hip‑hop","Pop","House"],
-      focused: ["Classical","Jazz","Study Beats","Minimal Techno","Piano"],
-      wistful: ["Indie","Ballads","Piano","Soul","Slowcore"]
+    /* ---------- Music: defaults + user overrides ---------- */
+    const defaultTracks = {
+      calm: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      energized: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      focused: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+      wistful: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
     };
-    function updateSubgenres(){
-      const mood=document.getElementById('moodSelect').value; const sub=document.getElementById('subgenreSelect');
-      sub.innerHTML='<option value="">Sub‑genre</option>'; (subgenresByMood[mood]||[]).forEach(g=>{
-        const opt=document.createElement('option'); opt.value=g; opt.textContent=g; sub.appendChild(opt);
-      });
-    }
-    function buildMusicQuery({mood,subgenre,artist}){ return [artist||'',mood||'',subgenre||'',"mix playlist"].filter(Boolean).join(" "); }
-    function setMusicPlayer(query){
-      const src=`https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(query)}&autoplay=1`;
-      document.getElementById('musicPlayer').innerHTML=`<iframe src="${src}" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="origin-when-cross-origin"></iframe>`;
-      shrinkTile('musicCard','bottom-right');
-    }
-    function generateMusic(){
-      const mood=document.getElementById('moodSelect').value; if(!mood){ document.getElementById('musicPlayer').innerHTML="<p>Please select a mood.</p>"; return; }
-      const subgenre=document.getElementById('subgenreSelect').value; const artist=document.getElementById('artistInput').value.trim();
-      setMusicPlayer(buildMusicQuery({mood,subgenre,artist}));
-    }
-    function shuffleMusic(){
-      const mood=document.getElementById('moodSelect').value; const subgenre=document.getElementById('subgenreSelect').value; const artist=document.getElementById('artistInput').value.trim();
-      const suffixes=["mix","best of","live set","full album","playlist","dj set"]; const suffix=suffixes[Math.floor(Math.random()*suffixes.length)];
-      const q=[artist||'',mood||'',subgenre||'',suffix].filter(Boolean).join(" "); setMusicPlayer(q);
-    }
-    function getMusicFavorites(){ return JSON.parse(localStorage.getItem('musicFavorites')||'[]'); }
-    function setMusicFavorites(list){ localStorage.setItem('musicFavorites', JSON.stringify(list)); }
-    function renderMusicFavorites(){
-      const wrap=document.getElementById('musicFavorites'); const favs=getMusicFavorites();
-      wrap.innerHTML = favs.length ? "<strong>Favorites</strong>" : "";
-      favs.forEach((f,idx)=>{
-        const row=document.createElement('div'); row.className='favorite-item';
-        row.innerHTML=`<div>${f.mood} · ${f.subgenre||"Any"}${f.artist? " · "+f.artist : ""}</div>
-                       <div><button class="button primary" onclick="playMusicFavorite(${idx})">Play</button>
-                       <button class="button" onclick="deleteMusicFavorite(${idx})">Delete</button></div>`;
-        wrap.appendChild(row);
-      });
-    }
-    function saveMusicFavorite(){
-      const mood=document.getElementById('moodSelect').value; if(!mood) return;
-      const subgenre=document.getElementById('subgenreSelect').value; const artist=document.getElementById('artistInput').value.trim();
-      const favs=getMusicFavorites(); favs.push({mood,subgenre,artist}); setMusicFavorites(favs); renderMusicFavorites();
-    }
-    function playMusicFavorite(idx){ const f=getMusicFavorites()[idx]; if(!f) return; setMusicPlayer(buildMusicQuery(f)); }
-    function deleteMusicFavorite(idx){ const favs=getMusicFavorites(); favs.splice(idx,1); setMusicFavorites(favs); renderMusicFavorites(); }
-    function clearMusic(){ document.getElementById('musicPlayer').innerHTML=""; expandTile('musicCard'); }
+    function getMusic(){ return JSON.parse(localStorage.getItem('musicTracks')||'{}'); }
+    function setMusic(obj){ localStorage.setItem('musicTracks',JSON.stringify(obj)); }
 
-    /* ---------- Prompt Shuffle: endless + safe ---------- */
-    const curatedPrompts = {
-      fantasy:{dialogue:["'The dragon owes me a favor.'","'Magic has a cost—are you willing to pay it?'"],scene:["A hidden door opens in an ancient tree.","A map appears on your skin at midnight."],character:["A knight who fears the dark.","A mage who can only cast one spell."],world:["A kingdom powered by memories.","A city where names are currency."]},
-      scifi:{dialogue:["'This planet was never on the charts.'","'The ship refuses to obey—it's in love.'"],scene:["You wake up in a cryo‑pod with alarms blaring.","A satellite broadcasts a single word: 'Return'."],character:["An android who dreams of oceans.","A pilot who is allergic to starlight."],world:["A city orbiting a dying star.","A colony with 30 minutes of daylight."]},
-      romance:{dialogue:["'I think I’ve loved you in every lifetime.'","'Tell me the truth, even if it hurts.'"],scene:["Two strangers meet on a delayed train.","A reunion at a wedding they almost didn’t attend."],character:["A florist who writes secret poems.","A chef who can't taste sweetness."],world:["A town where everyone knows your heart’s desire.","A café that appears only when it rains."]},
-      mystery:{dialogue:["'The key was never meant to be found.'","'Don't trust the portrait in the hallway.'"],scene:["The lights flicker out during a gala dinner.","A voicemail arrives from the future."],character:["A detective who can’t remember last night.","An archivist who never misfiles—until today."],world:["A mansion with doors that change positions.","A library where books whisper to listeners."]},
-      horror:{dialogue:["'Don’t look behind you.'","'We weren't alone in the cabin.'"],scene:["You hear scratching inside the walls.","The mirrors show you tomorrow's bruises."],character:["A child who never speaks but always stares.","A caretaker who sleeps standing up."],world:["A village where no one sleeps past midnight.","A town that bans lullabies."]},
-      slice:{dialogue:["'Let’s skip class and watch the sunset.'","'I kept your receipt—it felt like proof.'"],scene:["A rainy afternoon in a small café.","Neighbors gather on the roof to stargaze."],character:["A neighbor who always brings extra food.","A busker who only plays at dawn."],world:["A quiet street where nothing ever changes.","An apartment building that hums softly at night."]}
-    };
-    // Endless generator (no backend): blends templates by genre/type with mix-ins
-    const mixIns = {
-      fantasy:["ancient","enchanted","forgotten","cursed","celestial","hidden"],
-      scifi:["quantum","derelict","orbital","holographic","encrypted","synthetic"],
-      romance:["wistful","serendipitous","tender","unfinished","secret","sudden"],
-      mystery:["cryptic","vanishing","silent","unmarked","false","twinned"],
-      horror:["visceral","shrouded","feral","hollow","cold","echoing"],
-      slice:["quiet","sunlit","imperfect","ordinary","warm","stolen"]
-    };
-    function composePrompt(g, t){
-      const base = curatedPrompts[g] && curatedPrompts[g][t] ? curatedPrompts[g][t] : (curatedPrompts[g] ? Object.values(curatedPrompts[g]).flat() : Object.values(curatedPrompts).flatMap(v=>Object.values(v).flat()));
-      const seed = base[Math.floor(Math.random()*base.length)] || "Write about a moment that changes everything.";
-      const tag = (mixIns[g]||[])[Math.floor(Math.random()*((mixIns[g]||[]).length||1))];
-      // Simple augmentation for freshness
-      const endings = [" Describe the setting vividly.", " Add a twist halfway.", " Focus on a single compelling detail.", " Let the dialogue carry the scene.", " End with a question."];
-      const ending = endings[Math.floor(Math.random()*endings.length)];
-      return `${seed}${tag ? " ("+tag+")" : ""}${ending ? " "+ending : ""}`;
+    function playMoodMusic(){
+      const mood=document.getElementById('moodSelect').value;
+      if(!mood) return;
+      const userTracks=getMusic()[mood]||[];
+      let url;
+      if(userTracks.length){
+        url=userTracks[Math.floor(Math.random()*userTracks.length)];
+      } else {
+        url=defaultTracks[mood];
+      }
+      document.getElementById('musicPlayer').innerHTML=`
+        <h4>${mood.charAt(0).toUpperCase()+mood.slice(1)} Mode</h4>
+        <audio controls autoplay loop>
+          <source src="${url}" type="audio/mpeg">
+        </audio>
+      `;
+    }
+    function addMusicUrl(){
+      const url=document.getElementById('musicUrl').value.trim();
+      const mood=document.getElementById('moodSelect').value;
+      if(!url||!mood) return;
+      const obj=getMusic(); if(!obj[mood]) obj[mood]=[];
+      obj[mood].push(url); setMusic(obj);
+      document.getElementById('musicUrl').value='';
+      playMoodMusic();
+    }
+    function addMusicFile(){
+      const file=document.getElementById('musicFile').files[0];
+      const mood=document.getElementById('moodSelect').value;
+      if(!file||!mood) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const obj=getMusic(); if(!obj[mood]) obj[mood]=[];
+        obj[mood].push(reader.result); setMusic(obj);
+        playMoodMusic();
+      };
+      reader.readAsDataURL(file);
     }
 
-    const writingText = document.getElementById('writingText');
-    const wordCount = document.getElementById('wordCount');
-    let autosaveTimer = null, currentDraftHeader = localStorage.getItem('currentDraftHeader') || "Untitled";
-
+    /* ---------- Prompt Shuffle ---------- */
     function shufflePrompt(){
-      const genre = document.getElementById('genreSelect').value;
-      const type = document.getElementById('typeSelect').value;
-      let g = genre === 'random' ? ['fantasy','scifi','romance','mystery','horror','slice'][Math.floor(Math.random()*6)] : genre;
-      let t = type === 'random' ? ['dialogue','scene','character','world'][Math.floor(Math.random()*4)] : type;
-      const prompt = composePrompt(g, t);
-      document.getElementById('promptText').innerText = prompt;
-      document.getElementById('writingArea').style.display = 'block';
-      currentDraftHeader = prompt;
-      shrinkTile('promptCard','bottom-right');
-    }
-
-    // Draft management: autosave versions, snapshots, trash, export
-    function getDrafts(){ return JSON.parse(localStorage.getItem('drafts')||'[]'); }
-    function setDrafts(list){ localStorage.setItem('drafts', JSON.stringify(list)); }
-    function getTrash(){ return JSON.parse(localStorage.getItem('trashDrafts')||'[]'); }
-    function setTrash(list){ localStorage.setItem('trashDrafts', JSON.stringify(list)); }
-
-    writingText.value = localStorage.getItem('writingDraft') || "";
-    updateWordCount();
-    writingText.addEventListener('input', ()=>{
-      localStorage.setItem('writingDraft', writingText.value);
+      const prompts=[
+        "Write about a moment that changes everything.",
+        "Describe a character who hides a secret.",
+        "Invent a world where memories are currency.",
+        "Start with a line of overheard dialogue.",
+        "Describe a place that feels like home but isn’t."
+      ];
+      const prompt=prompts[Math.floor(Math.random()*prompts.length)];
+      document.getElementById('promptText').innerText=prompt;
+      document.getElementById('writingText').value='';
       updateWordCount();
-      scheduleAutosaveVersion();
-    });
+    }
+    const writingText=document.getElementById('writingText');
+    const wordCount=document.getElementById('wordCount');
+    writingText.addEventListener('input',()=>{updateWordCount();});
     function updateWordCount(){
-      const words = writingText.value.trim().split(/\s+/).filter(Boolean).length;
-      wordCount.innerText = "Words: " + words;
+      const words=writingText.value.trim().split(/\s+/).filter(Boolean).length;
+      wordCount.innerText="Words: "+words;
     }
-    function scheduleAutosaveVersion(){
-      if(autosaveTimer) clearTimeout(autosaveTimer);
-      autosaveTimer = setTimeout(()=>{ saveVersion("Autosave"); }, 1000*30);
-    }
-    function snapshotDraft(){ saveVersion("Snapshot"); }
-    function saveVersion(kind){
-      const drafts = getDrafts();
-      const entry = { id:Date.now(), kind, title: currentDraftHeader || "Untitled", content: writingText.value, ts:new Date().toLocaleString() };
-      drafts.push(entry); setDrafts(drafts); localStorage.setItem('currentDraftHeader', currentDraftHeader);
-      renderDrafts();
-    }
-    function renderDrafts(){
-      const wrap = document.getElementById('draftsList'); const drafts = getDrafts();
-      wrap.innerHTML = drafts.length ? "<strong>Drafts & Versions</strong>" : "";
-      drafts.slice().reverse().forEach(d=>{
-        const row = document.createElement('div'); row.className='favorite-item';
-        row.innerHTML = `<div><strong>${d.kind}</strong> · ${d.title} · <em>${d.ts}</em></div>
-                         <div>
-                           <button class="button primary" onclick="restoreDraft(${d.id})">Restore</button>
-                           <button class="button" onclick="trashDraft(${d.id})">Move to Trash</button>
-                         </div>`;
-        wrap.appendChild(row);
-      });
-      renderTrash();
-    }
-    function restoreDraft(id){
-      const drafts = getDrafts(); const d = drafts.find(x=>x.id===id); if(!d) return;
-      writingText.value = d.content; currentDraftHeader = d.title;
-      localStorage.setItem('writingDraft', d.content); localStorage.setItem('currentDraftHeader', d.title);
-      updateWordCount();
-    }
-    function trashDraft(id){
-      let drafts = getDrafts(); const idx = drafts.findIndex(x=>x.id===id); if(idx<0) return;
-      const removed = drafts.splice(idx,1)[0]; setDrafts(drafts);
-      const trash = getTrash(); trash.push(removed); setTrash(trash);
-      renderDrafts();
-    }
-    function renderTrash(){
-      const wrap = document.getElementById('trashList'); const trash = getTrash();
-      wrap.innerHTML = trash.length ? "<strong>Trash</strong>" : "";
-      trash.slice().reverse().forEach(d=>{
-        const row = document.createElement('div'); row.className='favorite-item';
-        row.innerHTML = `<div>${d.title} · <em>${d.ts}</em></div>
-                         <div>
-                           <button class="button primary" onclick="restoreFromTrash(${d.id})">Restore</button>
-                           <button class="button" onclick="deleteForever(${d.id})">Delete</button>
-                         </div>`;
-        wrap.appendChild(row);
-      });
-    }
-    function restoreFromTrash(id){
-      let trash = getTrash(); const idx = trash.findIndex(x=>x.id===id); if(idx<0) return;
-      const item = trash.splice(idx,1)[0]; setTrash(trash);
-      const drafts = getDrafts(); drafts.push(item); setDrafts(drafts); renderDrafts();
-    }
-    function deleteForever(id){
-      let trash = getTrash(); const idx = trash.findIndex(x=>x.id===id); if(idx<0) return;
-      trash.splice(idx,1); setTrash(trash); renderTrash();
-    }
-    function exportDraft(format){
-      const title = (currentDraftHeader||"Untitled").replace(/[^\w\s-]/g,'').trim() || "Untitled";
-      let content = writingText.value;
-      if(format==='md'){ content = `# ${title}\n\n${content}`; }
-      const blob=new Blob([content], {type:"text/plain"});
-      const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download = `${title}.${format}`; a.click(); URL.revokeObjectURL(url);
-    }
-    function exportPrintable(){
-      const title=currentDraftHeader||"Untitled"; const content=writingText.value.replace(/\n/g,'<br/>');
-      const html=`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
-      <style>body{font-family:Georgia,serif;margin:40px;color:#222} h1{font-size:24px;margin-bottom:20px} .content{font-size:16px;line-height:1.6}</style>
-      </head><body><h1>${title}</h1><div class="content">${content}</div></body></html>`;
-      const w=window.open('', '_blank'); if(!w) return;
-      w.document.open(); w.document.write(html); w.document.close();
-      setTimeout(()=>w.print(), 300);
-    }
-    function getPromptFavorites(){ return JSON.parse(localStorage.getItem('promptFavorites')||'[]'); }
-    function setPromptFavorites(list){ localStorage.setItem('promptFavorites', JSON.stringify(list)); }
-    function renderPromptFavorites(){
-      const wrap=document.getElementById('promptFavorites'); const favs=getPromptFavorites();
-      wrap.innerHTML = favs.length ? "<strong>Saved Prompts</strong>" : "";
-      favs.forEach((f,idx)=>{
-        const div=document.createElement('div'); div.className='favorite-item';
-        div.innerHTML=`<div>${f}</div><button class="button" onclick="deletePromptFavorite(${idx})">Delete</button>`;
-        wrap.appendChild(div);
-      });
-    }
-    function savePromptFavorite(p){ const favs=getPromptFavorites(); if(!favs.includes(p)){ favs.push(p); setPromptFavorites(favs); renderPromptFavorites(); } }
-    function deletePromptFavorite(idx){ const favs=getPromptFavorites(); favs.splice(idx,1); setPromptFavorites(favs); renderPromptFavorites(); }
 
     /* ---------- Habit Garden ---------- */
-    function getHabits(){ return JSON.parse(localStorage.getItem('habits')||'[]'); }
-    function setHabits(list){ localStorage.setItem('habits', JSON.stringify(list)); }
+    function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
+    function setHabits(list){localStorage.setItem('habits',JSON.stringify(list));}
     function addHabit(){
-      const name=document.getElementById('habitInput').value.trim(); if(!name) return;
-      const habits=getHabits(); habits.push({name,history:[]}); setHabits(habits); document.getElementById('habitInput').value=''; renderHabits();
+      const name=document.getElementById('habitInput').value.trim();
+      if(!name) return;
+      const habits=getHabits(); habits.push({name,history:[]});
+      setHabits(habits); document.getElementById('habitInput').value='';
+      renderHabits();
     }
     function checkInHabit(idx){
       const habits=getHabits(); const today=new Date().toDateString();
-      if(!habits[idx].history.includes(today)){ habits[idx].history.push(today); setHabits(habits); renderHabits(); }
-      shrinkTile('habitCard','bottom-left');
+      if(!habits[idx].history.includes(today)){
+        habits[idx].history.push(today); setHabits(habits); renderHabits();
+      }
     }
-    function resetHabit(idx){ const habits=getHabits(); habits[idx].history=[]; setHabits(habits); renderHabits(); }
-    function resetAllHabits(){ localStorage.removeItem('habits'); renderHabits(); }
     function renderHabits(){
       const wrap=document.getElementById('habitList'); wrap.innerHTML='';
-      const habits=getHabits();
-      habits.forEach((h,idx)=>{
+      getHabits().forEach((h,idx)=>{
         const streak=h.history.length;
-        let plant="🌱"; if(streak>=3) plant="🌿"; if(streak>=7) plant="🌳"; if(streak>=14) plant="🌸"; if(streak>=30) plant="🌲";
-        const badges=[]; if(streak>=7) badges.push("🔥"); if(streak>=30) badges.push("🌟"); if(streak>=100) badges.push("🏆");
+        let plant="🌱"; if(streak>=3)plant="🌿"; if(streak>=7)plant="🌳";
         const div=document.createElement('div'); div.className='habit';
-        div.innerHTML=`<h4>${h.name}</h4>
-          <p>Status: ${h.history.includes(new Date().toDateString()) ? "Done today" : "Not yet"}</p>
+        div.innerHTML=`
+          <h4>${h.name}</h4>
+          <p>Status: ${h.history.includes(new Date().toDateString())?"Done today":"Not yet"}</p>
           <div style="font-size:2rem;">${plant}</div>
-          <div class="badges">${badges.join(" ")}</div>
           <button class="btn" onclick="checkInHabit(${idx})">Check in</button>
-          <button class="btn secondary" onclick="resetHabit(${idx})">Reset</button>
-          <p><strong>History:</strong><br>${h.history.join("<br>") || "No check‑ins yet"}</p>`;
+        `;
         wrap.appendChild(div);
       });
     }
 
     /* ---------- Clock Tool ---------- */
-    let timer=null, timeLeft=1500, running=false;
-    let mode = localStorage.getItem('clockMode') || "pomodoro";
-    let pomodoroCompleted = parseInt(localStorage.getItem('pomodoroCompleted') || "0", 10);
+    let timer=null,timeLeft=1500,running=false;
+    let mode=localStorage.getItem('clockMode')||"pomodoro";
+    let pomodoroCompleted=parseInt(localStorage.getItem('pomodoroCompleted')||"0",10);
     function formatTime(sec){
       const h=Math.floor(sec/3600).toString().padStart(2,'0');
       const m=Math.floor((sec%3600)/60).toString().padStart(2,'0');
       const s=(sec%60).toString().padStart(2,'0');
       return `${h}:${m}:${s}`;
     }
-    function updateDisplay(){ document.getElementById('timeDisplay').innerText = formatTime(timeLeft); }
+    function updateDisplay(){document.getElementById('timeDisplay').innerText=formatTime(timeLeft);}
     function startTimer(){
-      if(running) return; running=true;
+      if(running)return;running=true;
       timer=setInterval(()=>{
-        if(mode==="stopwatch"){ timeLeft++; }
-        else { timeLeft--; if(timeLeft<=0){ clearInterval(timer); running=false;
-          if(mode==="pomodoro"){ pomodoroCompleted++; localStorage.setItem('pomodoroCompleted', pomodoroCompleted);
-            document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`; }
-          alert("Time's up!"); } }
+        if(mode==="stopwatch"){timeLeft++;}
+        else{timeLeft--;if(timeLeft<=0){clearInterval(timer);running=false;if(mode==="pomodoro"){pomodoroCompleted++;localStorage.setItem('pomodoroCompleted',pomodoroCompleted);document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;}alert("Time's up!");}}
         updateDisplay();
       },1000);
-      shrinkTile('clockCard','top-right');
     }
-    function pauseTimer(){ clearInterval(timer); running=false; }
+    function pauseTimer(){clearInterval(timer);running=false;}
     function resetTimer(){
-      clearInterval(timer); running=false;
-      if(mode==="pomodoro"){ const w=parseInt(document.getElementById('workMinutes').value||"25",10); timeLeft = w*60; }
-      if(mode==="stopwatch") timeLeft=0;
-      if(mode==="countdown"||mode==="custom"){
-        const h=parseInt(document.getElementById('customHours').value||"0",10);
-        const m=parseInt(document.getElementById('customMinutes').value||"0",10);
-        const s=parseInt(document.getElementById('customSeconds').value||"0",10);
-        timeLeft = h*3600 + m*60 + s;
-      }
+      clearInterval(timer);running=false;
+      if(mode==="pomodoro")timeLeft=1500;
+      if(mode==="stopwatch")timeLeft=0;
+      if(mode==="countdown")timeLeft=300;
       updateDisplay();
     }
     function switchMode(){
-      mode = document.getElementById('modeSelect').value;
-      localStorage.setItem('clockMode', mode);
-      document.getElementById('pomodoroSettings').style.display = (mode==="pomodoro") ? "block" : "none";
-      document.getElementById('customSettings').style.display = (mode==="countdown"||mode==="custom") ? "block" : "none";
+      mode=document.getElementById('modeSelect').value;
+      localStorage.setItem('clockMode',mode);
       resetTimer();
     }
-    document.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); if(running) pauseTimer(); else startTimer(); } });
 
     /* ---------- Init ---------- */
-    function init(){
-      renderThumbs();
-      renderMusicFavorites();
-      renderPromptFavorites();
-      renderDrafts();
-      renderHabits();
-      document.getElementById('modeSelect').value = mode;
-      document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
-      switchMode();
-    }
-    init();
-  </script>
-</body>
-</html>
+    (function init(){
+      const savedTheme=localStorage.getItem('theme')||'light';
+      document.documentElement.setAttribute('data-theme',savedTheme);
+      const savedEnv=localStorage.getItem('env')||'relax';
+      envSelect.value=savedEnv;
+      const last=localStorage.getItem('lastWallpaper');
+      const custom=getWallpapers();
+      if(last){setBackground(last);}
+      else if(custom.length){setBackground(custom[custom.length-1].url);}
+      else{applyEnvBackground(savedEnv);}
+      renderThumbs(); renderHabits(); switchMode();
+      document.getElementById('
