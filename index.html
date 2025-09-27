@@ -290,42 +290,46 @@
 
       <!-- Clock Tile -->
       <section id="clock" class="card tile" data-tile="clock">
-        <div class="tile-header">
-          <h3 class="tile-title">Clock</h3>
-          <button class="dots-btn">⋯</button>
-          <div class="tile-menu">
-            <button onclick="shrinkTile('clock')">Move to dock</button>
-          </div>
-        </div>
         <div class="row">
-          <select id="modeSelect" class="select-inline" onchange="switchMode()">
-            <option value="pomodoro">Pomodoro</option>
-            <option value="stopwatch">Stopwatch</option>
-            <option value="countdown">Countdown</option>
-            <option value="custom">Custom</option>
-          </select>
-          <button class="btn" onclick="startTimer()">Start</button>
-          <button class="btn secondary" onclick="pauseTimer()">Pause</button>
-          <button class="btn" onclick="resetTimer()">Reset</button>
-        </div>
-        <div class="row">
-          <label class="input">
-            <span>Pomodoro (min)</span>
-            <input id="pomodoroMinutes" type="number" min="1" value="25" style="width:70px;background:transparent;border:none;">
-          </label>
-          <label class="input">
-            <span>Countdown (min)</span>
-            <input id="countdownMinutes" type="number" min="1" value="5" style="width:70px;background:transparent;border:none;">
-          </label>
-          <label class="input">
-            <span>Custom (mm:ss)</span>
-            <input id="customMM" type="number" min="0" value="0" style="width:50px;background:transparent;border:none;">
-            <span>:</span>
-            <input id="customSS" type="number" min="0" value="30" style="width:50px;background:transparent;border:none;">
-          </label>
-        </div>
-        <div id="timeDisplay">25:00</div>
-        <p id="stats">Completed Pomodoros: 0</p>
+  <select id="modeSelect" class="select-inline" onchange="switchMode()">
+    <option value="pomodoro">Pomodoro</option>
+    <option value="stopwatch">Stopwatch</option>
+    <option value="countdown">Countdown</option>
+    <option value="timer">Timer</option>
+  </select>
+  <button class="btn" onclick="startTimer()">Start</button>
+  <button class="btn secondary" onclick="pauseTimer()">Pause</button>
+  <button class="btn" onclick="resetTimer()">Reset</button>
+</div>
+
+<!-- Pomodoro inputs -->
+<div class="row" id="pomodoroInputs">
+  <label class="input">Work (min)
+    <input id="pomodoroWork" type="number" min="1" value="25" style="width:70px;background:transparent;border:none;">
+  </label>
+  <label class="input">Break (min)
+    <input id="pomodoroBreak" type="number" min="1" value="5" style="width:70px;background:transparent;border:none;">
+  </label>
+</div>
+
+<!-- Countdown input -->
+<div class="row" id="countdownInputs" style="display:none;">
+  <label class="input">Countdown (min)
+    <input id="countdownMinutes" type="number" min="1" value="5" style="width:70px;background:transparent;border:none;">
+  </label>
+</div>
+
+<!-- Timer input -->
+<div class="row" id="timerInputs" style="display:none;">
+  <label class="input">Timer (mm:ss)
+    <input id="timerMM" type="number" min="0" value="0" style="width:50px;background:transparent;border:none;">
+    <span>:</span>
+    <input id="timerSS" type="number" min="0" value="30" style="width:50px;background:transparent;border:none;">
+  </label>
+</div>
+
+<div id="timeDisplay">25:00</div>
+<p id="stats">Completed Pomodoros: 0</p>
       </section>
     </main>
 
@@ -663,42 +667,95 @@ document.addEventListener('DOMContentLoaded', ()=>{
   function enableTrackReorder() {}
   function disableTrackReorder() {}
   </script>
-
+  
   <!-- Part 4: Writing Logic -->
   <script>
   /* ---------------- WRITING ---------------- */
-  function renderWriterMode(){
-    const mode = document.getElementById('writerMode').value;
-    const area = document.getElementById('writerArea');
-    area.innerHTML = "";
+    function generatePrompt(){
+  const pool = [
+    "Describe a moment that felt like magic.",
+    "Invent a tool that solves a tiny problem.",
+    "Write a letter to someone you admire.",
+    "What does silence mean to you?",
+    "Design a ritual for creative focus.",
+    "Imagine a dashboard that adapts to your mood.",
+    "Describe a place that feels like home.",
+    "Invent a character who hides a secret.",
+    "Write about a time you changed your mind.",
+    "Sketch a feature that blends music with memory."
+  ];
+  const random = pool[Math.floor(Math.random() * pool.length)];
+  const timestamp = new Date().toLocaleString();
+  return `${random} (${timestamp})`;
+}
+    function renderWriterMode(){
+  const mode = document.getElementById('writerMode').value;
+  const area = document.getElementById('writerArea');
+  area.innerHTML = "";
 
-    document.getElementById('brainstormVisible').style.display = (mode === "brainstorm") ? "block" : "none";
-    document.getElementById('journalVisible').style.display = (mode === "journal") ? "block" : "none";
+  document.getElementById('brainstormVisible').style.display = (mode === "brainstorm") ? "block" : "none";
+  document.getElementById('journalVisible').style.display = (mode === "journal") ? "block" : "none";
 
-    if (mode === "prompts") {
-      const prompts = [
-        "Write about a moment that changed your perspective.",
-        "Describe a place that feels like home.",
-        "Invent a character who hides a secret.",
-        "What does silence mean to you?",
-        "Write a letter to your future self."
-      ];
+  if (mode === "prompts") {
+    const saved = JSON.parse(localStorage.getItem('promptResponses') || '{}');
+    const promptArea = document.createElement('div');
+    promptArea.className = "stack";
+    area.appendChild(promptArea);
+
+    const promptBtn = document.createElement('button');
+    promptBtn.className = "btn";
+    promptBtn.textContent = "New Prompt";
+    promptBtn.onclick = () => {
+      const prompt = generatePrompt();
       const div = document.createElement('div');
       div.className = "stack";
-      prompts.forEach(p => {
-        const btn = document.createElement('button');
-        btn.className = "btn secondary";
-        btn.textContent = p;
-        btn.onclick = () => {
-          const ta = document.createElement('textarea');
-          ta.placeholder = p;
-          area.appendChild(ta);
-        };
-        div.appendChild(btn);
-      });
-      area.appendChild(div);
-    }
+      const label = document.createElement('strong');
+      label.textContent = prompt;
+      const ta = document.createElement('textarea');
+      ta.placeholder = "Your response...";
+      ta.value = saved[prompt] || "";
+      ta.oninput = () => {
+        saved[prompt] = ta.value;
+        localStorage.setItem('promptResponses', JSON.stringify(saved));
+      };
+      div.appendChild(label);
+      div.appendChild(ta);
+      promptArea.prepend(div);
+    };
+    area.appendChild(promptBtn);
 
+    const exportBtn = document.createElement('button');
+    exportBtn.className = "btn secondary";
+    exportBtn.textContent = "Export All Responses";
+    exportBtn.onclick = () => {
+      let text = "";
+      for (let key in saved) {
+        text += key + "\n" + saved[key] + "\n\n";
+      }
+      const blob = new Blob([text], { type: "text/plain" });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = "prompts.txt";
+      link.click();
+    };
+    area.appendChild(exportBtn);
+
+    const clearBtn = document.createElement('button');
+    clearBtn.className = "btn secondary";
+    clearBtn.textContent = "Clear All Responses";
+    clearBtn.onclick = () => {
+      if (confirm("Clear all saved prompt responses?")) {
+        localStorage.removeItem('promptResponses');
+        renderWriterMode();
+      }
+    };
+    area.appendChild(clearBtn);
+  }
+
+  // todo, free, brainstorm, journal — unchanged
+  if (mode === "todo") { /* keep your existing todo logic */ }
+  if (mode === "free") { /* keep your existing free writing logic */ }
+}
     if (mode === "todo") {
       const list = JSON.parse(localStorage.getItem('todoList') || '[]');
       const input = document.createElement('input');
@@ -870,88 +927,109 @@ document.addEventListener('DOMContentLoaded', ()=>{
   </script>
 
   <!-- Part 6: Clock -->
-  <script>
-  /* ---------------- CLOCK ---------------- */
-  let timerInterval;
-  let timeLeft = 0;
-  let running = false;
-  let mode = "pomodoro";
-  let pomodoroCount = 0;
+<script>
+/* ---------------- CLOCK (clean Pomodoro) ---------------- */
+let timerInterval;
+let timeLeft = 0;
+let running = false;
+let mode = "pomodoro";
+let pomodoroCount = 0;
+let isBreak = false;
 
-  function switchMode(){
-    mode = document.getElementById('modeSelect').value;
-    resetTimer();
+function switchMode(){
+  mode = document.getElementById('modeSelect').value;
+  resetTimer();
+}
+
+function startTimer(){
+  if(running) return;
+  running = true;
+
+  if(mode === "pomodoro"){
+    const workMins = parseInt(document.getElementById('pomodoroWork').value) || 25;
+    const breakMins = parseInt(document.getElementById('pomodoroBreak').value) || 5;
+    timeLeft = (isBreak ? breakMins : workMins) * 60;
+  } else if(mode === "countdown"){
+    timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
+  } else if(mode === "timer"){
+    const mm = parseInt(document.getElementById('timerMM').value) || 0;
+    const ss = parseInt(document.getElementById('timerSS').value) || 0;
+    timeLeft = mm * 60 + ss;
+  } else if(mode === "stopwatch"){
+    timeLeft = 0;
   }
 
-  function startTimer(){
-    if(running) return;
-    running = true;
-    if(mode === "pomodoro"){
-      timeLeft = parseInt(document.getElementById('pomodoroMinutes').value) * 60;
-    } else if(mode === "countdown"){
-      timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
-    } else if(mode === "custom"){
-      const mm = parseInt(document.getElementById('customMM').value) || 0;
-      const ss = parseInt(document.getElementById('customSS').value) || 0;
-      timeLeft = mm * 60 + ss;
-    } else if(mode === "stopwatch"){
-      timeLeft = 0;
-    }
+  updateDisplay();
+  timerInterval = setInterval(tick, 1000);
+}
+
+function tick(){
+  if(mode === "stopwatch"){
+    timeLeft++;
     updateDisplay();
-    timerInterval = setInterval(tick, 1000);
-  }
-
-  function tick(){
-    if(mode === "stopwatch"){
-      timeLeft++;
+  } else {
+    if(timeLeft > 0){
+      timeLeft--;
       updateDisplay();
-    } else {
-      if(timeLeft > 0){
-        timeLeft--;
-        updateDisplay();
-        if(timeLeft === 0){
-          clearInterval(timerInterval);
-          running = false;
-          if(mode === "pomodoro"){
+      if(timeLeft === 0){
+        clearInterval(timerInterval);
+        running = false;
+        if(mode === "pomodoro"){
+          if(!isBreak){
             pomodoroCount++;
             document.getElementById('stats').textContent = "Completed Pomodoros: " + pomodoroCount;
+            alert("Work session done! Time for a break.");
+          } else {
+            alert("Break over! Back to work.");
           }
+          isBreak = !isBreak;
+          startTimer(); // auto‑start next cycle
+        } else {
           alert("Time's up!");
         }
       }
     }
   }
+}
 
-  function pauseTimer(){
-    clearInterval(timerInterval);
-    running = false;
+function pauseTimer(){
+  clearInterval(timerInterval);
+  running = false;
+}
+
+function resetTimer(){
+  clearInterval(timerInterval);
+  running = false;
+  if(mode === "pomodoro"){
+    const workMins = parseInt(document.getElementById('pomodoroWork').value) || 25;
+    timeLeft = workMins * 60;
+    isBreak = false;
+  } else if(mode === "countdown"){
+    timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
+  } else if(mode === "timer"){
+    const mm = parseInt(document.getElementById('timerMM').value) || 0;
+    const ss = parseInt(document.getElementById('timerSS').value) || 0;
+    timeLeft = mm * 60 + ss;
+  } else if(mode === "stopwatch"){
+    timeLeft = 0;
   }
+  updateDisplay();
+}
 
-  function resetTimer(){
-    clearInterval(timerInterval);
-    running = false;
-    if(mode === "pomodoro"){
-      timeLeft = parseInt(document.getElementById('pomodoroMinutes').value) * 60;
-    } else if(mode === "countdown"){
-      timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
-    } else if(mode === "custom"){
-      const mm = parseInt(document.getElementById('customMM').value) || 0;
-      const ss = parseInt(document.getElementById('customSS').value) || 0;
-      timeLeft = mm * 60 + ss;
-    } else if(mode === "stopwatch"){
-      timeLeft = 0;
-    }
-    updateDisplay();
-  }
-
-  function updateDisplay(){
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById('timeDisplay').textContent =
-      String(minutes).padStart(2,'0') + ":" + String(seconds).padStart(2,'0');
-  }
-  </script>
-
+function updateDisplay(){
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  document.getElementById('timeDisplay').textContent =
+    String(minutes).padStart(2,'0') + ":" + String(seconds).padStart(2,'0');
+}
+</script>
+<script>
+document.getElementById('modeSelect').addEventListener('change', ()=>{
+  document.getElementById('pomodoroInputs').style.display = (mode==="pomodoro")?"flex":"none";
+  document.getElementById('countdownInputs').style.display = (mode==="countdown")?"flex":"none";
+  document.getElementById('timerInputs').style.display = (mode==="timer")?"flex":"none";
+});
+</script>
   <!-- Part 8: Initialization + Layout presets -->
   <script>
   /* ---------------- INITIALIZATION ---------------- */
@@ -1267,4 +1345,5 @@ document.addEventListener('DOMContentLoaded', ()=>{
   </script>
 </body>
 </html>
+
 
