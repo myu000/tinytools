@@ -46,19 +46,9 @@
       gap: 12px;
       align-items: center;
     }
-    .brand {
-      display: flex;
-      gap: 10px;
-      align-items: baseline;
-    }
-    .brand h1 {
-      margin: 0;
-      font-family: 'Sansita', sans-serif;
-    }
-    .brand span {
-      font-family: 'Jura', sans-serif;
-      opacity: 0.9;
-    }
+    .brand { display: flex; gap: 10px; align-items: baseline; }
+    .brand h1 { margin: 0; font-family: 'Sansita', sans-serif; }
+    .brand span { font-family: 'Jura', sans-serif; opacity: 0.9; }
     .select, .button {
       font-family: 'Jura', sans-serif;
       border: none;
@@ -66,17 +56,9 @@
       padding: 10px 12px;
       cursor: pointer;
     }
-    .select {
-      background: var(--select-bg);
-      color: var(--text);
-    }
-    .button {
-      background: var(--secondary);
-      color: #fff;
-    }
-    .button.primary {
-      background: var(--primary);
-    }
+    .select { background: var(--select-bg); color: var(--text); }
+    .button { background: var(--secondary); color: #fff; }
+    .button.primary { background: var(--primary); }
     .page {
       display: grid;
       grid-template-columns: 1fr var(--dock-width);
@@ -86,12 +68,8 @@
       padding: 0 24px;
     }
     @media (max-width: 1100px) {
-      .page {
-        grid-template-columns: 1fr;
-      }
-      .dock {
-        order: 2;
-      }
+      .page { grid-template-columns: 1fr; }
+      .dock { order: 2; }
     }
     .grid {
       display: grid;
@@ -103,14 +81,8 @@
       border-radius: 16px;
       padding: 16px;
     }
-    .dock h4 {
-      margin: 0 0 10px;
-      font-family: 'Sansita', sans-serif;
-    }
-    .dock-area {
-      display: grid;
-      gap: 12px;
-    }
+    .dock h4 { margin: 0 0 10px; font-family: 'Sansita', sans-serif; }
+    .dock-area { display: grid; gap: 12px; }
     .card {
       position: relative;
       background: var(--glass);
@@ -125,10 +97,7 @@
       justify-content: space-between;
       margin-bottom: 10px;
     }
-    .tile-title {
-      margin: 0;
-      font-family: 'Sansita', sans-serif;
-    }
+    .tile-title { margin: 0; font-family: 'Sansita', sans-serif; }
     .dots-btn {
       background: transparent;
       border: none;
@@ -151,9 +120,7 @@
       min-width: 160px;
       z-index: 20;
     }
-    .tile-menu.open {
-      display: block;
-    }
+    .tile-menu.open { display: block; }
     .tile-menu button {
       display: block;
       width: 100%;
@@ -165,72 +132,23 @@
       border-radius: 8px;
       cursor: pointer;
     }
-    .tile-menu button:hover {
-      background: rgba(255, 255, 255, 0.12);
-    }
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-    .stack {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+    .tile-menu button:hover { background: rgba(255, 255, 255, 0.12); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .stack { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
     .btn, .input, .select-inline, textarea {
       font-family: 'Jura', sans-serif;
       border: none;
       border-radius: 12px;
       padding: 10px;
     }
-    .btn {
-      background: var(--primary);
-      color: #fff;
-      cursor: pointer;
-    }
-    .btn.secondary {
-      background: var(--secondary);
-    }
-    .input, .select-inline, textarea {
-      background: var(--input-bg);
-    }
-    textarea {
-      width: 100%;
-      min-height: 180px;
-      resize: vertical;
-    }
-    .thumbs {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-    }
-    .thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      cursor: pointer;
-      border-radius: 12px;
-    }
-    .player iframe {
-      width: 100%;
-      height: 300px;
-      border: 0;
-    }
-    #timeDisplay {
-      font-family: 'Jura', sans-serif;
-      font-size: 2rem;
-      text-align: center;
-    }
-    .drag-handle {
-      cursor: grab;
-      user-select: none;
-    }
-    .draggable {
-      user-select: none;
-    }
+    .btn { background: var(--primary); color: #fff; cursor: pointer; }
+    .btn.secondary { background: var(--secondary); }
+    .input, .select-inline, textarea { background: var(--input-bg); }
+    textarea { width: 100%; min-height: 180px; resize: vertical; }
+    .thumbs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; border-radius: 12px; }
+    .player iframe { width: 100%; height: 300px; border: 0; }
+    #timeDisplay { font-family: 'Jura', sans-serif; font-size: 2rem; text-align: center; }
   </style>
 </head>
 <body>
@@ -261,9 +179,10 @@
       <button id="applyLayout" class="button">Apply layout</button>
       <span id="layoutNote">Layout: Balanced</span>
     </div>
-  </header>  <div class="page">
-    <main id="grid" class="grid">
+  </header>
 
+  <div class="page">
+    <main id="grid" class="grid">
       <!-- Wallpapers Tile -->
       <section id="wallpapers" class="card tile" data-tile="wallpapers">
         <div class="tile-header">
@@ -416,1035 +335,922 @@
       <div id="dockArea" class="dock-area"></div>
     </aside>
   </div>
-</body>
-</html><script>
-/* ---------------- WALLPAPERS ---------------- */
-const wallpapers = {
-  relax: [
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
-  ],
-  study: [
-    "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
-    "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
-    "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
-  ],
-  focus: [
-    "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
-    "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
-    "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
-  ],
-  creative: [
-    "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
-    "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
-  ],
-  default: [
-    "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
-    "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
-    "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
-  ],
-  custom: []
-};
 
-function setBackground(url){
-  document.body.style.backgroundImage = `url('${url}')`;
-  document.body.style.backgroundPosition = 'center';
-  document.body.style.backgroundSize = 'cover';
-  document.body.style.backgroundAttachment = 'fixed';
-  localStorage.setItem('lastWallpaper', url);
-}
-
-function renderThumbnails(list, env){
-  const thumbs = document.getElementById('wallpaperThumbs');
-  thumbs.innerHTML = "";
-  list.forEach((url, i) => {
-    const div = document.createElement('div');
-    div.className = "thumb";
-    div.innerHTML = `<img src="${url}" alt="wallpaper"/>`;
-    div.addEventListener('click', () => setBackground(url));
-    if (env === "custom") {
-      const del = document.createElement('button');
-      del.textContent = "✕";
-      del.className = "btn secondary";
-      del.style.position = "absolute";
-      del.style.top = "6px";
-      del.style.right = "6px";
-      del.onclick = (e) => {
-        e.stopPropagation();
-        let custom = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
-        custom.splice(i, 1);
-        localStorage.setItem('customWallpapers', JSON.stringify(custom));
-        wallpapers.custom = custom;
-        renderThumbnails(custom, "custom");
-      };
-      div.style.position = "relative";
-      div.appendChild(del);
-    }
-    thumbs.appendChild(div);
-  });
-}
-
-function applyEnvBackground(env){
-  const list = wallpapers[env] || wallpapers.default;
-  const url = list[Math.floor(Math.random() * list.length)];
-  if (url) setBackground(url);
-  renderThumbnails(list, env);
-  localStorage.setItem('env', env);
-}
-
-function loadCustomWallpapers(){
-  const custom = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
-  wallpapers.custom = custom;
-  renderThumbnails(custom, "custom");
-}
-
-document.getElementById('wallpaperUpload').addEventListener('change', e => {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const url = ev.target.result;
-    setBackground(url);
-    let custom = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
-    custom.push(url);
-    localStorage.setItem('customWallpapers', JSON.stringify(custom));
-    wallpapers.custom = custom;
-    renderThumbnails(custom, "custom");
+  <!-- Part 2: Wallpapers + Theme + Menus -->
+  <script>
+  /* ---------------- WALLPAPERS ---------------- */
+  const wallpapers = {
+    relax: [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+    ],
+    study: [
+      "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
+      "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
+      "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
+    ],
+    focus: [
+      "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
+      "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
+      "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
+    ],
+    creative: [
+      "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
+      "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
+    ],
+    default: [
+      "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
+      "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
+      "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
+    ],
+    custom: []
   };
-  reader.readAsDataURL(file);
-});
 
-document.getElementById('clearCustomWallpapers').addEventListener('click', () => {
-  localStorage.removeItem('customWallpapers');
-  wallpapers.custom = [];
-  renderThumbnails([], "custom");
-});
-
-document.getElementById('deleteCustomWallpapers').addEventListener('click', () => {
-  localStorage.removeItem('customWallpapers');
-  wallpapers.custom = [];
-  renderThumbnails([], "custom");
-});
-
-document.getElementById('envSelect').addEventListener('change', e => applyEnvBackground(e.target.value));
-document.getElementById('shuffleWallpaper').addEventListener('click', () => applyEnvBackground(envSelect.value));
-
-document.getElementById('themeToggle').addEventListener('click', () => {
-  const cur = document.documentElement.getAttribute('data-theme') || 'light';
-  const next = cur === 'light' ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-});
-
-/* ---------------- TILE MENUS ---------------- */
-function closeAllMenus(){
-  document.querySelectorAll('.tile-menu.open').forEach(menu => {
-    menu.classList.remove('open');
-  });
-}
-
-document.querySelectorAll('.dots-btn').forEach(btn => {
-  btn.addEventListener('click', e => {
-    e.stopPropagation();
-    const menu = btn.nextElementSibling;
-    const isOpen = menu.classList.contains('open');
-    closeAllMenus();
-    if (!isOpen) {
-      menu.classList.add('open');
-      const firstBtn = menu.querySelector('button');
-      if (firstBtn) firstBtn.focus();
-    }
-  });
-});
-
-document.addEventListener('click', e => {
-  document.querySelectorAll('.tile-menu.open').forEach(menu => {
-    if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
-      menu.classList.remove('open');
-    }
-  });
-});
-
-document.addEventListener('keydown', e => {
-  if (e.key === "Escape") closeAllMenus();
-});
-</script><script src="https://www.youtube.com/iframe_api"></script>
-<script>
-/* ---------------- MUSIC ---------------- */
-let ytPlayer, currentPlaylist = [], currentIndex = 0;
-window.playerReady = false;
-
-function onYouTubeIframeAPIReady() {
-  ytPlayer = new YT.Player('musicPlayer', {
-    height: '300',
-    width: '100%',
-    videoId: '',
-    playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1 },
-    events: {
-      'onReady': () => { window.playerReady = true; },
-      'onStateChange': onPlayerStateChange
-    }
-  });
-}
-
-function onPlayerStateChange(event) {
-  if (event.data === YT.PlayerState.ENDED) {
-    currentIndex++;
-    if (currentIndex >= currentPlaylist.length) currentIndex = 0;
-    if (currentPlaylist.length) ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
+  function setBackground(url){
+    document.body.style.backgroundImage = `url('${url}')`;
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundAttachment = 'fixed';
+    localStorage.setItem('lastWallpaper', url);
   }
-}
 
-function extractId(url) {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes("youtu.be")) return u.pathname.split("/")[1];
-    if (u.hostname.includes("youtube.com")) {
-      if (u.searchParams.has("v")) return u.searchParams.get("v");
-      if (u.pathname.includes("/embed/")) return u.pathname.split("/embed/")[1].split(/[?&]/)[0];
+  function renderThumbnails(list, env){
+    const thumbs = document.getElementById('wallpaperThumbs');
+    thumbs.innerHTML = "";
+    list.forEach((url, i) => {
+      const div = document.createElement('div');
+      div.className = "thumb";
+      div.style.position = "relative";
+      div.innerHTML = `<img src="${url}" alt="wallpaper"/>`;
+      div.addEventListener('click', () => setBackground(url));
+      if (env === "custom") {
+        const del = document.createElement('button');
+        del.textContent = "✕";
+        del.className = "btn secondary";
+        del.style.position = "absolute";
+        del.style.top = "6px";
+        del.style.right = "6px";
+        del.onclick = (e) => {
+          e.stopPropagation();
+          let custom = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
+          custom.splice(i, 1);
+          localStorage.setItem('customWallpapers', JSON.stringify(custom));
+          wallpapers.custom = custom;
+          renderThumbnails(custom, "custom");
+        };
+        div.appendChild(del);
+      }
+      thumbs.appendChild(div);
+    });
+  }
+
+  function applyEnvBackground(env){
+    const list = wallpapers[env] || wallpapers.default;
+    const url = list[Math.floor(Math.random() * list.length)];
+    if (url) setBackground(url);
+    renderThumbnails(list, env);
+    localStorage.setItem('env', env);
+  }
+
+  function loadCustomWallpapers(){
+    const custom = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
+    wallpapers.custom = custom;
+    if ((document.getElementById('envSelect').value || 'default') === 'custom') {
+      renderThumbnails(custom, "custom");
     }
-  } catch (e) {
-    if (/^[\w-]{11}$/.test(url)) return url;
   }
-  return "";
-}
 
-/* ---------------- PLAYLIST STORAGE ---------------- */
-function getPlaylists() {
-  return JSON.parse(localStorage.getItem('playlists') || '{}');
-}
-function setPlaylists(obj) {
-  localStorage.setItem('playlists', JSON.stringify(obj));
-}
+  document.getElementById('wallpaperUpload').addEventListener('change', e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const url = ev.target.result;
+      setBackground(url);
+      let custom = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
+      custom.push(url);
+      localStorage.setItem('customWallpapers', JSON.stringify(custom));
+      wallpapers.custom = custom;
+      renderThumbnails(custom, "custom");
+    };
+    reader.readAsDataURL(file);
+  });
 
-/* ---------------- PLAYLIST MGMT ---------------- */
-function createPlaylist() {
-  const name = document.getElementById('playlistName').value.trim();
-  if (!name) return;
-  const pls = getPlaylists();
-  if (!pls[name]) pls[name] = [];
-  setPlaylists(pls);
-  document.getElementById('playlistName').value = "";
-  renderPlaylists();
-}
+  document.getElementById('clearCustomWallpapers').addEventListener('click', () => {
+    localStorage.removeItem('customWallpapers');
+    wallpapers.custom = [];
+    renderThumbnails([], "custom");
+  });
 
-function deletePlaylist() {
-  const name = document.getElementById('playlistSelect').value;
-  if (!name) return;
-  const pls = getPlaylists();
-  delete pls[name];
-  setPlaylists(pls);
-  renderPlaylists();
-  document.getElementById('playlistTracks').innerHTML = "";
-}
+  document.getElementById('deleteCustomWallpapers').addEventListener('click', () => {
+    localStorage.removeItem('customWallpapers');
+    wallpapers.custom = [];
+    renderThumbnails([], "custom");
+  });
 
-function renderPlaylists() {
-  const pls = getPlaylists();
-  const sel = document.getElementById('playlistSelect');
-  sel.innerHTML = "";
-  const names = Object.keys(pls);
-  if (!names.length) {
-    const opt = document.createElement('option');
-    opt.value = "";
-    opt.textContent = "No playlists";
-    sel.appendChild(opt);
-    return;
+  document.getElementById('envSelect').addEventListener('change', e => applyEnvBackground(e.target.value));
+  document.getElementById('shuffleWallpaper').addEventListener('click', () => applyEnvBackground(envSelect.value));
+
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = cur === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+
+  /* ---------------- TILE MENUS ---------------- */
+  function closeAllMenus(){
+    document.querySelectorAll('.tile-menu.open').forEach(menu => menu.classList.remove('open'));
   }
-  names.forEach(n => {
-    const opt = document.createElement('option');
-    opt.value = n;
-    opt.textContent = n;
-    sel.appendChild(opt);
+
+  document.querySelectorAll('.dots-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const menu = btn.nextElementSibling;
+      const isOpen = menu.classList.contains('open');
+      closeAllMenus();
+      if (!isOpen) {
+        menu.classList.add('open');
+        const firstBtn = menu.querySelector('button');
+        if (firstBtn) firstBtn.focus();
+      }
+    });
   });
-  renderPlaylist();
-}
 
-function renderPlaylist() {
-  const pls = getPlaylists();
-  const name = document.getElementById('playlistSelect').value;
-  const list = document.getElementById('playlistTracks');
-  list.innerHTML = "";
-  if (!name || !pls[name]) return;
-  pls[name].forEach((id, i) => {
-    const row = document.createElement('div');
-    row.className = 'row draggable';
-    row.draggable = true;
-    row.dataset.index = i;
-    row.innerHTML = `
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
-      <button class="btn" onclick="playTrack('${name}',${i})">Play</button>
-      <button class="btn secondary" onclick="removeTrack('${name}',${i})">Remove</button>
-    `;
-    list.appendChild(row);
+  document.addEventListener('click', e => {
+    document.querySelectorAll('.tile-menu.open').forEach(menu => {
+      const trigger = menu.previousElementSibling;
+      if (!menu.contains(e.target) && (!trigger || !trigger.contains(e.target))) {
+        menu.classList.remove('open');
+      }
+    });
   });
-  enableReorderDnD();
-}
 
-function addTrack() {
-  const name = document.getElementById('playlistSelect').value;
-  const raw = document.getElementById('musicUrl').value.trim();
-  if (!name || !raw) return;
-  const id = extractId(raw);
-  if (!id) { alert("Invalid YouTube link"); return; }
-  const pls = getPlaylists();
-  if (!pls[name]) pls[name] = [];
-  pls[name].push(id);
-  setPlaylists(pls);
-  document.getElementById('musicUrl').value = "";
-  renderPlaylist();
-}
+  document.addEventListener('keydown', e => { if (e.key === "Escape") closeAllMenus(); });
+  </script>
 
-function removeTrack(name, i) {
-  const pls = getPlaylists();
-  if (!pls[name]) return;
-  pls[name].splice(i, 1);
-  setPlaylists(pls);
-  renderPlaylist();
-}
+  <!-- Part 3: Music Logic -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+  /* ---------------- MUSIC ---------------- */
+  let ytPlayer, currentPlaylist = [], currentIndex = 0;
+  window.playerReady = false;
 
-function playPlaylist() {
-  if (!window.playerReady || !ytPlayer) { alert("Player not ready yet"); return; }
-  const name = document.getElementById('playlistSelect').value;
-  const pls = getPlaylists();
-  if (!name || !pls[name] || !pls[name].length) return;
-  currentPlaylist = pls[name];
-  currentIndex = 0;
-  ytPlayer.loadVideoById(currentPlaylist[0]);
-}
-
-function playTrack(name, i) {
-  if (!window.playerReady || !ytPlayer) { alert("Player not ready yet"); return; }
-  const pls = getPlaylists();
-  currentPlaylist = pls[name] || [];
-  currentIndex = i;
-  ytPlayer.loadVideoById(currentPlaylist[i]);
-}
-
-function shufflePlay() {
-  const name = document.getElementById('playlistSelect').value;
-  const pls = getPlaylists();
-  if (!name || !pls[name] || !pls[name].length) return;
-  currentPlaylist = [...pls[name]];
-  for (let i = currentPlaylist.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [currentPlaylist[i], currentPlaylist[j]] = [currentPlaylist[j], currentPlaylist[i]];
+  function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('musicPlayer', {
+      height: '300',
+      width: '100%',
+      videoId: '',
+      playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1 },
+      events: {
+        'onReady': () => { window.playerReady = true; },
+        'onStateChange': onPlayerStateChange
+      }
+    });
   }
-  currentIndex = 0;
-  if (window.playerReady) ytPlayer.loadVideoById(currentPlaylist[0]);
-}
 
-/* ---------------- REORDER ---------------- */
-function enableTrackReorder() {
-  const rows = document.querySelectorAll('#playlistTracks .draggable');
-  rows.forEach(row => {
-    row.addEventListener('dragstart', trackDragStart);
-    row.addEventListener('dragover', trackDragOver);
-    row.addEventListener('drop', trackDrop);
-    row.addEventListener('dragend', trackDragEnd);
-  });
-}
+  function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+      currentIndex++;
+      if (currentIndex >= currentPlaylist.length) currentIndex = 0;
+      if (currentPlaylist.length) ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
+    }
+  }
 
-let dragTrack = null;
+  function extractId(url) {
+    try {
+      const u = new URL(url);
+      if (u.hostname.includes("youtu.be")) return u.pathname.split("/")[1];
+      if (u.hostname.includes("youtube.com")) {
+        if (u.searchParams.has("v")) return u.searchParams.get("v");
+        if (u.pathname.includes("/embed/")) return u.pathname.split("/embed/")[1].split(/[?&]/)[0];
+      }
+    } catch (e) {
+      if (/^[\w-]{11}$/.test(url)) return url;
+    }
+    return "";
+  }
 
-function trackDragStart(e) {
-  dragTrack = this;
-  e.dataTransfer.effectAllowed = 'move';
-  this.style.opacity = '0.5';
-}
+  function getPlaylists() { return JSON.parse(localStorage.getItem('playlists') || '{}'); }
+  function setPlaylists(obj) { localStorage.setItem('playlists', JSON.stringify(obj)); }
 
-function trackDragOver(e) {
-  e.preventDefault();
-  this.style.borderTop = '2px solid var(--accent)';
-}
-
-function trackDrop(e) {
-  e.stopPropagation();
-  if (dragTrack !== this) {
-    const name = document.getElementById('playlistSelect').value;
+  function createPlaylist() {
+    const name = document.getElementById('playlistName').value.trim();
+    if (!name) return;
     const pls = getPlaylists();
-    const arr = pls[name];
-    const from = parseInt(dragTrack.dataset.index);
-    const to = parseInt(this.dataset.index);
-    const moved = arr.splice(from, 1)[0];
-    arr.splice(to, 0, moved);
+    if (!pls[name]) pls[name] = [];
+    setPlaylists(pls);
+    document.getElementById('playlistName').value = "";
+    renderPlaylists();
+  }
+
+  function deletePlaylist() {
+    const name = document.getElementById('playlistSelect').value;
+    if (!name) return;
+    const pls = getPlaylists();
+    delete pls[name];
+    setPlaylists(pls);
+    renderPlaylists();
+    document.getElementById('playlistTracks').innerHTML = "";
+  }
+
+  function renderPlaylists() {
+    const pls = getPlaylists();
+    const sel = document.getElementById('playlistSelect');
+    sel.innerHTML = "";
+    const names = Object.keys(pls);
+    if (!names.length) {
+      const opt = document.createElement('option');
+      opt.value = "";
+      opt.textContent = "No playlists";
+      sel.appendChild(opt);
+      return;
+    }
+    names.forEach(n => {
+      const opt = document.createElement('option');
+      opt.value = n;
+      opt.textContent = n;
+      sel.appendChild(opt);
+    });
+    renderPlaylist();
+  }
+
+  function renderPlaylist() {
+    const pls = getPlaylists();
+    const name = document.getElementById('playlistSelect').value;
+    const list = document.getElementById('playlistTracks');
+    list.innerHTML = "";
+    if (!name || !pls[name]) return;
+    pls[name].forEach((id, i) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
+        <button class="btn" onclick="playTrack('${name}',${i})">Play</button>
+        <button class="btn secondary" onclick="removeTrack('${name}',${i})">Remove</button>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  function addTrack() {
+    const name = document.getElementById('playlistSelect').value;
+    const raw = document.getElementById('musicUrl').value.trim();
+    if (!name || !raw) return;
+    const id = extractId(raw);
+    if (!id) { alert("Invalid YouTube link"); return; }
+    const pls = getPlaylists();
+    if (!pls[name]) pls[name] = [];
+    pls[name].push(id);
+    setPlaylists(pls);
+    document.getElementById('musicUrl').value = "";
+    renderPlaylist();
+  }
+
+  function removeTrack(name, i) {
+    const pls = getPlaylists();
+    if (!pls[name]) return;
+    pls[name].splice(i, 1);
     setPlaylists(pls);
     renderPlaylist();
   }
-}
 
-function trackDragEnd() {
-  this.style.opacity = '1';
-  document.querySelectorAll('#playlistTracks .draggable').forEach(r => r.style.borderTop = 'none');
-}
-
-function disableTrackReorder() {
-  const rows = document.querySelectorAll('#playlistTracks .draggable');
-  rows.forEach(row => {
-    row.removeEventListener('dragstart', trackDragStart);
-    row.removeEventListener('dragover', trackDragOver);
-    row.removeEventListener('drop', trackDrop);
-    row.removeEventListener('dragend', trackDragEnd);
-    row.style.borderTop = 'none';
-  });
-}
-</script><script>
-/* ---------------- WRITING ---------------- */
-function renderWriterMode(){
-  const mode = document.getElementById('writerMode').value;
-  const area = document.getElementById('writerArea');
-  area.innerHTML = "";
-
-  // Toggle Brainstorm and Journal visibility
-  document.getElementById('brainstormVisible').style.display = (mode === "brainstorm") ? "block" : "none";
-  document.getElementById('journalVisible').style.display = (mode === "journal") ? "block" : "none";
-
-  if (mode === "prompts") {
-    const prompts = [
-      "Write about a moment that changed your perspective.",
-      "Describe a place that feels like home.",
-      "Invent a character who hides a secret.",
-      "What does silence mean to you?",
-      "Write a letter to your future self."
-    ];
-    const div = document.createElement('div');
-    div.className = "stack";
-    prompts.forEach(p => {
-      const btn = document.createElement('button');
-      btn.className = "btn secondary";
-      btn.textContent = p;
-      btn.onclick = () => {
-        const ta = document.createElement('textarea');
-        ta.placeholder = p;
-        area.appendChild(ta);
-      };
-      div.appendChild(btn);
-    });
-    area.appendChild(div);
+  function playPlaylist() {
+    if (!window.playerReady || !ytPlayer) { alert("Player not ready yet"); return; }
+    const name = document.getElementById('playlistSelect').value;
+    const pls = getPlaylists();
+    if (!name || !pls[name] || !pls[name].length) return;
+    currentPlaylist = pls[name];
+    currentIndex = 0;
+    ytPlayer.loadVideoById(currentPlaylist[0]);
   }
 
-  if (mode === "todo") {
-    const list = JSON.parse(localStorage.getItem('todoList') || '[]');
-    const input = document.createElement('input');
-    input.className = "input";
-    input.placeholder = "Add task";
-    const addBtn = document.createElement('button');
-    addBtn.className = "btn";
-    addBtn.textContent = "Add";
-    addBtn.onclick = () => {
-      if (input.value.trim()) {
-        list.push(input.value.trim());
-        localStorage.setItem('todoList', JSON.stringify(list));
-        renderWriterMode();
-      }
-    };
-    area.appendChild(input);
-    area.appendChild(addBtn);
-    list.forEach((task, i) => {
+  function playTrack(name, i) {
+    if (!window.playerReady || !ytPlayer) { alert("Player not ready yet"); return; }
+    const pls = getPlaylists();
+    currentPlaylist = pls[name] || [];
+    currentIndex = i;
+    ytPlayer.loadVideoById(currentPlaylist[i]);
+  }
+
+  function shufflePlay() {
+    const name = document.getElementById('playlistSelect').value;
+    const pls = getPlaylists();
+    if (!name || !pls[name] || !pls[name].length) return;
+    currentPlaylist = [...pls[name]];
+    for (let i = currentPlaylist.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [currentPlaylist[i], currentPlaylist[j]] = [currentPlaylist[j], currentPlaylist[i]];
+    }
+    currentIndex = 0;
+    if (window.playerReady) ytPlayer.loadVideoById(currentPlaylist[0]);
+  }
+
+  // No-op stubs to keep buttons functional without drag & drop
+  function enableTrackReorder() {}
+  function disableTrackReorder() {}
+  </script>
+
+  <!-- Part 4: Writing Logic -->
+  <script>
+  /* ---------------- WRITING ---------------- */
+  function renderWriterMode(){
+    const mode = document.getElementById('writerMode').value;
+    const area = document.getElementById('writerArea');
+    area.innerHTML = "";
+
+    document.getElementById('brainstormVisible').style.display = (mode === "brainstorm") ? "block" : "none";
+    document.getElementById('journalVisible').style.display = (mode === "journal") ? "block" : "none";
+
+    if (mode === "prompts") {
+      const prompts = [
+        "Write about a moment that changed your perspective.",
+        "Describe a place that feels like home.",
+        "Invent a character who hides a secret.",
+        "What does silence mean to you?",
+        "Write a letter to your future self."
+      ];
+      const div = document.createElement('div');
+      div.className = "stack";
+      prompts.forEach(p => {
+        const btn = document.createElement('button');
+        btn.className = "btn secondary";
+        btn.textContent = p;
+        btn.onclick = () => {
+          const ta = document.createElement('textarea');
+          ta.placeholder = p;
+          area.appendChild(ta);
+        };
+        div.appendChild(btn);
+      });
+      area.appendChild(div);
+    }
+
+    if (mode === "todo") {
+      const list = JSON.parse(localStorage.getItem('todoList') || '[]');
+      const input = document.createElement('input');
+      input.className = "input";
+      input.placeholder = "Add task";
+      const addBtn = document.createElement('button');
+      addBtn.className = "btn";
+      addBtn.textContent = "Add";
+      addBtn.onclick = () => {
+        if (input.value.trim()) {
+          list.push(input.value.trim());
+          localStorage.setItem('todoList', JSON.stringify(list));
+          renderWriterMode();
+        }
+      };
+      area.appendChild(input);
+      area.appendChild(addBtn);
+      list.forEach((task, i) => {
+        const row = document.createElement('div');
+        row.className = "row";
+        row.innerHTML = `<span style="flex:1;">${task}</span>`;
+        const del = document.createElement('button');
+        del.className = "btn secondary";
+        del.textContent = "✕";
+        del.onclick = () => {
+          list.splice(i, 1);
+          localStorage.setItem('todoList', JSON.stringify(list));
+          renderWriterMode();
+        };
+        row.appendChild(del);
+        area.appendChild(row);
+      });
+    }
+
+    if (mode === "free") {
+      const ta = document.createElement('textarea');
+      ta.placeholder = "Start writing...";
+      ta.value = localStorage.getItem('freeDraft') || "";
+      ta.oninput = () => { localStorage.setItem('freeDraft', ta.value); };
+      area.appendChild(ta);
+    }
+  }
+
+  /* ---------------- BRAINSTORM ---------------- */
+  function generateIdea(){
+    const ideas = [
+      "Design a tool that solves a tiny but annoying problem.",
+      "Invent a productivity ritual for creative people.",
+      "Imagine a dashboard that adapts to your mood.",
+      "Create a writing prompt generator with personality.",
+      "Sketch a feature that blends music with focus."
+    ];
+    const idea = ideas[Math.floor(Math.random() * ideas.length)];
+    document.getElementById('ideaText').textContent = idea;
+  }
+  function clearIdeas(){
+    document.getElementById('ideaText').textContent = "";
+    document.getElementById('brainstormDraft').value = "";
+  }
+
+  /* ---------------- JOURNAL ---------------- */
+  function saveJournal(){
+    const text = document.getElementById('journalText').value.trim();
+    if (!text) return;
+    const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+    const date = new Date().toLocaleDateString();
+    entries.unshift({ date, text });
+    localStorage.setItem('journalEntries', JSON.stringify(entries));
+    document.getElementById('journalText').value = "";
+    renderJournalEntries();
+  }
+  function renderJournalEntries(){
+    const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+    const list = document.getElementById('journalEntries');
+    list.innerHTML = "";
+    entries.forEach((entry, i) => {
+      const div = document.createElement('div');
+      div.className = "stack";
+      div.innerHTML = `<strong>${entry.date}</strong><p>${entry.text}</p>`;
+      const del = document.createElement('button');
+      del.className = "btn secondary";
+      del.textContent = "Delete";
+      del.onclick = () => {
+        entries.splice(i, 1);
+        localStorage.setItem('journalEntries', JSON.stringify(entries));
+        renderJournalEntries();
+      };
+      div.appendChild(del);
+      list.appendChild(div);
+    });
+  }
+  function exportJournal(){
+    const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+    let text = entries.map(e => `${e.date}\n${e.text}\n\n`).join("");
+    const blob = new Blob([text], { type: "text/plain" });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "journal.txt";
+    link.click();
+  }
+  function exportJournalPrintable(){
+    const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+    let html = "<html><head><title>Journal</title></head><body>";
+    entries.forEach(e => { html += `<h3>${e.date}</h3><p>${e.text}</p><hr/>`; });
+    html += "</body></html>";
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.print();
+  }
+  </script>
+
+  <!-- Part 5: Habits + Dock -->
+  <script>
+  /* ---------------- HABITS ---------------- */
+  function addHabit(){
+    const input = document.getElementById('habitInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const habits = JSON.parse(localStorage.getItem('habitList') || '[]');
+    habits.push(text);
+    localStorage.setItem('habitList', JSON.stringify(habits));
+    input.value = "";
+    renderHabits();
+  }
+
+  function renderHabits(){
+    const list = document.getElementById('habitList');
+    list.innerHTML = "";
+    const habits = JSON.parse(localStorage.getItem('habitList') || '[]');
+    habits.forEach((habit, i) => {
       const row = document.createElement('div');
       row.className = "row";
-      row.innerHTML = `<span style="flex:1;">${task}</span>`;
+      row.innerHTML = `<span style="flex:1;">${habit}</span>`;
       const del = document.createElement('button');
       del.className = "btn secondary";
       del.textContent = "✕";
       del.onclick = () => {
-        list.splice(i, 1);
-        localStorage.setItem('todoList', JSON.stringify(list));
-        renderWriterMode();
+        habits.splice(i, 1);
+        localStorage.setItem('habitList', JSON.stringify(habits));
+        renderHabits();
       };
       row.appendChild(del);
-      area.appendChild(row);
+      list.appendChild(row);
     });
   }
 
-  if (mode === "free") {
-    const ta = document.createElement('textarea');
-    ta.placeholder = "Start writing...";
-    ta.value = localStorage.getItem('freeDraft') || "";
-    ta.oninput = () => {
-      localStorage.setItem('freeDraft', ta.value);
+  /* ---------------- DOCKING ---------------- */
+  function shrinkTile(id){
+    const tile = document.getElementById(id);
+    if (!tile) return;
+    tile.style.display = "none";
+
+    const clone = document.createElement('div');
+    clone.className = "card";
+    clone.innerHTML = `<h4>${id.charAt(0).toUpperCase() + id.slice(1)}</h4>`;
+
+    const restoreBtn = document.createElement('button');
+    restoreBtn.className = "btn";
+    restoreBtn.textContent = "Restore";
+    restoreBtn.onclick = () => {
+      tile.style.display = "";
+      clone.remove();
     };
-    area.appendChild(ta);
+
+    clone.appendChild(restoreBtn);
+    document.getElementById('dockArea').appendChild(clone);
   }
-}
+  </script>
 
-/* ---------------- BRAINSTORM ---------------- */
-function generateIdea(){
-  const ideas = [
-    "Design a tool that solves a tiny but annoying problem.",
-    "Invent a productivity ritual for creative people.",
-    "Imagine a dashboard that adapts to your mood.",
-    "Create a writing prompt generator with personality.",
-    "Sketch a feature that blends music with focus."
-  ];
-  const idea = ideas[Math.floor(Math.random() * ideas.length)];
-  document.getElementById('ideaText').textContent = idea;
-}
-function clearIdeas(){
-  document.getElementById('ideaText').textContent = "";
-  document.getElementById('brainstormDraft').value = "";
-}
+  <!-- Part 6: Clock -->
+  <script>
+  /* ---------------- CLOCK ---------------- */
+  let timerInterval;
+  let timeLeft = 0;
+  let running = false;
+  let mode = "pomodoro";
+  let pomodoroCount = 0;
 
-/* ---------------- JOURNAL ---------------- */
-function saveJournal(){
-  const text = document.getElementById('journalText').value.trim();
-  if (!text) return;
-  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-  const date = new Date().toLocaleDateString();
-  entries.unshift({ date, text });
-  localStorage.setItem('journalEntries', JSON.stringify(entries));
-  document.getElementById('journalText').value = "";
-  renderJournalEntries();
-}
-function renderJournalEntries(){
-  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-  const list = document.getElementById('journalEntries');
-  list.innerHTML = "";
-  entries.forEach((entry, i) => {
-    const div = document.createElement('div');
-    div.className = "stack";
-    div.innerHTML = `<strong>${entry.date}</strong><p>${entry.text}</p>`;
-    const del = document.createElement('button');
-    del.className = "btn secondary";
-    del.textContent = "Delete";
-    del.onclick = () => {
-      entries.splice(i, 1);
-      localStorage.setItem('journalEntries', JSON.stringify(entries));
-      renderJournalEntries();
-    };
-    div.appendChild(del);
-    list.appendChild(div);
-  });
-}
-function exportJournal(){
-  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-  let text = entries.map(e => `${e.date}\n${e.text}\n\n`).join("");
-  const blob = new Blob([text], { type: "text/plain" });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = "journal.txt";
-  link.click();
-}
-function exportJournalPrintable(){
-  const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-  let html = "<html><head><title>Journal</title></head><body>";
-  entries.forEach(e => {
-    html += `<h3>${e.date}</h3><p>${e.text}</p><hr/>`;
-  });
-  html += "</body></html>";
-  const win = window.open("", "_blank");
-  win.document.write(html);
-  win.document.close();
-  win.print();
-}
-</script><script>
-/* ---------------- HABITS ---------------- */
-function addHabit(){
-  const input = document.getElementById('habitInput');
-  const text = input.value.trim();
-  if (!text) return;
-  const habits = JSON.parse(localStorage.getItem('habitList') || '[]');
-  habits.push(text);
-  localStorage.setItem('habitList', JSON.stringify(habits));
-  input.value = "";
-  renderHabits();
-}
-
-function renderHabits(){
-  const list = document.getElementById('habitList');
-  list.innerHTML = "";
-  const habits = JSON.parse(localStorage.getItem('habitList') || '[]');
-  habits.forEach((habit, i) => {
-    const row = document.createElement('div');
-    row.className = "row";
-    row.innerHTML = `<span style="flex:1;">${habit}</span>`;
-    const del = document.createElement('button');
-    del.className = "btn secondary";
-    del.textContent = "✕";
-    del.onclick = () => {
-      habits.splice(i, 1);
-      localStorage.setItem('habitList', JSON.stringify(habits));
-      renderHabits();
-    };
-    row.appendChild(del);
-    list.appendChild(row);
-  });
-}
-
-/* ---------------- DOCKING ---------------- */
-function shrinkTile(id){
-  const tile = document.getElementById(id);
-  if (!tile) return;
-  tile.style.display = "none";
-
-  // Create dock clone
-  const clone = document.createElement('div');
-  clone.className = "card";
-  clone.innerHTML = `<h4>${id.charAt(0).toUpperCase() + id.slice(1)}</h4>`;
-
-  const restoreBtn = document.createElement('button');
-  restoreBtn.className = "btn";
-  restoreBtn.textContent = "Restore";
-  restoreBtn.onclick = () => {
-    tile.style.display = "";
-    clone.remove();
-  };
-
-  clone.appendChild(restoreBtn);
-  document.getElementById('dockArea').appendChild(clone);
-}
-</script><script>
-/* ---------------- CLOCK ---------------- */
-let timerInterval;
-let timeLeft = 0;
-let running = false;
-let mode = "pomodoro";
-let pomodoroCount = 0;
-
-function switchMode(){
-  mode = document.getElementById('modeSelect').value;
-  resetTimer();
-}
-
-function startTimer(){
-  if(running) return;
-  running = true;
-  if(mode === "pomodoro"){
-    timeLeft = parseInt(document.getElementById('pomodoroMinutes').value) * 60;
-  } else if(mode === "countdown"){
-    timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
-  } else if(mode === "custom"){
-    const mm = parseInt(document.getElementById('customMM').value) || 0;
-    const ss = parseInt(document.getElementById('customSS').value) || 0;
-    timeLeft = mm * 60 + ss;
-  } else if(mode === "stopwatch"){
-    timeLeft = 0;
+  function switchMode(){
+    mode = document.getElementById('modeSelect').value;
+    resetTimer();
   }
-  updateDisplay();
-  timerInterval = setInterval(tick, 1000);
-}
 
-function tick(){
-  if(mode === "stopwatch"){
-    timeLeft++;
+  function startTimer(){
+    if(running) return;
+    running = true;
+    if(mode === "pomodoro"){
+      timeLeft = parseInt(document.getElementById('pomodoroMinutes').value) * 60;
+    } else if(mode === "countdown"){
+      timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
+    } else if(mode === "custom"){
+      const mm = parseInt(document.getElementById('customMM').value) || 0;
+      const ss = parseInt(document.getElementById('customSS').value) || 0;
+      timeLeft = mm * 60 + ss;
+    } else if(mode === "stopwatch"){
+      timeLeft = 0;
+    }
     updateDisplay();
-  } else {
-    if(timeLeft > 0){
-      timeLeft--;
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  function tick(){
+    if(mode === "stopwatch"){
+      timeLeft++;
       updateDisplay();
-      if(timeLeft === 0){
-        clearInterval(timerInterval);
-        running = false;
-        if(mode === "pomodoro"){
-          pomodoroCount++;
-          document.getElementById('stats').textContent = "Completed Pomodoros: " + pomodoroCount;
+    } else {
+      if(timeLeft > 0){
+        timeLeft--;
+        updateDisplay();
+        if(timeLeft === 0){
+          clearInterval(timerInterval);
+          running = false;
+          if(mode === "pomodoro"){
+            pomodoroCount++;
+            document.getElementById('stats').textContent = "Completed Pomodoros: " + pomodoroCount;
+          }
+          alert("Time's up!");
         }
-        alert("Time's up!");
       }
     }
   }
-}
 
-function pauseTimer(){
-  clearInterval(timerInterval);
-  running = false;
-}
-
-function resetTimer(){
-  clearInterval(timerInterval);
-  running = false;
-  if(mode === "pomodoro"){
-    timeLeft = parseInt(document.getElementById('pomodoroMinutes').value) * 60;
-  } else if(mode === "countdown"){
-    timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
-  } else if(mode === "custom"){
-    const mm = parseInt(document.getElementById('customMM').value) || 0;
-    const ss = parseInt(document.getElementById('customSS').value) || 0;
-    timeLeft = mm * 60 + ss;
-  } else if(mode === "stopwatch"){
-    timeLeft = 0;
-  }
-  updateDisplay();
-}
-
-function updateDisplay(){
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  document.getElementById('timeDisplay').textContent =
-    String(minutes).padStart(2,'0') + ":" + String(seconds).padStart(2,'0');
-}
-</script><script>
-/* ---------------- INITIALIZATION ---------------- */
-document.addEventListener('DOMContentLoaded', () => {
-  // Restore theme
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
-
-  // Restore wallpaper
-  const lastWallpaper = localStorage.getItem('lastWallpaper');
-  if (lastWallpaper) setBackground(lastWallpaper);
-  const savedEnv = localStorage.getItem('env') || 'default';
-  document.getElementById('envSelect').value = savedEnv;
-  applyEnvBackground(savedEnv);
-  loadCustomWallpapers();
-
-  // Restore writing drafts
-  renderWriterMode();
-  renderJournalEntries();
-
-  // Restore habits
-  renderHabits();
-
-  // Restore playlists
-  renderPlaylists();
-
-  // Restore clock defaults
-  resetTimer();
-
-  // Apply saved layout
-  const savedLayout = localStorage.getItem('layout') || 'balanced';
-  document.getElementById('layoutSelect').value = savedLayout;
-  applyLayout(savedLayout);
-});
-
-/* ---------------- LAYOUT PRESETS ---------------- */
-function applyLayout(mode){
-  const grid = document.getElementById('grid');
-  const tiles = grid.querySelectorAll('.tile');
-  tiles.forEach(tile => tile.style.display = ""); // reset all visible
-
-  if(mode === "focus"){
-    document.getElementById('music').style.display = "none";
-    document.getElementById('writing').style.display = "none";
-    document.getElementById('habits').style.display = "none";
-  }
-  if(mode === "writing"){
-    document.getElementById('music').style.display = "none";
-    document.getElementById('habits').style.display = "none";
-    document.getElementById('clock').style.display = "none";
-  }
-  if(mode === "music"){
-    document.getElementById('writing').style.display = "none";
-    document.getElementById('habits').style.display = "none";
-    document.getElementById('clock').style.display = "none";
+  function pauseTimer(){
+    clearInterval(timerInterval);
+    running = false;
   }
 
-  document.getElementById('layoutNote').textContent = "Layout: " + mode.charAt(0).toUpperCase() + mode.slice(1);
-  localStorage.setItem('layout', mode);
-}
-
-document.getElementById('applyLayout').addEventListener('click', () => {
-  const mode = document.getElementById('layoutSelect').value;
-  applyLayout(mode);
-});
-</script><script>
-/* ---------------- AUTOSAVE & SAFETY ---------------- */
-
-// --- Writing: Free Draft Autosave ---
-function initFreeDraftAutosave(){
-  const ta = document.querySelector('#writerArea textarea');
-  if(ta){
-    ta.value = localStorage.getItem('freeDraft') || "";
-    ta.addEventListener('input', () => {
-      localStorage.setItem('freeDraft', ta.value);
-    });
+  function resetTimer(){
+    clearInterval(timerInterval);
+    running = false;
+    if(mode === "pomodoro"){
+      timeLeft = parseInt(document.getElementById('pomodoroMinutes').value) * 60;
+    } else if(mode === "countdown"){
+      timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
+    } else if(mode === "custom"){
+      const mm = parseInt(document.getElementById('customMM').value) || 0;
+      const ss = parseInt(document.getElementById('customSS').value) || 0;
+      timeLeft = mm * 60 + ss;
+    } else if(mode === "stopwatch"){
+      timeLeft = 0;
+    }
+    updateDisplay();
   }
-}
 
-// --- Journal Autosave (draft before saving entry) ---
-function initJournalAutosave(){
-  const jt = document.getElementById('journalText');
-  if(jt){
-    jt.value = localStorage.getItem('journalDraft') || "";
-    jt.addEventListener('input', () => {
-      localStorage.setItem('journalDraft', jt.value);
-    });
+  function updateDisplay(){
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('timeDisplay').textContent =
+      String(minutes).padStart(2,'0') + ":" + String(seconds).padStart(2,'0');
   }
-}
+  </script>
 
-// --- Restore Journal Draft on load ---
-function restoreJournalDraft(){
-  const jt = document.getElementById('journalText');
-  if(jt){
-    jt.value = localStorage.getItem('journalDraft') || "";
-  }
-}
+  <!-- Part 8: Initialization + Layout presets -->
+  <script>
+  /* ---------------- INITIALIZATION ---------------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
 
-// --- Clear Journal Draft after saving ---
-const originalSaveJournal = saveJournal;
-saveJournal = function(){
-  originalSaveJournal();
-  localStorage.removeItem('journalDraft');
-};
+    const lastWallpaper = localStorage.getItem('lastWallpaper');
+    if (lastWallpaper) setBackground(lastWallpaper);
+    const savedEnv = localStorage.getItem('env') || 'default';
+    document.getElementById('envSelect').value = savedEnv;
+    applyEnvBackground(savedEnv);
+    loadCustomWallpapers();
 
-// --- Habits Autosave ---
-function initHabitsAutosave(){
-  renderHabits(); // already pulls from localStorage
-}
-
-// --- Safety: Versioning for Journal Entries ---
-function backupJournalEntries(){
-  const entries = localStorage.getItem('journalEntries');
-  if(entries){
-    const backups = JSON.parse(localStorage.getItem('journalBackups') || '[]');
-    backups.unshift({ ts: Date.now(), data: entries });
-    if(backups.length > 5) backups.pop(); // keep last 5 backups
-    localStorage.setItem('journalBackups', JSON.stringify(backups));
-  }
-}
-
-// --- Restore from Backup (manual trigger) ---
-function restoreJournalBackup(index=0){
-  const backups = JSON.parse(localStorage.getItem('journalBackups') || '[]');
-  if(backups[index]){
-    localStorage.setItem('journalEntries', backups[index].data);
+    renderWriterMode();
     renderJournalEntries();
-    alert("Journal restored from backup #" + (index+1));
+
+    renderHabits();
+
+    renderPlaylists();
+
+    resetTimer();
+
+    const savedLayout = localStorage.getItem('layout') || 'balanced';
+    document.getElementById('layoutSelect').value = savedLayout;
+    applyLayout(savedLayout);
+  });
+
+  /* ---------------- LAYOUT PRESETS ---------------- */
+  function applyLayout(mode){
+    const grid = document.getElementById('grid');
+    const tiles = grid.querySelectorAll('.tile');
+    tiles.forEach(tile => tile.style.display = "");
+
+    if(mode === "focus"){
+      document.getElementById('music').style.display = "none";
+      document.getElementById('writing').style.display = "none";
+      document.getElementById('habits').style.display = "none";
+    }
+    if(mode === "writing"){
+      document.getElementById('music').style.display = "none";
+      document.getElementById('habits').style.display = "none";
+      document.getElementById('clock').style.display = "none";
+    }
+    if(mode === "music"){
+      document.getElementById('writing').style.display = "none";
+      document.getElementById('habits').style.display = "none";
+      document.getElementById('clock').style.display = "none";
+    }
+
+    document.getElementById('layoutNote').textContent = "Layout: " + mode.charAt(0).toUpperCase() + mode.slice(1);
+    localStorage.setItem('layout', mode);
   }
-}
 
-// --- Initialize Autosave on DOM load ---
-document.addEventListener('DOMContentLoaded', () => {
-  initFreeDraftAutosave();
-  initJournalAutosave();
-  restoreJournalDraft();
-  initHabitsAutosave();
+  document.getElementById('applyLayout').addEventListener('click', () => {
+    const mode = document.getElementById('layoutSelect').value;
+    applyLayout(mode);
+  });
+  </script>
 
-  // Backup journal every 60s
-  setInterval(backupJournalEntries, 60000);
-});
-</script><script>
-/* ---------------- UI POLISH & ACCESSIBILITY ---------------- */
+  <!-- Part 9: Autosave & Safety -->
+  <script>
+  /* ---------------- AUTOSAVE & SAFETY ---------------- */
 
-// Add keyboard support for ⋯ menus
-document.querySelectorAll('.dots-btn').forEach(btn => {
-  btn.setAttribute('aria-haspopup', 'true');
-  btn.setAttribute('aria-expanded', 'false');
-  btn.addEventListener('keydown', e => {
-    if(e.key === "Enter" || e.key === " "){
+  function initFreeDraftAutosave(){
+    const ta = document.querySelector('#writerArea textarea');
+    if(ta){
+      ta.value = localStorage.getItem('freeDraft') || "";
+      ta.addEventListener('input', () => {
+        localStorage.setItem('freeDraft', ta.value);
+      });
+    }
+  }
+
+  function initJournalAutosave(){
+    const jt = document.getElementById('journalText');
+    if(jt){
+      jt.value = localStorage.getItem('journalDraft') || "";
+      jt.addEventListener('input', () => {
+        localStorage.setItem('journalDraft', jt.value);
+      });
+    }
+  }
+
+  function restoreJournalDraft(){
+    const jt = document.getElementById('journalText');
+    if(jt){
+      jt.value = localStorage.getItem('journalDraft') || "";
+    }
+  }
+
+  const originalSaveJournal = saveJournal;
+  saveJournal = function(){
+    originalSaveJournal();
+    localStorage.removeItem('journalDraft');
+  };
+
+  function initHabitsAutosave(){
+    renderHabits();
+  }
+
+  function backupJournalEntries(){
+    const entries = localStorage.getItem('journalEntries');
+    if(entries){
+      const backups = JSON.parse(localStorage.getItem('journalBackups') || '[]');
+      backups.unshift({ ts: Date.now(), data: entries });
+      if(backups.length > 5) backups.pop();
+      localStorage.setItem('journalBackups', JSON.stringify(backups));
+    }
+  }
+
+  function restoreJournalBackup(index=0){
+    const backups = JSON.parse(localStorage.getItem('journalBackups') || '[]');
+    if(backups[index]){
+      localStorage.setItem('journalEntries', backups[index].data);
+      renderJournalEntries();
+      alert("Journal restored from backup #" + (index+1));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initFreeDraftAutosave();
+    initJournalAutosave();
+    restoreJournalDraft();
+    initHabitsAutosave();
+    setInterval(backupJournalEntries, 60000);
+  });
+  </script>
+
+  <!-- Part 10: UI polish & accessibility -->
+  <script>
+  /* ---------------- UI POLISH & ACCESSIBILITY ---------------- */
+  document.querySelectorAll('.dots-btn').forEach(btn => {
+    btn.setAttribute('aria-haspopup', 'true');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('keydown', e => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        btn.click();
+      }
+    });
+  });
+
+  function updateMenuAria(){
+    document.querySelectorAll('.dots-btn').forEach(btn => {
+      const menu = btn.nextElementSibling;
+      btn.setAttribute('aria-expanded', menu.classList.contains('open'));
+    });
+  }
+  document.addEventListener('click', updateMenuAria);
+  document.addEventListener('keydown', updateMenuAria);
+
+  const style = document.createElement('style');
+  style.textContent = `
+    button:focus, select:focus, input:focus, textarea:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  `;
+  document.head.appendChild(style);
+
+  document.getElementById('habitInput').addEventListener('keydown', e => {
+    if(e.key === "Enter"){
       e.preventDefault();
-      btn.click();
+      addHabit();
     }
   });
-});
 
-// Update aria-expanded when menu opens/closes
-function updateMenuAria(){
-  document.querySelectorAll('.dots-btn').forEach(btn => {
-    const menu = btn.nextElementSibling;
-    btn.setAttribute('aria-expanded', menu.classList.contains('open'));
-  });
-}
-document.addEventListener('click', updateMenuAria);
-document.addEventListener('keydown', updateMenuAria);
-
-// Add focus outlines for accessibility
-const style = document.createElement('style');
-style.textContent = `
-  button:focus, select:focus, input:focus, textarea:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-`;
-document.head.appendChild(style);
-
-// Enter key to add habits quickly
-document.getElementById('habitInput').addEventListener('keydown', e => {
-  if(e.key === "Enter"){
-    e.preventDefault();
-    addHabit();
-  }
-});
-
-// Enter key to add to-do tasks
-document.addEventListener('keydown', e => {
-  if(e.target && e.target.placeholder === "Add task" && e.key === "Enter"){
-    e.preventDefault();
-    e.target.nextSibling.click(); // trigger Add button
-  }
-});
-
-// Enter key to create playlist
-document.getElementById('playlistName').addEventListener('keydown', e => {
-  if(e.key === "Enter"){
-    e.preventDefault();
-    createPlaylist();
-  }
-});
-
-// Enter key to add track
-document.getElementById('musicUrl').addEventListener('keydown', e => {
-  if(e.key === "Enter"){
-    e.preventDefault();
-    addTrack();
-  }
-});
-</script><script>
-/* ---------------- NOTIFICATIONS & FEEDBACK ---------------- */
-
-// Create notification container
-const notifContainer = document.createElement('div');
-notifContainer.style.position = 'fixed';
-notifContainer.style.bottom = '20px';
-notifContainer.style.right = '20px';
-notifContainer.style.display = 'flex';
-notifContainer.style.flexDirection = 'column';
-notifContainer.style.gap = '10px';
-notifContainer.style.zIndex = '9999';
-document.body.appendChild(notifContainer);
-
-function showNotification(message, type="info"){
-  const note = document.createElement('div');
-  note.textContent = message;
-  note.style.padding = "10px 16px";
-  note.style.borderRadius = "12px";
-  note.style.fontFamily = "Jura, sans-serif";
-  note.style.color = "#fff";
-  note.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-  note.style.opacity = "0";
-  note.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-  note.style.transform = "translateY(10px)";
-
-  if(type==="success") note.style.background = "var(--accent)";
-  else if(type==="error") note.style.background = "#b33";
-  else note.style.background = "var(--primary)";
-
-  notifContainer.appendChild(note);
-
-  // Animate in
-  requestAnimationFrame(()=>{
-    note.style.opacity = "1";
-    note.style.transform = "translateY(0)";
+  document.addEventListener('keydown', e => {
+    if(e.target && e.target.placeholder === "Add task" && e.key === "Enter"){
+      e.preventDefault();
+      const addBtn = e.target.nextSibling;
+      if (addBtn && addBtn.click) addBtn.click();
+    }
   });
 
-  // Auto remove
-  setTimeout(()=>{
+  document.getElementById('playlistName').addEventListener('keydown', e => {
+    if(e.key === "Enter"){
+      e.preventDefault();
+      createPlaylist();
+    }
+  });
+
+  document.getElementById('musicUrl').addEventListener('keydown', e => {
+    if(e.key === "Enter"){
+      e.preventDefault();
+      addTrack();
+    }
+  });
+  </script>
+
+  <!-- Part 11: Notifications & Feedback -->
+  <script>
+  /* ---------------- NOTIFICATIONS & FEEDBACK ---------------- */
+  const notifContainer = document.createElement('div');
+  notifContainer.style.position = 'fixed';
+  notifContainer.style.bottom = '20px';
+  notifContainer.style.right = '20px';
+  notifContainer.style.display = 'flex';
+  notifContainer.style.flexDirection = 'column';
+  notifContainer.style.gap = '10px';
+  notifContainer.style.zIndex = '9999';
+  document.body.appendChild(notifContainer);
+
+  function showNotification(message, type="info"){
+    const note = document.createElement('div');
+    note.textContent = message;
+    note.style.padding = "10px 16px";
+    note.style.borderRadius = "12px";
+    note.style.fontFamily = "Jura, sans-serif";
+    note.style.color = "#fff";
+    note.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
     note.style.opacity = "0";
+    note.style.transition = "opacity 0.3s ease, transform 0.3s ease";
     note.style.transform = "translateY(10px)";
-    setTimeout(()=> note.remove(), 300);
-  }, 2500);
-}
-
-/* --- Hook into existing actions for feedback --- */
-
-// Habits
-const originalAddHabit = addHabit;
-addHabit = function(){
-  originalAddHabit();
-  showNotification("Habit added ✅","success");
-};
-
-// Journal
-const originalSaveJournal = saveJournal;
-saveJournal = function(){
-  originalSaveJournal();
-  showNotification("Journal entry saved ✍️","success");
-};
-const originalExportJournal = exportJournal;
-exportJournal = function(){
-  originalExportJournal();
-  showNotification("Journal exported 📄","info");
-};
-const originalExportJournalPrintable = exportJournalPrintable;
-exportJournalPrintable = function(){
-  originalExportJournalPrintable();
-  showNotification("Printable journal opened 🖨️","info");
-};
-
-// Music
-const originalCreatePlaylist = createPlaylist;
-createPlaylist = function(){
-  originalCreatePlaylist();
-  showNotification("Playlist created 🎶","success");
-};
-const originalDeletePlaylist = deletePlaylist;
-deletePlaylist = function(){
-  originalDeletePlaylist();
-  showNotification("Playlist deleted 🗑️","error");
-};
-const originalAddTrack = addTrack;
-addTrack = function(){
-  originalAddTrack();
-  showNotification("Track added 🎵","success");
-};
-const originalRemoveTrack = removeTrack;
-removeTrack = function(name,i){
-  originalRemoveTrack(name,i);
-  showNotification("Track removed ❌","error");
-};
-
-// Wallpapers
-document.getElementById('shuffleWallpaper').addEventListener('click',()=>{
-  showNotification("Wallpaper shuffled 🖼️","info");
-});
-document.getElementById('wallpaperUpload').addEventListener('change',()=>{
-  showNotification("Wallpaper uploaded 🌄","success");
-});
-document.getElementById('clearCustomWallpapers').addEventListener('click',()=>{
-  showNotification("Custom wallpapers cleared 🗑️","error");
-});
-document.getElementById('deleteCustomWallpapers').addEventListener('click',()=>{
-  showNotification("Custom wallpapers deleted 🗑️","error");
-});
-
-// Clock
-const originalStartTimer = startTimer;
-startTimer = function(){
-  originalStartTimer();
-  showNotification("Timer started ⏱️","info");
-};
-const originalPauseTimer = pauseTimer;
-pauseTimer = function(){
-  originalPauseTimer();
-  showNotification("Timer paused ⏸️","info");
-};
-const originalResetTimer = resetTimer;
-resetTimer = function(){
-  originalResetTimer();
-  showNotification("Timer reset 🔄","info");
-};
-</script><script>
-/* ---------------- FINAL POLISH ---------------- */
-
-// Ensure safe JSON parsing
-function safeParse(key, fallback){
-  try {
-    return JSON.parse(localStorage.getItem(key)) || fallback;
-  } catch(e){
-    return fallback;
+    if(type==="success") note.style.background = "var(--accent)";
+    else if(type==="error") note.style.background = "#b33";
+    else note.style.background = "var(--primary)";
+    notifContainer.appendChild(note);
+    requestAnimationFrame(()=>{ note.style.opacity="1"; note.style.transform="translateY(0)"; });
+    setTimeout(()=>{ note.style.opacity="0"; note.style.transform="translateY(10px)"; setTimeout(()=> note.remove(),300); },2500);
   }
-}
 
-// Defensive wrappers for critical functions
-function safeRenderAll(){
-  try { renderWriterMode(); } catch(e){}
-  try { renderJournalEntries(); } catch(e){}
-  try { renderHabits(); } catch(e){}
-  try { renderPlaylists(); } catch(e){}
-  try { resetTimer(); } catch(e){}
-}
+  if(typeof addHabit === "function"){
+    const prev = addHabit;
+    addHabit = function(){ prev(); showNotification("Habit added ✅","success"); };
+  }
+  if(typeof saveJournal === "function"){
+    const prev = saveJournal;
+    saveJournal = function(){ prev(); showNotification("Journal entry saved ✍️","success"); };
+  }
+  if(typeof exportJournal === "function"){
+    const prev = exportJournal;
+    exportJournal = function(){ prev(); showNotification("Journal exported 📄","info"); };
+  }
+  if(typeof exportJournalPrintable === "function"){
+    const prev = exportJournalPrintable;
+    exportJournalPrintable = function(){ prev(); showNotification("Printable journal opened 🖨️","info"); };
+  }
+  if(typeof createPlaylist === "function"){
+    const prev = createPlaylist;
+    createPlaylist = function(){ prev(); showNotification("Playlist created 🎶","success"); };
+  }
+  if(typeof deletePlaylist === "function"){
+    const prev = deletePlaylist;
+    deletePlaylist = function(){ prev(); showNotification("Playlist deleted 🗑️","error"); };
+  }
+  if(typeof addTrack === "function"){
+    const prev = addTrack;
+    addTrack = function(){ prev(); showNotification("Track added 🎵","success"); };
+  }
+  if(typeof removeTrack === "function"){
+    const prev = removeTrack;
+    removeTrack = function(name,i){ prev(name,i); showNotification("Track removed ❌","error"); };
+  }
 
-// Default wallpaper if nothing set
-if(!localStorage.getItem('lastWallpaper')){
-  setBackground("https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg");
-}
+  document.getElementById('shuffleWallpaper').addEventListener('click',()=>{ showNotification("Wallpaper shuffled 🖼️","info"); });
+  document.getElementById('wallpaperUpload').addEventListener('change',()=>{ showNotification("Wallpaper uploaded 🌄","success"); });
+  document.getElementById('clearCustomWallpapers').addEventListener('click',()=>{ showNotification("Custom wallpapers cleared 🗑️","error"); });
+  document.getElementById('deleteCustomWallpapers').addEventListener('click',()=>{ showNotification("Custom wallpapers deleted 🗑️","error"); });
 
-// Ensure theme defaults
-if(!localStorage.getItem('theme')){
-  document.documentElement.setAttribute('data-theme','light');
-}
+  if(typeof startTimer === "function"){
+    const prev = startTimer;
+    startTimer = function(){ prev(); showNotification("Timer started ⏱️","info"); };
+  }
+  if(typeof pauseTimer === "function"){
+    const prev = pauseTimer;
+    pauseTimer = function(){ prev(); showNotification("Timer paused ⏸️","info"); };
+  }
+  if(typeof resetTimer === "function"){
+    const prev = resetTimer;
+    resetTimer = function(){ prev(); showNotification("Timer reset 🔄","info"); };
+  }
+  </script>
 
-// Final init after window load (ensures YouTube API, DOM, etc.)
-window.addEventListener('load', () => {
-  safeRenderAll();
-  const savedLayout = localStorage.getItem('layout') || 'balanced';
-  applyLayout(savedLayout);
-  document.getElementById('layoutSelect').value = savedLayout;
-  document.getElementById('layoutNote').textContent = "Layout: " + savedLayout.charAt(0).toUpperCase() + savedLayout.slice(1);
-});
+  <!-- Part 12: Final polish & wrap-up -->
+  <script>
+  /* ---------------- FINAL POLISH ---------------- */
+  function safeParse(key, fallback){
+    try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+    catch(e){ return fallback; }
+  }
 
-// Catch unhandled errors gracefully
-window.addEventListener('error', (e) => {
-  console.warn("Tiny Tools error caught:", e.message);
-  showNotification("Something went wrong ⚠️","error");
-});
-</script>
+  function safeRenderAll(){
+    try { renderWriterMode(); } catch(e){}
+    try { renderJournalEntries(); } catch(e){}
+    try { renderHabits(); } catch(e){}
+    try { renderPlaylists(); } catch(e){}
+    try { resetTimer(); } catch(e){}
+  }
+
+  if(!localStorage.getItem('lastWallpaper')){
+    setBackground("https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg");
+  }
+  if(!localStorage.getItem('theme')){
+    document.documentElement.setAttribute('data-theme','light');
+  }
+
+  window.addEventListener('load', () => {
+    safeRenderAll();
+    const savedLayout = localStorage.getItem('layout') || 'balanced';
+    applyLayout(savedLayout);
+    document.getElementById('layoutSelect').value = savedLayout;
+    document.getElementById('layoutNote').textContent = "Layout: " + savedLayout.charAt(0).toUpperCase() + savedLayout.slice(1);
+  });
+
+  window.addEventListener('error', (e) => {
+    console.warn("Tiny Tools error caught:", e.message);
+    if (typeof showNotification === "function") {
+      showNotification("Something went wrong ⚠️","error");
+    }
+  });
+  </script>
+</body>
+</html>
