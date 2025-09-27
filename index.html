@@ -3,26 +3,28 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Tiny Tools — Your Moodspace</title>
+  <title>Tiny Tools — Creative & Focus Hub</title>
   <link rel="icon" type="image/png" href="favicon.png"/>
-  <link rel="apple-touch-icon" href="favicon.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
-    :root{
+    :root {
       --bg:#FFFAE3; --text:#1F2F16;
       --primary:#395B50; --secondary:#96705B; --accent:#3F6F63;
       --glass:rgba(255,255,255,0.35);
       --shadow-1:0 8px 24px rgba(0,0,0,0.18);
       --shadow-2:0 12px 32px rgba(0,0,0,0.26);
       --tile-gap:24px; --tile-radius:20px; --tile-pad:24px;
-      --dock-width:340px; --select-bg:rgba(255,255,255,0.30); --input-bg:rgba(255,255,255,0.28);
+      --dock-width:340px;
+      --select-bg:rgba(255,255,255,0.30);
+      --input-bg:rgba(255,255,255,0.28);
     }
-    [data-theme="dark"]{
+    [data-theme="dark"] {
       --bg:#1F2F16; --text:#F3EFE7; --accent:#78B3A7;
       --glass:rgba(30,30,30,0.45);
       --shadow-1:0 8px 24px rgba(0,0,0,0.35);
       --shadow-2:0 12px 32px rgba(0,0,0,0.48);
-      --select-bg:rgba(255,255,255,0.20); --input-bg:rgba(255,255,255,0.18);
+      --select-bg:rgba(255,255,255,0.20);
+      --input-bg:rgba(255,255,255,0.18);
     }
     *{box-sizing:border-box;}
     body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
@@ -36,176 +38,60 @@
     .button.primary{background:var(--primary);}
     .page{display:grid;grid-template-columns:1fr var(--dock-width);gap:var(--tile-gap);max-width:1500px;margin:40px auto;padding:0 40px;}
     @media(max-width:1100px){.page{grid-template-columns:1fr;}.dock{order:2;}}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);align-content:start;}
-    .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;min-height:200px;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);}
+    .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;}
     .dock h4{margin:0 0 10px;font-family:'Sansita',sans-serif;}
-    .dock-area{display:grid;grid-template-columns:1fr;gap:12px;}
-    .card{
-      position:relative;background:var(--glass);
-      backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
-      border-radius:var(--tile-radius); padding:var(--tile-pad); box-shadow:var(--shadow-1);
-      transition:transform .25s ease, box-shadow .25s ease, filter .25s ease; min-height:180px; user-select:none;
-    }
-    .card:hover{transform:translateY(-2px);filter:brightness(1.03);box-shadow:var(--shadow-2);}
-    .card h3{margin:0 0 16px;font-family:'Sansita',sans-serif;}
-    .menu{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.30);border:none;border-radius:8px;padding:6px 8px;cursor:pointer;}
-    .menu-options{position:absolute;top:42px;right:8px;display:none;background:#fff;border-radius:10px;box-shadow:var(--shadow-1);overflow:hidden;min-width:210px;z-index:10;}
-    .menu-options button{display:block;width:100%;padding:10px 12px;border:none;background:transparent;cursor:pointer;text-align:left;}
+    .dock-area{display:grid;gap:12px;}
+    .card{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);border-radius:var(--tile-radius);padding:var(--tile-pad);box-shadow:var(--shadow-1);}
+    .card h3{margin:0 0 12px;font-family:'Sansita',sans-serif;cursor:grab;}
     .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
     .stack{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
-    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;color:var(--text);}
+    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;}
     .btn{background:var(--primary);color:#fff;cursor:pointer;}
     .btn.secondary{background:var(--secondary);}
     .input,.select-inline,textarea{background:var(--input-bg);}
-    textarea{width:100%;min-height:220px;resize:vertical;outline:none;}
+    textarea{width:100%;min-height:220px;resize:vertical;}
     .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
-    .thumb{border-radius:12px;overflow:hidden;height:110px;position:relative;}
-    .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-    .player{border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.18);}
-    .player iframe{display:block;width:100%;height:300px;border:0;}
-    @media(max-width:600px){.player iframe{height:200px;}}
-    #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;margin:10px 0 6px;}
-    .drag-placeholder{outline:2px dashed rgba(63,111,99,0.6);border-radius:var(--tile-radius);min-height:160px;opacity:0.8;}
-    .dragging-origin{outline:2px dashed rgba(63,111,99,0.35);}
-    .select:focus,.select-inline:focus,.input:focus,textarea:focus,.btn:focus,.button:focus{outline:2px solid var(--accent);outline-offset:2px;}
-    @media(max-width:480px){header{padding:14px 16px;grid-template-columns:1fr;gap:10px;} .page{padding:0 16px;margin:20px auto;} .card{padding:16px;} .thumb{height:80px;}}
+    .thumb img{width:100%;height:100%;object-fit:cover;cursor:pointer;}
+    .player iframe{width:100%;height:300px;border:0;}
+    #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;}
   </style>
 </head>
 <body>
   <header>
     <div class="brand"><h1>Tiny Tools</h1><span>Creative & Focus Hub</span></div>
     <div class="top-controls">
-      <select id="envSelect" class="select"><option value="relax">Relax</option><option value="study">Study</option><option value="focus">Focus</option><option value="creative">Creative</option><option value="default">Default</option></select>
+      <select id="envSelect" class="select">
+        <option value="relax">Relax</option>
+        <option value="study">Study</option>
+        <option value="focus">Focus</option>
+        <option value="creative">Creative</option>
+        <option value="default">Default</option>
+      </select>
       <button id="shuffleWallpaper" class="button">Shuffle</button>
       <button id="themeToggle" class="button primary">Theme</button>
     </div>
     <div class="layout-controls">
-      <select id="layoutSelect" class="select"><option value="balanced">Balanced</option><option value="focus">Focus</option><option value="writing">Writing</option><option value="music">Music</option></select>
-      <button id="applyLayout" class="button">Apply</button>
+      <select id="layoutSelect" class="select">
+        <option value="balanced">Balanced</option>
+        <option value="focus">Focus</option>
+        <option value="writing">Writing</option>
+        <option value="music">Music</option>
+      </select>
+      <button id="applyLayout" class="button">Apply layout</button>
       <span id="layoutNote">Layout: Balanced</span>
     </div>
   </header>
 
   <div class="page">
     <main id="grid" class="grid">
-      <section class="card tile" id="tile-wallpapers" data-tile="wallpapers" data-order="1">
-        <button class="menu" onclick="toggleMenu('menu-wallpapers')">⁝</button>
-        <div class="menu-options" id="menu-wallpapers">
-          <button onclick="shrinkTile('wallpapers')">Shrink to dock</button>
-          <button onclick="expandTile('wallpapers')">Expand to grid</button>
-          <button onclick="closeMenus()">Close menu</button>
-        </div>
-        <h3>Wallpapers</h3>
-        <div id="wallpaperThumbs" class="thumbs"></div>
-      </section>
-
-      <section class="card tile" id="tile-music" data-tile="music" data-order="2">
-        <button class="menu" onclick="toggleMenu('menu-music')">⁝</button>
-        <div class="menu-options" id="menu-music">
-          <button onclick="shrinkTile('music')">Shrink to dock</button>
-          <button onclick="expandTile('music')">Expand to grid</button>
-          <button onclick="closeMenus()">Close menu</button>
-        </div>
-        <h3>Music Playlists</h3>
-        <div class="row">
-          <input id="playlistName" class="input" placeholder="New playlist name"/>
-          <button class="btn" onclick="createPlaylist()">Create</button>
-          <button class="btn secondary" onclick="deletePlaylist()">Delete</button>
-        </div>
-        <div class="row">
-          <select id="playlistSelect" class="select-inline" onchange="renderPlaylist()"></select>
-          <button class="btn" onclick="renderPlaylist()">Refresh</button>
-        </div>
-        <div class="row">
-          <input id="musicUrl" class="input" placeholder="Paste YouTube URL (video or playlist)"/>
-          <button class="btn secondary" onclick="addTrack()">Add track</button>
-        </div>
-        <div id="playlistTracks" class="stack"></div>
-        <div id="musicPlayer" class="player"></div>
-      </section>
-
-      <section class="card tile" id="tile-writing" data-tile="writing" data-order="3">
-        <button class="menu" onclick="toggleMenu('menu-writing')">⁝</button>
-        <div class="menu-options" id="menu-writing">
-          <button onclick="shrinkTile('writing')">Shrink to dock</button>
-          <button onclick="expandTile('writing')">Expand to grid</button>
-          <button onclick="closeMenus()">Close menu</button>
-        </div>
-        <h3>Writing</h3>
-        <div class="row">
-          <select id="writerMode" class="select-inline" onchange="switchWriterMode()">
-            <option value="prompts">Prompts</option>
-            <option value="todo">To‑Do</option>
-            <option value="free">Free Writing</option>
-            <option value="brainstorm">Brainstorm</option>
-            <option value="journal">Journal</option>
-          </select>
-        </div>
-        <div id="writerArea"></div>
-      </section>
-
-      <section class="card tile" id="tile-habits" data-tile="habits" data-order="4">
-        <button class="menu" onclick="toggleMenu('menu-habits')">⁝</button>
-        <div class="menu-options" id="menu-habits">
-          <button onclick="shrinkTile('habits')">Shrink to dock</button>
-          <button onclick="expandTile('habits')">Expand to grid</button>
-          <button onclick="closeMenus()">Close menu</button>
-        </div>
-        <h3>Habit Garden</h3>
-        <div class="row">
-          <input id="habitInput" class="input" placeholder="Add a new habit..."/>
-          <button class="btn" onclick="addHabit()">Add habit</button>
-          <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
-        </div>
-        <div id="habitList" class="stack"></div>
-      </section>
-
-      <section class="card tile" id="tile-clock" data-tile="clock" data-order="5">
-        <button class="menu" onclick="toggleMenu('menu-clock')">⁝</button>
-        <div class="menu-options" id="menu-clock">
-          <button onclick="shrinkTile('clock')">Shrink to dock</button>
-          <button onclick="expandTile('clock')">Expand to grid</button>
-          <button onclick="closeMenus()">Close menu</button>
-        </div>
-        <h3>Clock Tool</h3>
-        <div class="row">
-          <select id="modeSelect" class="select-inline" onchange="switchMode()">
-            <option value="pomodoro">Pomodoro</option>
-            <option value="stopwatch">Stopwatch</option>
-            <option value="countdown">Countdown</option>
-            <option value="custom">Custom</option>
-          </select>
-          <button class="btn" onclick="startTimer()">Start</button>
-          <button class="btn secondary" onclick="pauseTimer()">Pause</button>
-          <button class="btn" onclick="resetTimer()">Reset</button>
-        </div>
-        <div class="row" id="settingsRow">
-          <div class="row" id="pomodoroSettings" style="display:none;width:100%;">
-            <input id="workMinutes" class="input" type="number" min="1" value="25"/>
-            <input id="breakMinutes" class="input" type="number" min="1" value="5"/>
-            <button class="btn" onclick="completePomodoro()">Complete cycle</button>
-          </div>
-          <div class="row" id="customSettings" style="display:none;width:100%;">
-            <input id="customHours" class="input" type="number" min="0" value="0"/>
-            <input id="customMinutes" class="input" type="number" min="0" value="5"/>
-            <input id="customSeconds" class="input" type="number" min="0" value="0"/>
-          </div>
-        </div>
-        <div id="timeDisplay">00:25:00</div>
-        <p id="stats" class="small">Completed Pomodoros: 0</p>
-      </section>
+      <!-- Tiles will be added in Parts 2–6 -->
     </main>
-
-    <aside class="dock">
-      <h4>Mini dock</h4>
-      <div id="dockArea" class="dock-area"></div>
-    </aside>
+    <aside class="dock"><h4>Mini dock</h4><div id="dockArea" class="dock-area"></div></aside>
   </div>
-
+  <!-- Wallpapers + Theme Script -->
   <script>
-    function toggleMenu(id){ closeMenus(); const m=document.getElementById(id); if(m) m.style.display='block'; }
-    function closeMenus(){ document.querySelectorAll('.menu-options').forEach(m=>m.style.display='none'); }
-
+    /* ---------------- WALLPAPERS ---------------- */
     const wallpapers={
       relax:[
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
@@ -231,31 +117,71 @@
         "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
         "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
         "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
-      ]
+      ],
+      custom:[]
     };
 
     const envSelect=document.getElementById('envSelect');
     const shuffleWallpaperBtn=document.getElementById('shuffleWallpaper');
     const themeToggle=document.getElementById('themeToggle');
+    const wallpaperThumbs=document.getElementById('wallpaperThumbs');
+    const wallpaperUpload=document.getElementById('wallpaperUpload');
+    const clearCustomWallpapersBtn=document.getElementById('clearCustomWallpapers');
 
     function setBackground(url){
       document.body.style.backgroundImage=`url('${url}')`;
+      document.body.style.backgroundPosition='center';
+      document.body.style.backgroundSize='cover';
+      document.body.style.backgroundAttachment='fixed';
       localStorage.setItem('lastWallpaper',url);
     }
-    function applyEnvBackground(env){
-      const list=wallpapers[env]||wallpapers.default;
-      const pick=list[Math.floor(Math.random()*list.length)];
-      setBackground(pick);
-      const thumbs=document.getElementById('wallpaperThumbs');
-      thumbs.innerHTML="";
+    function renderThumbnails(list){
+      wallpaperThumbs.innerHTML="";
       list.forEach(url=>{
         const div=document.createElement('div');
         div.className="thumb";
         div.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
-        thumbs.appendChild(div);
+        div.addEventListener('click',()=>setBackground(url));
+        wallpaperThumbs.appendChild(div);
       });
+    }
+    function applyEnvBackground(env){
+      const list=wallpapers[env]||wallpapers.default;
+      const pick=list[Math.floor(Math.random()*list.length)];
+      if(pick) setBackground(pick);
+      renderThumbnails(list);
       localStorage.setItem('env',env);
     }
+    function loadCustomWallpapers(){
+      const custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+      wallpapers.custom=custom;
+      if(custom.length && ![...envSelect.options].some(o=>o.value==="custom")){
+        const opt=document.createElement('option');
+        opt.value="custom"; opt.textContent="Custom";
+        envSelect.appendChild(opt);
+      }
+    }
+    wallpaperUpload.addEventListener('change',e=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        const url=ev.target.result;
+        setBackground(url);
+        let custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+        custom.push(url);
+        localStorage.setItem('customWallpapers',JSON.stringify(custom));
+        wallpapers.custom=custom;
+        renderThumbnails(custom);
+      };
+      reader.readAsDataURL(file);
+    });
+    clearCustomWallpapersBtn.addEventListener('click',()=>{
+      localStorage.removeItem('customWallpapers');
+      wallpapers.custom=[];
+      const opt=[...envSelect.options].find(o=>o.value==="custom");
+      if(opt) opt.remove();
+      applyEnvBackground(envSelect.value);
+    });
     envSelect.addEventListener('change',e=>applyEnvBackground(e.target.value));
     shuffleWallpaperBtn.addEventListener('click',()=>applyEnvBackground(envSelect.value));
     themeToggle.addEventListener('click',()=>{
@@ -264,38 +190,84 @@
       document.documentElement.setAttribute('data-theme',next);
       localStorage.setItem('theme',next);
     });
+  </script>
+  <!-- Music / YouTube Playlist Script -->
+  <script>
+    /* ---------------- MUSIC ---------------- */
+    let ytPlayer,currentPlaylist=[],currentIndex=0;window.playerReady=false;
 
-    const playlistSelect=document.getElementById('playlistSelect');
-    const musicPlayer=document.getElementById('musicPlayer');
+    function onYouTubeIframeAPIReady(){
+      ytPlayer=new YT.Player('musicPlayer',{
+        height:'300',width:'100%',videoId:'',
+        playerVars:{autoplay:0,controls:1,rel:0,modestbranding:1,playsinline:1},
+        events:{
+          'onReady':e=>{try{e.target.mute();}catch(err){}window.playerReady=true;},
+          'onStateChange':onPlayerStateChange
+        }
+      });
+    }
+    function onPlayerStateChange(event){
+      if(event.data===YT.PlayerState.ENDED){
+        currentIndex++;
+        if(currentIndex>=currentPlaylist.length) currentIndex=0;
+        ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
+      }
+    }
+    function extractId(url){
+      try{
+        const u=new URL(url);
+        if(u.hostname.includes("youtu.be")){
+          const id=u.pathname.split("/")[1];
+          return (id && id.length===11)?id:"";
+        }
+        if(u.hostname.includes("youtube.com")){
+          if(u.searchParams.has("v")){
+            const id=u.searchParams.get("v");
+            return (id && id.length===11)?id:"";
+          }
+          if(u.pathname.includes("/embed/")){
+            const id=u.pathname.split("/embed/")[1].split(/[?&]/)[0];
+            return (id && id.length===11)?id:"";
+          }
+        }
+      }catch(e){
+        if(/^[\w-]{11}$/.test(url)) return url;
+      }
+      return "";
+    }
+
     function getPlaylists(){return JSON.parse(localStorage.getItem('playlists')||'{}');}
     function setPlaylists(obj){localStorage.setItem('playlists',JSON.stringify(obj));}
+
     function createPlaylist(){
       const name=document.getElementById('playlistName').value.trim();
-      if(!name)return;
+      if(!name) return;
       const pls=getPlaylists(); if(!pls[name]) pls[name]=[];
-      setPlaylists(pls); document.getElementById('playlistName').value="";
-      renderPlaylists(); playlistSelect.value=name; renderPlaylist();
+      setPlaylists(pls);
+      document.getElementById('playlistName').value="";
+      renderPlaylists();
     }
     function deletePlaylist(){
-      const name=playlistSelect.value; if(!name)return;
+      const name=document.getElementById('playlistSelect').value; if(!name) return;
       const pls=getPlaylists(); delete pls[name]; setPlaylists(pls);
-      renderPlaylists(); document.getElementById('playlistTracks').innerHTML=""; musicIframeEnsure();
+      renderPlaylists(); document.getElementById('playlistTracks').innerHTML="";
     }
     function renderPlaylists(){
-      const pls=getPlaylists(); playlistSelect.innerHTML="";
+      const pls=getPlaylists(); const sel=document.getElementById('playlistSelect'); sel.innerHTML="";
       const names=Object.keys(pls);
-      if(!names.length){ const opt=document.createElement('option'); opt.value=""; opt.textContent="No playlists"; playlistSelect.appendChild(opt); return; }
-      names.forEach(n=>{ const opt=document.createElement('option'); opt.value=n; opt.textContent=n; playlistSelect.appendChild(opt); });
+      if(!names.length){
+        const opt=document.createElement('option'); opt.value=""; opt.textContent="No playlists"; sel.appendChild(opt); return;
+      }
+      names.forEach(n=>{const opt=document.createElement('option');opt.value=n;opt.textContent=n;sel.appendChild(opt);});
     }
     function renderPlaylist(){
-      const pls=getPlaylists(); const name=playlistSelect.value;
+      const pls=getPlaylists(); const name=document.getElementById('playlistSelect').value;
       const list=document.getElementById('playlistTracks'); list.innerHTML="";
       if(!name||!pls[name]) return;
-      pls[name].forEach((url,i)=>{
-        const row=document.createElement('div');
-        row.className='row';
+      pls[name].forEach((id,i)=>{
+        const row=document.createElement('div'); row.className='row';
         row.innerHTML=`
-          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">${url}</span>
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
           <button class="btn" onclick="playTrack('${name}',${i})">Play</button>
           <button class="btn secondary" onclick="removeTrack('${name}',${i})">Remove</button>
         `;
@@ -303,60 +275,55 @@
       });
     }
     function addTrack(){
-      const name=playlistSelect.value;
+      const name=document.getElementById('playlistSelect').value;
       const raw=document.getElementById('musicUrl').value.trim();
       if(!name||!raw) return;
-      const url=normalizeYouTubeUrl(raw);
+      const id=extractId(raw);
+      if(!id){alert("Invalid YouTube link");return;}
       const pls=getPlaylists(); if(!pls[name]) pls[name]=[];
-      pls[name].push(url); setPlaylists(pls); document.getElementById('musicUrl').value="";
+      pls[name].push(id); setPlaylists(pls);
+      document.getElementById('musicUrl').value="";
       renderPlaylist();
     }
     function removeTrack(name,i){
       const pls=getPlaylists(); if(!pls[name]) return;
       pls[name].splice(i,1); setPlaylists(pls); renderPlaylist();
     }
-    function musicIframeEnsure(){
-      if(!musicPlayer.querySelector('iframe')){
-        const iframe=document.createElement('iframe');
-        iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-        iframe.setAttribute('allowfullscreen','true');
-        iframe.style.display='block'; iframe.style.width='100%'; iframe.style.height='300px'; iframe.style.border='0';
-        musicPlayer.appendChild(iframe);
+    function playPlaylist(){
+      if(!window.playerReady||!ytPlayer||typeof ytPlayer.loadVideoById!=="function"){
+        alert("Player not ready yet");return;
       }
+      const name=document.getElementById('playlistSelect').value;
+      const pls=getPlaylists(); if(!name||!pls[name]||!pls[name].length) return;
+      currentPlaylist=pls[name]; currentIndex=0;
+      ytPlayer.loadVideoById(currentPlaylist[0]);
     }
     function playTrack(name,i){
-      const pls=getPlaylists(); if(!pls[name]) return;
-      const url=pls[name][i]; musicIframeEnsure();
-      const iframe=musicPlayer.querySelector('iframe'); iframe.src=url;
+      if(!window.playerReady||!ytPlayer||typeof ytPlayer.loadVideoById!=="function"){
+        alert("Player not ready yet");return;
+      }
+      const pls=getPlaylists(); currentPlaylist=pls[name]||[]; currentIndex=i;
+      ytPlayer.loadVideoById(currentPlaylist[i]);
     }
-    function normalizeYouTubeUrl(input){
-      try{
-        const u=new URL(input);
-        if(u.hostname.includes("youtu.be")) return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
-        if(u.hostname.includes("youtube.com")){
-          if(u.pathname.includes("/embed/")) return input;
-          const id=u.searchParams.get("v"), list=u.searchParams.get("list");
-          if(list && !id) return `https://www.youtube.com/embed?listType=playlist&list=${list}`;
-          if(id && list) return `https://www.youtube.com/embed/${id}?list=${list}`;
-          if(id) return `https://www.youtube.com/embed/${id}`;
-        }
-      }catch(e){}
-      return input;
-    }
-
-    const writerArea=document.getElementById('writerArea');
-    const promptsList=[
+  </script>
+  <!-- Writing Suite Script — Part 4 i) -->
+  <script>
+    /* ---------------- WRITING CORE ---------------- */
+    const writerArea = document.getElementById('writerArea');
+    const promptsList = [
       "Write about a moment that changes everything.",
       "Describe a character who hides a secret.",
       "Invent a world where memories are currency.",
       "Start with a line of overheard dialogue.",
       "Describe a place that feels like home but isn’t."
     ];
-    function switchWriterMode(){
-      const mode=document.getElementById('writerMode').value;
-      writerArea.innerHTML="";
-      if(mode==="prompts"){
-        writerArea.innerHTML=`
+
+    function renderWriterMode(){
+      const mode = document.getElementById('writerMode').value;
+      writerArea.innerHTML = "";
+
+      if(mode === "prompts"){
+        writerArea.innerHTML = `
           <div class="row">
             <button class="btn" onclick="shufflePrompt()">Shuffle</button>
             <button class="btn secondary" onclick="exportPromptDraft('txt')">Export TXT</button>
@@ -367,13 +334,18 @@
           <textarea id="promptDraft" placeholder="Write here..."></textarea>
           <p id="promptWordCount" class="small">Words: 0</p>
         `;
-        const pd=document.getElementById('promptDraft');
-        pd.value=localStorage.getItem('promptDraft')||"";
-        pd.addEventListener('input',()=>{ localStorage.setItem('promptDraft',pd.value); updateWordCount('promptDraft','promptWordCount'); });
-        shufflePrompt(); updateWordCount('promptDraft','promptWordCount');
+        const pd = document.getElementById('promptDraft');
+        pd.value = localStorage.getItem('promptDraft') || "";
+        pd.addEventListener('input', ()=>{
+          localStorage.setItem('promptDraft', pd.value);
+          updateWordCount('promptDraft','promptWordCount');
+        });
+        shufflePrompt();
+        updateWordCount('promptDraft','promptWordCount');
       }
-      if(mode==="todo"){
-        writerArea.innerHTML=`
+
+      if(mode === "todo"){
+        writerArea.innerHTML = `
           <div class="row">
             <input id="todoInput" class="input" placeholder="Add task..."/>
             <button class="btn" onclick="addTodo()">Add</button>
@@ -383,8 +355,9 @@
         `;
         renderTodos();
       }
-      if(mode==="free"){
-        writerArea.innerHTML=`
+
+      if(mode === "free"){
+        writerArea.innerHTML = `
           <div class="row">
             <button class="btn secondary" onclick="exportFreeDraft('txt')">Export TXT</button>
             <button class="btn secondary" onclick="exportFreeDraft('md')">Export MD</button>
@@ -393,78 +366,120 @@
           <textarea id="freeDraft" placeholder="Free writing..."></textarea>
           <p id="freeWordCount" class="small">Words: 0</p>
         `;
-        const fd=document.getElementById('freeDraft');
-        fd.value=localStorage.getItem('freeDraft')||"";
-        fd.addEventListener('input',()=>{ localStorage.setItem('freeDraft',fd.value); updateWordCount('freeDraft','freeWordCount'); });
+        const fd = document.getElementById('freeDraft');
+        fd.value = localStorage.getItem('freeDraft') || "";
+        fd.addEventListener('input', ()=>{
+          localStorage.setItem('freeDraft', fd.value);
+          updateWordCount('freeDraft','freeWordCount');
+        });
         updateWordCount('freeDraft','freeWordCount');
       }
-      if(mode==="brainstorm"){
-        writerArea.innerHTML=`
-          <div class="row">
-            <button class="btn" onclick="generateIdea()">Generate Idea</button>
-            <button class="btn secondary" onclick="clearIdeas()">Clear</button>
-          </div>
-          <p id="ideaText" class="small"></p>
-          <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
-          <p id="brainstormWordCount" class="small">Words: 0</p>
-        `;
-        const bd=document.getElementById('brainstormDraft');
-        bd.value=localStorage.getItem('brainstormDraft')||"";
-        bd.addEventListener('input',()=>{ localStorage.setItem('brainstormDraft',bd.value); updateWordCount('brainstormDraft','brainstormWordCount'); });
-        const last=localStorage.getItem('lastIdea'); if(last) document.getElementById('ideaText').innerText=last;
-        updateWordCount('brainstormDraft','brainstormWordCount');
-      }
-      if(mode==="journal"){
-        writerArea.innerHTML=`
-          <textarea id="journalText" placeholder="Today's entry..."></textarea>
-          <div class="row">
-            <button class="btn" onclick="saveJournal()">Save entry</button>
-            <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
-            <button class="btn" onclick="exportJournalPrintable()">Printable</button>
-          </div>
-          <div id="journalEntries" class="stack"></div>
-        `;
-        renderJournal();
-      }
     }
+
+    /* ---------------- UTILITIES ---------------- */
     function updateWordCount(textareaId,labelId){
-      const el=document.getElementById(textareaId), lbl=document.getElementById(labelId);
-      if(!el||!lbl) return; const words=el.value.trim().split(/\s+/).filter(Boolean).length;
-      lbl.innerText="Words: "+words;
+      const el = document.getElementById(textareaId), lbl = document.getElementById(labelId);
+      if(!el || !lbl) return;
+      const words = el.value.trim().split(/\s+/).filter(Boolean).length;
+      lbl.innerText = "Words: " + words;
     }
     function shufflePrompt(){
-      const prompt=promptsList[Math.floor(Math.random()*promptsList.length)];
-      document.getElementById('promptText').innerText=prompt;
-      localStorage.setItem('currentPromptTitle',prompt);
+      const prompt = promptsList[Math.floor(Math.random()*promptsList.length)];
+      document.getElementById('promptText').innerText = prompt;
+      localStorage.setItem('currentPromptTitle', prompt);
     }
-    function downloadFile(content,filename){
-      const blob=new Blob([content],{type:"text/plain"}); const url=URL.createObjectURL(blob);
-      const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
+    function downloadFile(content, filename){
+      const blob = new Blob([content], {type:"text/plain"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
     }
-    function openPrintable(title,contentHtml){
-      const html=`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
+    function openPrintable(title, contentHtml){
+      const html = `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
       <style>body{font-family:Georgia,serif;margin:40px;color:#222}h1{font-size:24px;margin-bottom:20px}.content{font-size:16px;line-height:1.6}</style>
-      </head><body><h1>${escapeHtml(title)}</h1><div class="content">${contentHtml}</div></body></html>`;
-      const w=window.open('', '_blank'); if(!w) return; w.document.open(); w.document.write(html); w.document.close(); setTimeout(()=>w.print(),300);
+      </head><body><h1>${title}</h1><div class="content">${contentHtml}</div></body></html>`;
+      const w = window.open('', '_blank'); if(!w) return;
+      w.document.open(); w.document.write(html); w.document.close();
+      setTimeout(()=>w.print(),300);
     }
-    function escapeHtml(str){return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+    /* ---------------- EXPORTS ---------------- */
     function exportPromptDraft(format){
-      const title=(localStorage.getItem('currentPromptTitle')||"Prompt Draft").replace(/[^\w\s-]/g,'').trim()||"Prompt Draft";
-      let content=document.getElementById('promptDraft').value;
-      if(format==='md') content=`# ${title}\n\n${content}`;
-      downloadFile(content,`${title}.${format}`);
+      const title = (localStorage.getItem('currentPromptTitle')||"Prompt Draft").replace(/[^\w\s-]/g,'').trim()||"Prompt Draft";
+      let content = document.getElementById('promptDraft').value;
+      if(format==='md') content = `# ${title}\n\n${content}`;
+      downloadFile(content, `${title}.${format}`);
     }
     function exportPromptPrintable(){
-      const title=localStorage.getItem('currentPromptTitle')||"Prompt Draft";
-      const content=document.getElementById('promptDraft').value.replace(/\n/g,'<br/>'); openPrintable(title,content);
+      const title = localStorage.getItem('currentPromptTitle')||"Prompt Draft";
+      const content = document.getElementById('promptDraft').value.replace(/\n/g,'<br/>');
+      openPrintable(title, content);
     }
     function exportFreeDraft(format){
-      const title="Free Writing"; let content=document.getElementById('freeDraft').value;
-      if(format==='md') content=`# ${title}\n\n${content}`; downloadFile(content,`${title}.${format}`);
+      const title = "Free Writing";
+      let content = document.getElementById('freeDraft').value;
+      if(format==='md') content = `# ${title}\n\n${content}`;
+      downloadFile(content, `${title}.${format}`);
     }
     function exportFreePrintable(){
-      const title="Free Writing"; const content=document.getElementById('freeDraft').value.replace(/\n/g,'<br/>'); openPrintable(title,content);
+      const title = "Free Writing";
+      const content = document.getElementById('freeDraft').value.replace(/\n/g,'<br/>');
+      openPrintable(title, content);
     }
+
+    /* ---------------- TO‑DO ---------------- */
+    function getTodos(){ return JSON.parse(localStorage.getItem('todos')||'[]'); }
+    function setTodos(list){ localStorage.setItem('todos', JSON.stringify(list)); }
+    function addTodo(){
+      const val = document.getElementById('todoInput').value.trim(); if(!val) return;
+      const todos = getTodos(); todos.push({text:val, done:false}); setTodos(todos);
+      document.getElementById('todoInput').value = ""; renderTodos();
+    }
+    function toggleTodo(i){
+      const todos = getTodos(); todos[i].done = !todos[i].done; setTodos(todos); renderTodos();
+    }
+    function removeTodo(i){
+      const todos = getTodos(); todos.splice(i,1); setTodos(todos); renderTodos();
+    }
+    function clearTodos(){
+      localStorage.removeItem('todos'); renderTodos();
+    }
+    function renderTodos(){
+      const list = document.getElementById('todoList'); if(!list) return;
+      list.innerHTML = "";
+      getTodos().forEach((t,i)=>{
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <input type="checkbox" ${t.done?"checked":""} onchange="toggleTodo(${i})"/>
+          <span style="${t.done?'text-decoration:line-through;opacity:0.7;':''}">${t.text}</span>
+          <button class="btn secondary" style="margin-left:8px;" onclick="removeTodo(${i})">x</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+  </script>
+  <!-- Writing Suite Script — Part 4 ii) -->
+  <script>
+    /* ---------------- BRAINSTORM ---------------- */
+    function generateIdea(){
+      const seeds=[
+        "A tool that saves memories as scents.",
+        "A habit that grows into a garden.",
+        "A playlist that changes with the weather.",
+        "A journal that talks back.",
+        "A clock that counts inspiration, not seconds."
+      ];
+      const idea=seeds[Math.floor(Math.random()*seeds.length)];
+      document.getElementById('ideaText').innerText=idea;
+      localStorage.setItem('lastIdea',idea);
+    }
+    function clearIdeas(){
+      document.getElementById('ideaText').innerText="";
+      localStorage.removeItem('lastIdea');
+    }
+
+    /* ---------------- JOURNAL ---------------- */
     function getJournal(){return JSON.parse(localStorage.getItem('journal')||'[]');}
     function setJournal(list){localStorage.setItem('journal',JSON.stringify(list));}
     function saveJournal(){
@@ -473,79 +488,95 @@
       entries.unshift({date:d.toLocaleDateString(), time:d.toLocaleTimeString(), text});
       setJournal(entries); document.getElementById('journalText').value=""; renderJournal();
     }
-    function clearJournal(){localStorage.removeItem('journal'); renderJournal();}
     function renderJournal(){
       const wrap=document.getElementById('journalEntries'); if(!wrap) return; wrap.innerHTML="";
       getJournal().forEach((e,i)=>{
         const div=document.createElement('div'); div.className='card'; div.style.padding='12px';
         div.innerHTML=`
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <strong style="font-family:'Sansita',sans-serif;">${e.date} — ${e.time}</strong>
-            <div><button class="btn secondary" onclick="deleteJournal(${i})">Delete</button></div>
+            <strong>${e.date} — ${e.time}</strong>
+            <button class="btn secondary" onclick="deleteJournal(${i})">Delete</button>
           </div>
-          <p class="small" style="margin-top:8px;">${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p>
+          <p class="small" style="margin-top:8px;">${e.text.replace(/\n/g,'<br/>')}</p>
         `;
         wrap.appendChild(div);
       });
     }
-    function deleteJournal(i){const entries=getJournal(); entries.splice(i,1); setJournal(entries); renderJournal();}
+    function deleteJournal(i){
+      const entries=getJournal(); entries.splice(i,1); setJournal(entries); renderJournal();
+    }
     function exportJournal(){
-      const entries=getJournal(); let content=entries.map(e=>`${e.date} ${e.time}\n${e.text}\n`).join('\n');
+      const entries=getJournal();
+      let content=entries.map(e=>`${e.date} ${e.time}\n${e.text}\n`).join('\n');
       downloadFile(content,'Journal.txt');
     }
     function exportJournalPrintable(){
       const entries=getJournal();
-      const content=entries.map(e=>`<h3>${e.date} — ${e.time}</h3><p>${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p><hr/>`).join('');
+      const content=entries.map(e=>`<h3>${e.date} — ${e.time}</h3><p>${e.text.replace(/\n/g,'<br/>')}</p><hr/>`).join('');
       openPrintable('Journal',content);
     }
-
-    function getTodos(){return JSON.parse(localStorage.getItem('todos')||'[]');}
-    function setTodos(list){localStorage.setItem('todos',JSON.stringify(list));}
-    function addTodo(){
-      const val=document.getElementById('todoInput').value.trim(); if(!val) return;
-      const todos=getTodos(); todos.push({text:val,done:false}); setTodos(todos);
-      document.getElementById('todoInput').value=""; renderTodos();
-    }
-    function toggleTodo(i){const todos=getTodos(); todos[i].done=!todos[i].done; setTodos(todos); renderTodos();}
-    function removeTodo(i){const todos=getTodos(); todos.splice(i,1); setTodos(todos); renderTodos();}
-    function clearTodos(){localStorage.removeItem('todos'); renderTodos();}
-    function renderTodos(){
-      const list=document.getElementById('todoList'); if(!list) return; list.innerHTML="";
-      getTodos().forEach((t,i)=>{
-        const li=document.createElement('li');
-        li.innerHTML=`
-          <input type="checkbox" ${t.done?"checked":""} onchange="toggleTodo(${i})"/>
-          <span style="${t.done?'text-decoration:line-through;opacity:0.7;':''}">${escapeHtml(t.text)}</span>
-          <button class="btn secondary" style="margin-left:8px;" onclick="removeTodo(${i})">x</button>
-        `;
-        list.appendChild(li);
-      });
-    }
-
+  </script>
+  <!-- Habits Script -->
+  <script>
+    /* ---------------- HABITS ---------------- */
     function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
     function setHabits(list){localStorage.setItem('habits',JSON.stringify(list));}
+
     function addHabit(){
-      const name=document.getElementById('habitInput').value.trim(); if(!name) return;
-      const habits=getHabits(); habits.push({name,history:[]}); setHabits(habits);
-      document.getElementById('habitInput').value=""; renderHabits();
+      const name=document.getElementById('habitInput').value.trim();
+      if(!name) return;
+      const habits=getHabits();
+      habits.push({name,history:[]});
+      setHabits(habits);
+      document.getElementById('habitInput').value="";
+      renderHabits();
     }
-    function resetAllHabits(){localStorage.removeItem('habits'); renderHabits();}
+
+    function resetAllHabits(){
+      localStorage.removeItem('habits');
+      renderHabits();
+    }
+
     function checkInHabit(idx){
-      const habits=getHabits(); const today=new Date().toDateString();
-      if(!habits[idx].history.includes(today)){ habits[idx].history.push(today); setHabits(habits); renderHabits(); }
+      const habits=getHabits();
+      const today=new Date().toDateString();
+      if(!habits[idx].history.includes(today)){
+        habits[idx].history.push(today);
+        setHabits(habits);
+        renderHabits();
+      }
     }
-    function resetHabit(idx){const habits=getHabits(); habits[idx].history=[]; setHabits(habits); renderHabits();}
+
+    function resetHabit(idx){
+      const habits=getHabits();
+      habits[idx].history=[];
+      setHabits(habits);
+      renderHabits();
+    }
+
     function renderHabits(){
-      const wrap=document.getElementById('habitList'); if(!wrap) return; wrap.innerHTML="";
+      const wrap=document.getElementById('habitList');
+      if(!wrap) return;
+      wrap.innerHTML="";
       const habits=getHabits();
       habits.forEach((h,idx)=>{
         const streak=h.history.length;
-        let plant="🌱"; if(streak>=3) plant="🌿"; if(streak>=7) plant="🌳"; if(streak>=14) plant="🌸"; if(streak>=30) plant="🌲";
-        const badges=[]; if(streak>=7) badges.push("🔥"); if(streak>=30) badges.push("🌟"); if(streak>=100) badges.push("🏆");
-        const div=document.createElement('div'); div.className='card'; div.style.padding='12px';
+        let plant="🌱";
+        if(streak>=3) plant="🌿";
+        if(streak>=7) plant="🌳";
+        if(streak>=14) plant="🌸";
+        if(streak>=30) plant="🌲";
+        const badges=[];
+        if(streak>=7) badges.push("🔥");
+        if(streak>=30) badges.push("🌟");
+        if(streak>=100) badges.push("🏆");
+
+        const div=document.createElement('div');
+        div.className='card';
+        div.style.padding='12px';
         div.innerHTML=`
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <strong style="font-family:'Sansita',sans-serif;">${escapeHtml(h.name)}</strong>
+            <strong>${h.name}</strong>
             <div class="small">${h.history.includes(new Date().toDateString())?'Done today':'Not yet'}</div>
           </div>
           <div style="font-size:2rem;margin:6px 0;">${plant}</div>
@@ -559,26 +590,36 @@
         wrap.appendChild(div);
       });
     }
-
+  </script>
+  <!-- Clock Script -->
+  <script>
+    /* ---------------- CLOCK ---------------- */
     let timer=null, timeLeft=1500, running=false;
     let mode=localStorage.getItem('clockMode')||"pomodoro";
     let pomodoroCompleted=parseInt(localStorage.getItem('pomodoroCompleted')||"0",10);
+
     function formatTime(sec){
       const h=Math.floor(sec/3600).toString().padStart(2,'0');
       const m=Math.floor((sec%3600)/60).toString().padStart(2,'0');
       const s=(sec%60).toString().padStart(2,'0');
       return `${h}:${m}:${s}`;
     }
-    function updateDisplay(){document.getElementById('timeDisplay').innerText=formatTime(timeLeft);}
+    function updateDisplay(){
+      document.getElementById('timeDisplay').innerText=formatTime(timeLeft);
+    }
     function startTimer(){
-      if(running) return; running=true;
+      if(running) return;
+      running=true;
       timer=setInterval(()=>{
-        if(mode==="stopwatch"){ timeLeft++; }
-        else{
-          timeLeft--; if(timeLeft<=0){
+        if(mode==="stopwatch"){
+          timeLeft++;
+        } else {
+          timeLeft--;
+          if(timeLeft<=0){
             clearInterval(timer); running=false;
             if(mode==="pomodoro"){
-              pomodoroCompleted++; localStorage.setItem('pomodoroCompleted',pomodoroCompleted);
+              pomodoroCompleted++;
+              localStorage.setItem('pomodoroCompleted',pomodoroCompleted);
               document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;
             }
             alert("Time's up!");
@@ -587,32 +628,20 @@
         updateDisplay();
       },1000);
     }
-    function pauseTimer(){clearInterval(timer); running=false;}
+    function pauseTimer(){
+      clearInterval(timer); running=false;
+    }
     function resetTimer(){
       clearInterval(timer); running=false;
-      if(mode==="pomodoro"){
-        const w=parseInt(document.getElementById('workMinutes')?.value||"25",10);
-        timeLeft=w*60;
-      }else if(mode==="stopwatch"){
-        timeLeft=0;
-      }else if(mode==="countdown"||mode==="custom"){
-        const h=parseInt(document.getElementById('customHours')?.value||"0",10);
-        const m=parseInt(document.getElementById('customMinutes')?.value||"5",10);
-        const s=parseInt(document.getElementById('customSeconds')?.value||"0",10);
-        timeLeft=h*3600+m*60+s;
-      }
+      if(mode==="pomodoro"){ timeLeft=25*60; }
+      else if(mode==="stopwatch"){ timeLeft=0; }
+      else if(mode==="countdown"||mode==="custom"){ timeLeft=5*60; }
       updateDisplay();
     }
     function switchMode(){
       mode=document.getElementById('modeSelect').value;
       localStorage.setItem('clockMode',mode);
-      document.getElementById('pomodoroSettings').style.display=(mode==="pomodoro")?"flex":"none";
-      document.getElementById('customSettings').style.display=(mode==="countdown"||mode==="custom")?"flex":"none";
       resetTimer();
-    }
-    function completePomodoro(){
-      pomodoroCompleted++; localStorage.setItem('pomodoroCompleted',pomodoroCompleted);
-      document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;
     }
     document.addEventListener('keydown',(e)=>{
       if(e.code==='Space'){
@@ -623,155 +652,130 @@
         if(running) pauseTimer(); else startTimer();
       }
     });
-
+  </script>
+  <!-- Dock + Layout + Drag-and-Drop Script -->
+  <script>
+    /* ---------------- DRAG & DROP ---------------- */
     const grid=document.getElementById('grid');
-    let drag={tile:null,handle:null,ghost:null,placeholderIndex:null,offsetX:0,offsetY:0};
+    let drag={tile:null,ghost:null,offsetX:0,offsetY:0};
+
     function setupDraggableTiles(){
       const tiles=Array.from(grid.querySelectorAll('.tile'));
       tiles.forEach((tile,i)=>{
         tile.dataset.order=tile.dataset.order||String(i+1);
-        const handle=tile.querySelector('h3'); if(!handle) return;
+        const handle=tile.querySelector('h3');
+        if(!handle) return;
         handle.style.cursor='grab';
         handle.addEventListener('pointerdown',(e)=>{
           const tag=e.target.tagName;
-          if(['INPUT','SELECT','TEXTAREA','BUTTON','IFRAME'].includes(tag)||e.target.classList.contains('menu')||e.target.closest('.menu-options')) return;
+          if(['INPUT','SELECT','TEXTAREA','BUTTON','IFRAME'].includes(tag)) return;
           startDrag(tile,e);
         });
       });
     }
     function startDrag(tile,e){
-      e.preventDefault(); const rect=tile.getBoundingClientRect();
-      drag.tile=tile; drag.offsetX=e.clientX-rect.left; drag.offsetY=e.clientY-rect.top;
-      drag.ghost=document.createElement('div'); drag.ghost.className='card';
-      drag.ghost.style.position='fixed'; drag.ghost.style.left=rect.left+'px'; drag.ghost.style.top=rect.top+'px';
-      drag.ghost.style.width=rect.width+'px'; drag.ghost.style.height=rect.height+'px'; drag.ghost.style.zIndex='1000'; drag.ghost.style.opacity='0.9';
+      const rect=tile.getBoundingClientRect();
+      drag.tile=tile;
+      drag.offsetX=e.clientX-rect.left;
+      drag.offsetY=e.clientY-rect.top;
+      drag.ghost=document.createElement('div');
+      drag.ghost.className='card';
+      drag.ghost.style.position='fixed';
+      drag.ghost.style.left=rect.left+'px';
+      drag.ghost.style.top=rect.top+'px';
+      drag.ghost.style.width=rect.width+'px';
+      drag.ghost.style.height=rect.height+'px';
+      drag.ghost.style.zIndex='1000';
+      drag.ghost.style.opacity='0.9';
       drag.ghost.innerHTML=`<div style="padding:10px;font-family:'Jura',sans-serif;">Moving: ${tile.querySelector('h3')?.textContent||'Tile'}</div>`;
-      document.body.appendChild(drag.ghost); tile.classList.add('dragging-origin');
-      document.addEventListener('pointermove',onDragMove); document.addEventListener('pointerup',onDragEnd);
+      document.body.appendChild(drag.ghost);
+      tile.classList.add('dragging-origin');
+      document.addEventListener('pointermove',onDragMove);
+      document.addEventListener('pointerup',onDragEnd);
     }
     function onDragMove(e){
       if(!drag.ghost) return;
       const x=e.clientX-drag.offsetX, y=e.clientY-drag.offsetY;
       drag.ghost.style.left=x+'px'; drag.ghost.style.top=y+'px';
-      const tiles=Array.from(grid.querySelectorAll('.tile'));
-      const centers=tiles.map(t=>{const r=t.getBoundingClientRect();return{el:t,cy:r.top+r.height/2};});
-      const ghostCy=y+(drag.ghost.getBoundingClientRect().height/2);
-      let nearestIndex=0,minDist=Infinity;
-      centers.forEach((c,i)=>{const d=Math.abs(c.cy-ghostCy);if(d<minDist){minDist=d;nearestIndex=i;}});
-      drag.placeholderIndex=nearestIndex;
-      tiles.forEach((t,i)=>t.classList.toggle('drag-placeholder',i===drag.placeholderIndex));
     }
     function onDragEnd(){
-      const tiles=Array.from(grid.querySelectorAll('.tile')); tiles.forEach(t=>t.classList.remove('drag-placeholder'));
-      if(drag.tile!=null && Number.isInteger(drag.placeholderIndex)){
-        const ordered=tiles.map(t=>({el:t,order:parseInt(t.dataset.order||"1",10)})).sort((a,b)=>a.order-b.order);
-        const idx=ordered.findIndex(x=>x.el===drag.tile); const item=ordered.splice(idx,1)[0];
-        ordered.splice(drag.placeholderIndex,0,item);
-        ordered.forEach((x,i)=>{x.el.dataset.order=String(i+1); x.el.style.order=String(i+1);});
-        saveLayout();
-      }
       if(drag.ghost){drag.ghost.remove(); drag.ghost=null;}
-      drag.tile?.classList.remove('dragging-origin'); drag.tile=null; drag.placeholderIndex=null;
-      document.removeEventListener('pointermove',onDragMove); document.removeEventListener('pointerup',onDragEnd);
+      drag.tile?.classList.remove('dragging-origin');
+      drag.tile=null;
+      document.removeEventListener('pointermove',onDragMove);
+      document.removeEventListener('pointerup',onDragEnd);
     }
 
+    /* ---------------- DOCK ---------------- */
     const dockArea=document.getElementById('dockArea');
-    function titleFor(key){
-      switch(key){case'wallpapers':return'Wallpapers';case'music':return'Music';case'writing':return'Writing';case'habits':return'Habits';case'clock':return'Clock';default:return key;}
-    }
     function shrinkTile(key){
       const tile=document.querySelector(`.tile[data-tile="${key}"]`); if(!tile) return;
       const mini=document.createElement('div'); mini.className='card'; mini.dataset.tile=key;
-      mini.innerHTML=`
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <strong style="font-family:'Sansita',sans-serif;">${titleFor(key)}</strong>
-          <div><button class="button primary" onclick="expandTile('${key}')">Expand</button></div>
-        </div>
-      `;
-      dockArea.appendChild(mini); tile.style.display='none'; saveLayout(); closeMenus();
+      mini.innerHTML=`<strong>${key}</strong> <button class="button primary" onclick="expandTile('${key}')">Expand</button>`;
+      dockArea.appendChild(mini); tile.style.display='none';
     }
     function expandTile(key){
       const tile=document.querySelector(`.tile[data-tile="${key}"]`); if(!tile) return;
-      tile.style.display=''; const minis=Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===key);
-      minis.forEach(m=>m.remove()); saveLayout(); closeMenus();
+      tile.style.display='';
+      const minis=Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===key);
+      minis.forEach(m=>m.remove());
     }
 
-    const layoutSelect=document.getElementById('layoutSelect');
-    const applyLayoutBtn=document.getElementById('applyLayout');
-    const layoutNote=document.getElementById('layoutNote');
-    const layouts={
-      balanced:[{key:'wallpapers',order:1},{key:'music',order:2},{key:'writing',order:3},{key:'habits',order:4},{key:'clock',order:5}],
-      focus:[{key:'clock',order:1},{key:'writing',order:2},{key:'music',order:3},{key:'habits',order:4},{key:'wallpapers',order:5}],
-      writing:[{key:'writing',order:1},{key:'wallpapers',order:2},{key:'music',order:3},{key:'clock',order:4},{key:'habits',order:5}],
-      music:[{key:'music',order:1},{key:'wallpapers',order:2},{key:'writing',order:3},{key:'clock',order:4},{key:'habits',order:5}]
-    };
-    applyLayoutBtn.addEventListener('click',()=>{
-      const preset=layoutSelect.value||'balanced'; applyLayoutPreset(preset);
-      layoutNote.textContent=`Layout: ${preset.charAt(0).toUpperCase()+preset.slice(1)}`;
-      saveLayout();
-    });
+    /* ---------------- LAYOUT PRESETS ---------------- */
     function applyLayoutPreset(name){
+      const layouts={
+        balanced:['wallpapers','music','writing','habits','clock'],
+        focus:['clock','writing','music','habits','wallpapers'],
+        writing:['writing','wallpapers','music','clock','habits'],
+        music:['music','wallpapers','writing','clock','habits']
+      };
       const config=layouts[name]||layouts.balanced;
-      config.forEach(item=>{
-        const tile=document.querySelector(`.tile[data-tile="${item.key}"]`);
-        if(tile){
-          tile.dataset.order=String(item.order); tile.style.order=String(item.order); tile.style.display='';
-          const minis=Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===item.key); minis.forEach(m=>m.remove());
-        }
+      config.forEach((key,i)=>{
+        const tile=document.querySelector(`.tile[data-tile="${key}"]`);
+        if(tile){ tile.style.order=String(i+1); tile.style.display=''; }
       });
     }
-    function saveLayout(){
-      const state={
-        tiles:Array.from(grid.querySelectorAll('.tile')).map(t=>({key:t.dataset.tile,order:parseInt(t.dataset.order,10),hidden:t.style.display==='none'})),
-        dock:Array.from(dockArea.querySelectorAll('.card')).map(m=>m.dataset.tile)
-      };
-      localStorage.setItem('layoutState',JSON.stringify(state));
-    }
-    function restoreLayout(){
-      const raw=localStorage.getItem('layoutState'); if(!raw) return;
-      try{
-        const state=JSON.parse(raw);
-        state.tiles.forEach(item=>{
-          const tile=document.querySelector(`.tile[data-tile="${item.key}"]`);
-          if(tile){ tile.dataset.order=String(item.order); tile.style.order=String(item.order); tile.style.display=item.hidden?'none':''; }
-        });
-        state.dock.forEach(key=>{
-          const tile=document.querySelector(`.tile[data-tile="${key}"]`);
-          if(tile && tile.style.display==='none'){
-            const mini=document.createElement('div'); mini.className='card'; mini.dataset.tile=key;
-            mini.innerHTML=`
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <strong style="font-family:'Sansita',sans-serif;">${titleFor(key)}</strong>
-                <div><button class="button primary" onclick="expandTile('${key}')">Expand</button></div>
-              </div>
-            `;
-            dockArea.appendChild(mini);
-          }
-        });
-      }catch(e){}
-    }
-
+    document.getElementById('applyLayout').addEventListener('click',()=>{
+      const preset=document.getElementById('layoutSelect').value||'balanced';
+      applyLayoutPreset(preset);
+      document.getElementById('layoutNote').textContent=`Layout: ${preset.charAt(0).toUpperCase()+preset.slice(1)}`;
+    });
+  </script>
+  <!-- Initialization Script -->
+  <script>
+    /* ---------------- INIT ---------------- */
     function init(){
+      // Theme
       const savedTheme=localStorage.getItem('theme')||'light';
       document.documentElement.setAttribute('data-theme',savedTheme);
-      const envSaved=localStorage.getItem('env')||'relax'; envSelect.value=envSaved;
-      const last=localStorage.getItem('lastWallpaper'); if(last) setBackground(last);
-      applyEnvBackground(envSaved);
 
-      renderPlaylists(); musicIframeEnsure();
+      // Wallpapers
+      loadCustomWallpapers();
+      const envSaved=localStorage.getItem('env')||'relax';
+      envSelect.value=envSaved;
+      const last=localStorage.getItem('lastWallpaper');
+      if(last) setBackground(last); else applyEnvBackground(envSaved);
 
-      switchWriterMode();
+      // Music
+      renderPlaylists();
 
+      // Writing
+      renderWriterMode();
+
+      // Habits
       renderHabits();
 
-      document.getElementById('modeSelect').value=mode;
+      // Clock
       document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;
+      document.getElementById('modeSelect').value=mode;
       switchMode();
 
-      setupDraggableTiles(); restoreLayout();
-      layoutNote.textContent=`Layout: ${(layoutSelect.value||'balanced').charAt(0).toUpperCase()+(layoutSelect.value||'balanced').slice(1)}`;
+      // Drag + Layout
+      setupDraggableTiles();
+      applyLayoutPreset(document.getElementById('layoutSelect').value||'balanced');
     }
-    init();
+
+    document.addEventListener('DOMContentLoaded',init);
   </script>
 </body>
 </html>
