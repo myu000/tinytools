@@ -4,11 +4,9 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Tiny Tools — Creative & Focus Hub</title>
-
   <link rel="icon" type="image/png" href="favicon.png"/>
   <link rel="apple-touch-icon" href="favicon.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
-
   <style>
     :root{
       --bg:#FFFAE3; --text:#1F2F16;
@@ -30,7 +28,7 @@
     html,body{height:100%;}
     body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
 
-    header{background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;}
+    header{background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;backdrop-filter:saturate(180%) blur(8px);}
     .brand{display:flex;gap:12px;align-items:baseline;}
     .brand h1{margin:0;font-family:'Sansita',sans-serif;}
     .brand span{font-family:'Jura',sans-serif;opacity:0.9;}
@@ -39,10 +37,11 @@
     .select{background:var(--select-bg);color:var(--text);}
     .button{background:var(--secondary);color:#fff;}
     .button.primary{background:var(--primary);}
-    .button:hover{filter:brightness(1.06);}
+    .button:hover{filter:brightness(1.06);transform:translateY(-1px);}
 
     .page{display:grid;grid-template-columns:1fr var(--dock-width);gap:var(--tile-gap);max-width:1500px;margin:40px auto;padding:0 40px;}
-    @media (max-width:1100px){.page{grid-template-columns:1fr;} .dock{order:2;}}
+    @media(max-width:1100px){.page{grid-template-columns:1fr;}.dock{order:2;}}
+
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);align-content:start;}
 
     .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;min-height:200px;}
@@ -56,7 +55,7 @@
       transition:transform .25s ease, box-shadow .25s ease, filter .25s ease; min-height:180px; user-select:none;
     }
     .card:hover{transform:translateY(-2px);filter:brightness(1.03);box-shadow:var(--shadow-2);}
-    .card h3{margin:0 0 12px;font-family:'Sansita',sans-serif;touch-action:none;cursor:grab;} /* touch drag fix */
+    .card h3{margin:0 0 16px;font-family:'Sansita',sans-serif;touch-action:none;cursor:grab;} /* touch drag fix */
 
     .menu{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.30);border:none;border-radius:8px;padding:6px 8px;cursor:pointer;font-family:'Jura',sans-serif;color:var(--text);}
     .menu-options{position:absolute;top:42px;right:8px;display:none;background:#fff;border-radius:10px;box-shadow:var(--shadow-1);overflow:hidden;min-width:210px;z-index:10;}
@@ -73,11 +72,11 @@
 
     .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
     .thumb{border-radius:12px;overflow:hidden;height:110px;position:relative;}
-    .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;}
 
     .player{border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.18);}
     .player iframe{display:block;width:100%;height:300px;border:0;}
-    @media (max-width:600px){.player iframe{height:200px;}}
+    @media(max-width:600px){.player iframe{height:200px;}}
 
     #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;margin:10px 0 6px;}
 
@@ -86,7 +85,7 @@
 
     .select:focus,.select-inline:focus,.input:focus,textarea:focus,.btn:focus,.button:focus{outline:2px solid var(--accent);outline-offset:2px;}
 
-    @media (max-width:480px){
+    @media(max-width:480px){
       header{padding:14px 16px;grid-template-columns:1fr;gap:10px;}
       .page{padding:0 16px;margin:20px auto;}
       .card{padding:16px;}
@@ -245,78 +244,77 @@
       <div id="dockArea" class="dock-area"></div>
     </aside>
   </div>
-
+  <!-- YouTube IFrame API -->
   <script src="https://www.youtube.com/iframe_api"></script>
 
   <script>
+    /* Menus */
     function toggleMenu(id){ closeMenus(); const m=document.getElementById(id); if(m) m.style.display='block'; }
     function closeMenus(){ document.querySelectorAll('.menu-options').forEach(m=>m.style.display='none'); }
 
-    const wallpapers = {
-      relax: [
+    /* Wallpapers */
+    const wallpapers={
+      relax:[
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
         "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
       ],
-      study: [
+      study:[
         "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
         "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
         "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
       ],
-      focus: [
+      focus:[
         "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
         "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
         "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
       ],
-      creative: [
+      creative:[
         "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
         "https://i.pinimg.com/736x/5b/f8/8f/5bf88fe147b4f5f591a5e07bb5afd5ec.jpg",
         "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
       ],
-      default: [
+      default:[
         "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
         "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
         "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
       ],
-      custom: [] // populated from localStorage
+      custom:[]
     };
 
-    const envSelect = document.getElementById('envSelect');
-    const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
-    const themeToggle = document.getElementById('themeToggle');
-    const wallpaperThumbs = document.getElementById('wallpaperThumbs');
-    const wallpaperUpload = document.getElementById('wallpaperUpload');
-    const clearCustomWallpapersBtn = document.getElementById('clearCustomWallpapers');
+    const envSelect=document.getElementById('envSelect');
+    const shuffleWallpaperBtn=document.getElementById('shuffleWallpaper');
+    const themeToggle=document.getElementById('themeToggle');
+    const wallpaperThumbs=document.getElementById('wallpaperThumbs');
+    const wallpaperUpload=document.getElementById('wallpaperUpload');
+    const clearCustomWallpapersBtn=document.getElementById('clearCustomWallpapers');
 
     function setBackground(url){
-      document.body.style.backgroundImage = `url('${url}')`;
-      localStorage.setItem('lastWallpaper', url);
+      document.body.style.backgroundImage=`url('${url}')`;
+      localStorage.setItem('lastWallpaper',url);
     }
-
     function renderThumbnails(list){
-      wallpaperThumbs.innerHTML = "";
+      wallpaperThumbs.innerHTML="";
       list.forEach(url=>{
-        const div = document.createElement('div');
-        div.className = "thumb";
-        div.innerHTML = `<img src="${url}" alt="wallpaper"/>`;
-        div.addEventListener('click', ()=>setBackground(url));
+        const div=document.createElement('div');
+        div.className="thumb";
+        div.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
+        div.addEventListener('click',()=>setBackground(url));
         wallpaperThumbs.appendChild(div);
       });
     }
-
     function applyEnvBackground(env){
-      const list = wallpapers[env] || wallpapers.default;
-      const pick = list[Math.floor(Math.random()*list.length)];
+      const list=wallpapers[env]||wallpapers.default;
+      const pick=list[Math.floor(Math.random()*list.length)];
       setBackground(pick);
       renderThumbnails(list);
-      localStorage.setItem('env', env);
+      localStorage.setItem('env',env);
     }
-
     function loadCustomWallpapers(){
-      const custom = JSON.parse(localStorage.getItem('customWallpapers')||'[]');
-      wallpapers.custom = custom;
+      const custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+      wallpapers.custom=custom;
       if(custom.length){
-        const hasOption = Array.from(envSelect.options).some(o=>o.value==="custom");
+        const hasOption=[...envSelect.options].some(o=>o.value==="custom");
         if(!hasOption){
           const opt=document.createElement('option');
           opt.value="custom"; opt.textContent="Custom";
@@ -324,203 +322,140 @@
         }
       }
     }
-
-    wallpaperUpload.addEventListener('change', e=>{
-      const file = e.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = ev=>{
-        const url = ev.target.result;
+    wallpaperUpload.addEventListener('change',e=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        const url=ev.target.result;
         setBackground(url);
-        let custom = JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+        let custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
         custom.push(url);
-        localStorage.setItem('customWallpapers', JSON.stringify(custom));
-        wallpapers.custom = custom;
-        renderThumbnails((wallpapers[envSelect.value]||wallpapers.default).concat(custom.length && envSelect.value!=='custom' ? [] : []));
-        // if current env is custom, re-render custom list; else just append thumbnail
-        const thumb = document.createElement('div');
-        thumb.className="thumb";
-        thumb.innerHTML = `<img src="${url}" alt="wallpaper"/>`;
-        thumb.addEventListener('click', ()=>setBackground(url));
-        wallpaperThumbs.appendChild(thumb);
+        localStorage.setItem('customWallpapers',JSON.stringify(custom));
+        wallpapers.custom=custom;
+        // Show custom list when env is "custom", else append thumbnail
+        if(envSelect.value==='custom'){ renderThumbnails(custom); }
+        else{
+          const thumb=document.createElement('div');
+          thumb.className="thumb"; thumb.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
+          thumb.addEventListener('click',()=>setBackground(url));
+          wallpaperThumbs.appendChild(thumb);
+        }
       };
       reader.readAsDataURL(file);
-      wallpaperUpload.value = "";
+      wallpaperUpload.value="";
     });
-
-    clearCustomWallpapersBtn.addEventListener('click', ()=>{
+    clearCustomWallpapersBtn.addEventListener('click',()=>{
       localStorage.removeItem('customWallpapers');
-      wallpapers.custom = [];
-      const opt = Array.from(envSelect.options).find(o=>o.value==="custom");
+      wallpapers.custom=[];
+      const opt=[...envSelect.options].find(o=>o.value==="custom");
       if(opt) opt.remove();
       applyEnvBackground(envSelect.value);
     });
-
-    envSelect.addEventListener('change', e=>applyEnvBackground(e.target.value));
-    shuffleWallpaperBtn.addEventListener('click', ()=>applyEnvBackground(envSelect.value));
-    themeToggle.addEventListener('click', ()=>{
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = current === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
+    envSelect.addEventListener('change',e=>applyEnvBackground(e.target.value));
+    shuffleWallpaperBtn.addEventListener('click',()=>applyEnvBackground(envSelect.value));
+    themeToggle.addEventListener('click',()=>{
+      const cur=document.documentElement.getAttribute('data-theme')||'light';
+      const next=cur==='light'?'dark':'light';
+      document.documentElement.setAttribute('data-theme',next);
+      localStorage.setItem('theme',next);
     });
 
-    let ytPlayer, currentPlaylist = [], currentIndex = 0;
+    /* Music with robust autoplay — store clean IDs */
+    let ytPlayer,currentPlaylist=[],currentIndex=0;
     function onYouTubeIframeAPIReady(){
-      ytPlayer = new YT.Player('musicPlayer', {
-        height: '300',
-        width: '100%',
-        videoId: '',
-        playerVars: {
-          autoplay: 0,
-          controls: 1,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1
-        },
-        events: {
-          'onStateChange': onPlayerStateChange
-        }
+      ytPlayer=new YT.Player('musicPlayer',{
+        height:'300',width:'100%',videoId:'',
+        playerVars:{autoplay:0,controls:1,rel:0,modestbranding:1,playsinline:1},
+        events:{'onStateChange':onPlayerStateChange}
       });
     }
     function onPlayerStateChange(event){
-      if(event.data === YT.PlayerState.ENDED){
+      if(event.data===YT.PlayerState.ENDED){
         currentIndex++;
-        if(currentIndex >= currentPlaylist.length) currentIndex = 0;
-        const nextId = extractId(currentPlaylist[currentIndex]);
-        if(nextId) ytPlayer.loadVideoById(nextId);
+        if(currentIndex>=currentPlaylist.length) currentIndex=0;
+        ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
       }
     }
-
-    const playlistSelect = document.getElementById('playlistSelect');
-    function getPlaylists(){ return JSON.parse(localStorage.getItem('playlists')||'{}'); }
-    function setPlaylists(obj){ localStorage.setItem('playlists', JSON.stringify(obj)); }
-
+    function extractId(url){
+      try{
+        const u=new URL(url);
+        if(u.hostname.includes("youtu.be")) return u.pathname.slice(1);
+        if(u.hostname.includes("youtube.com")) return u.searchParams.get("v");
+      }catch(e){}
+      if(/^[\w-]{11}$/.test(url)) return url;
+      return "";
+    }
+    function getPlaylists(){return JSON.parse(localStorage.getItem('playlists')||'{}');}
+    function setPlaylists(obj){localStorage.setItem('playlists',JSON.stringify(obj));}
     function createPlaylist(){
-      const name = document.getElementById('playlistName').value.trim();
-      if (!name) return;
-      const pls = getPlaylists();
-      if (!pls[name]) pls[name] = [];
-      setPlaylists(pls);
-      document.getElementById('playlistName').value = "";
-      renderPlaylists();
-      playlistSelect.value = name;
-      renderPlaylist();
+      const name=document.getElementById('playlistName').value.trim();
+      if(!name) return;
+      const pls=getPlaylists(); if(!pls[name]) pls[name]=[];
+      setPlaylists(pls); renderPlaylists(); document.getElementById('playlistName').value="";
     }
-
     function deletePlaylist(){
-      const name = playlistSelect.value; if (!name) return;
-      const pls = getPlaylists();
-      delete pls[name]; setPlaylists(pls);
-      renderPlaylists();
-      document.getElementById('playlistTracks').innerHTML = "";
+      const name=document.getElementById('playlistSelect').value; if(!name) return;
+      const pls=getPlaylists(); delete pls[name]; setPlaylists(pls);
+      renderPlaylists(); document.getElementById('playlistTracks').innerHTML="";
     }
-
     function renderPlaylists(){
-      const pls = getPlaylists(); playlistSelect.innerHTML = "";
-      const names = Object.keys(pls);
-      if (!names.length) {
-        const opt = document.createElement('option'); opt.value = ""; opt.textContent = "No playlists";
-        playlistSelect.appendChild(opt); return;
-      }
-      names.forEach(n=>{
-        const opt = document.createElement('option'); opt.value = n; opt.textContent = n;
-        playlistSelect.appendChild(opt);
-      });
+      const pls=getPlaylists(); const sel=document.getElementById('playlistSelect'); sel.innerHTML="";
+      const names=Object.keys(pls);
+      if(!names.length){ const opt=document.createElement('option');opt.value="";opt.textContent="No playlists";sel.appendChild(opt); return; }
+      names.forEach(n=>{const opt=document.createElement('option');opt.value=n;opt.textContent=n;sel.appendChild(opt);});
     }
-
     function renderPlaylist(){
-      const pls = getPlaylists();
-      const name = playlistSelect.value;
-      const list = document.getElementById('playlistTracks');
-      list.innerHTML = "";
-      if (!name || !pls[name]) return;
-      pls[name].forEach((url, i)=>{
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.innerHTML = `
-          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">${url}</span>
-          <button class="btn" onclick="playTrack('${name}', ${i})">Play</button>
-          <button class="btn secondary" onclick="removeTrack('${name}', ${i})">Remove</button>
+      const pls=getPlaylists(); const name=document.getElementById('playlistSelect').value;
+      const list=document.getElementById('playlistTracks'); list.innerHTML="";
+      if(!name||!pls[name]) return;
+      pls[name].forEach((id,i)=>{
+        const row=document.createElement('div'); row.className='row';
+        row.innerHTML=`
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
+          <button class="btn" onclick="playTrack('${name}',${i})">Play</button>
+          <button class="btn secondary" onclick="removeTrack('${name}',${i})">Remove</button>
         `;
         list.appendChild(row);
       });
     }
-
     function addTrack(){
-      const name = playlistSelect.value;
-      const raw = document.getElementById('musicUrl').value.trim();
-      if (!name || !raw) return;
-      const url = normalizeYouTubeUrl(raw);
-      const pls = getPlaylists(); if (!pls[name]) pls[name] = [];
-      pls[name].push(url); setPlaylists(pls);
-      document.getElementById('musicUrl').value = "";
+      const name=document.getElementById('playlistSelect').value;
+      const raw=document.getElementById('musicUrl').value.trim();
+      if(!name||!raw) return;
+      const id=extractId(raw); if(!id) return;
+      const pls=getPlaylists(); if(!pls[name]) pls[name]=[];
+      pls[name].push(id); setPlaylists(pls);
+      document.getElementById('musicUrl').value="";
       renderPlaylist();
     }
-
     function removeTrack(name,i){
-      const pls = getPlaylists(); if (!pls[name]) return;
+      const pls=getPlaylists(); if(!pls[name]) return;
       pls[name].splice(i,1); setPlaylists(pls); renderPlaylist();
     }
-
     function playPlaylist(){
-      const name = playlistSelect.value;
-      const pls = getPlaylists();
-      if (!name || !pls[name] || !pls[name].length) return;
-      currentPlaylist = pls[name];
-      currentIndex = 0;
-      const id = extractId(currentPlaylist[0]);
-      if(id && ytPlayer) ytPlayer.loadVideoById(id);
+      const name=document.getElementById('playlistSelect').value;
+      const pls=getPlaylists(); if(!name||!pls[name]||!pls[name].length) return;
+      currentPlaylist=pls[name]; currentIndex=0;
+      ytPlayer.loadVideoById(currentPlaylist[0]);
     }
-
     function playTrack(name,i){
-      const pls = getPlaylists();
-      currentPlaylist = pls[name] || [];
-      currentIndex = i;
-      const id = extractId(currentPlaylist[i]);
-      if(id && ytPlayer) ytPlayer.loadVideoById(id);
+      const pls=getPlaylists(); currentPlaylist=pls[name]||[]; currentIndex=i;
+      ytPlayer.loadVideoById(currentPlaylist[i]);
     }
-
-    function extractId(url){
-      try{
-        const u = new URL(url);
-        if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
-        if (u.hostname.includes("youtube.com")) return u.searchParams.get("v") || "";
-      }catch(e){}
-      // fallback: if user pasted an ID directly
-      if(/^[\w-]{11}$/.test(url)) return url;
-      return "";
-    }
-
-    function normalizeYouTubeUrl(input){
-      try {
-        const u = new URL(input);
-        if (u.hostname.includes("youtu.be")) return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
-        if (u.hostname.includes("youtube.com")) {
-          if (u.pathname.includes("/embed/")) return input;
-          const id = u.searchParams.get("v"), list = u.searchParams.get("list");
-          if (list && !id) return `https://www.youtube.com/embed?listType=playlist&list=${list}`;
-          if (id && list) return `https://www.youtube.com/embed/${id}?list=${list}`;
-          if (id) return `https://www.youtube.com/embed/${id}`;
-        }
-      }catch(e){}
-      return input;
-    }
-
-    const writerArea = document.getElementById('writerArea');
-    const promptsList = [
+    /* Writing modes with autosave + export */
+    const writerArea=document.getElementById('writerArea');
+    const promptsList=[
       "Write about a moment that changes everything.",
       "Describe a character who hides a secret.",
       "Invent a world where memories are currency.",
       "Start with a line of overheard dialogue.",
       "Describe a place that feels like home but isn’t."
     ];
-
     function switchWriterMode(){
-      const mode = document.getElementById('writerMode').value;
-      writerArea.innerHTML = "";
+      const mode=document.getElementById('writerMode').value;
+      writerArea.innerHTML="";
       if(mode==="prompts"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <div class="row">
             <button class="btn" onclick="shufflePrompt()">Shuffle</button>
             <button class="btn secondary" onclick="exportPromptDraft('txt')">Export TXT</button>
@@ -537,7 +472,7 @@
         shufflePrompt(); updateWordCount('promptDraft','promptWordCount');
       }
       if(mode==="todo"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <div class="row">
             <input id="todoInput" class="input" placeholder="Add task..."/>
             <button class="btn" onclick="addTodo()">Add</button>
@@ -548,7 +483,7 @@
         renderTodos();
       }
       if(mode==="free"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <div class="row">
             <button class="btn secondary" onclick="exportFreeDraft('txt')">Export TXT</button>
             <button class="btn secondary" onclick="exportFreeDraft('md')">Export MD</button>
@@ -563,7 +498,7 @@
         updateWordCount('freeDraft','freeWordCount');
       }
       if(mode==="brainstorm"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <div class="row">
             <button class="btn" onclick="generateIdea()">Generate Idea</button>
             <button class="btn secondary" onclick="clearIdeas()">Clear</button>
@@ -579,7 +514,7 @@
         updateWordCount('brainstormDraft','brainstormWordCount');
       }
       if(mode==="journal"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <textarea id="journalText" placeholder="Today's entry..."></textarea>
           <div class="row">
             <button class="btn" onclick="saveJournal()">Save entry</button>
@@ -591,7 +526,6 @@
         renderJournal();
       }
     }
-
     function updateWordCount(textareaId,labelId){
       const el=document.getElementById(textareaId), lbl=document.getElementById(labelId);
       if(!el||!lbl) return; const words=el.value.trim().split(/\s+/).filter(Boolean).length;
@@ -643,13 +577,11 @@
       const wrap=document.getElementById('journalEntries'); if(!wrap) return; wrap.innerHTML="";
       getJournal().forEach((e,i)=>{
         const div=document.createElement('div'); div.className='card'; div.style.padding='12px';
-        div.innerHTML=`
-          <div style="display:flex;justify-content:space-between;align-items:center;">
+        div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;">
             <strong style="font-family:'Sansita',sans-serif;">${e.date} — ${e.time}</strong>
             <div><button class="btn secondary" onclick="deleteJournal(${i})">Delete</button></div>
           </div>
-          <p class="small" style="margin-top:8px;">${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p>
-        `;
+          <p class="small" style="margin-top:8px;">${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p>`;
         wrap.appendChild(div);
       });
     }
@@ -664,6 +596,7 @@
       openPrintable('Journal',content);
     }
 
+    /* To‑Do */
     function getTodos(){return JSON.parse(localStorage.getItem('todos')||'[]');}
     function setTodos(list){localStorage.setItem('todos',JSON.stringify(list));}
     function addTodo(){
@@ -687,6 +620,7 @@
       });
     }
 
+    /* Habits */
     function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
     function setHabits(list){localStorage.setItem('habits',JSON.stringify(list));}
     function addHabit(){
@@ -725,6 +659,7 @@
       });
     }
 
+    /* Clock */
     let timer=null, timeLeft=1500, running=false;
     let mode=localStorage.getItem('clockMode')||"pomodoro";
     let pomodoroCompleted=parseInt(localStorage.getItem('pomodoroCompleted')||"0",10);
@@ -789,9 +724,9 @@
       }
     });
 
+    /* Drag & drop */
     const grid=document.getElementById('grid');
-    let drag={tile:null,handle:null,ghost:null,placeholderIndex:null,offsetX:0,offsetY:0};
-
+    let drag={tile:null,ghost:null,placeholderIndex:null,offsetX:0,offsetY:0};
     function setupDraggableTiles(){
       const tiles=Array.from(grid.querySelectorAll('.tile'));
       tiles.forEach((tile,i)=>{
@@ -843,6 +778,7 @@
       document.removeEventListener('pointermove',onDragMove); document.removeEventListener('pointerup',onDragEnd);
     }
 
+    /* Dock + layout */
     const dockArea=document.getElementById('dockArea');
     function titleFor(key){
       switch(key){case'wallpapers':return'Wallpapers';case'music':return'Music';case'writing':return'Writing';case'habits':return'Habits';case'clock':return'Clock';default:return key;}
@@ -919,6 +855,7 @@
       }catch(e){}
     }
 
+    /* Init */
     function init(){
       const savedTheme=localStorage.getItem('theme')||'light';
       document.documentElement.setAttribute('data-theme',savedTheme);
