@@ -89,7 +89,7 @@
     </main>
     <aside class="dock"><h4>Mini dock</h4><div id="dockArea" class="dock-area"></div></aside>
   </div>
-  <!-- Wallpapers + Theme Script -->
+    <!-- Wallpapers + Theme Script -->
   <script>
     /* ---------------- WALLPAPERS ---------------- */
     const wallpapers={
@@ -191,7 +191,7 @@
       localStorage.setItem('theme',next);
     });
   </script>
-  <!-- Music / YouTube Playlist Script -->
+    <!-- Music / YouTube Playlist Script -->
   <script>
     /* ---------------- MUSIC ---------------- */
     let ytPlayer,currentPlaylist=[],currentIndex=0;window.playerReady=false;
@@ -306,7 +306,7 @@
       ytPlayer.loadVideoById(currentPlaylist[i]);
     }
   </script>
-  <!-- Writing Suite Script — Part 4 i) -->
+    <!-- Writing Suite Script — Part 4 i) -->
   <script>
     /* ---------------- WRITING CORE ---------------- */
     const writerArea = document.getElementById('writerArea');
@@ -459,7 +459,7 @@
       });
     }
   </script>
-  <!-- Writing Suite Script — Part 4 ii) -->
+    <!-- Writing Suite Script — Part 4 ii) -->
   <script>
     /* ---------------- BRAINSTORM ---------------- */
     function generateIdea(){
@@ -516,7 +516,7 @@
       openPrintable('Journal',content);
     }
   </script>
-  <!-- Habits Script -->
+    <!-- Habits Script -->
   <script>
     /* ---------------- HABITS ---------------- */
     function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
@@ -591,7 +591,7 @@
       });
     }
   </script>
-  <!-- Clock Script -->
+    <!-- Clock Script -->
   <script>
     /* ---------------- CLOCK ---------------- */
     let timer=null, timeLeft=1500, running=false;
@@ -653,7 +653,7 @@
       }
     });
   </script>
-  <!-- Dock + Layout + Drag-and-Drop Script -->
+    <!-- Dock + Layout + Drag-and-Drop Script -->
   <script>
     /* ---------------- DRAG & DROP ---------------- */
     const grid=document.getElementById('grid');
@@ -741,7 +741,7 @@
       document.getElementById('layoutNote').textContent=`Layout: ${preset.charAt(0).toUpperCase()+preset.slice(1)}`;
     });
   </script>
-  <!-- Initialization Script -->
+    <!-- Initialization Script -->
   <script>
     /* ---------------- INIT ---------------- */
     function init(){
