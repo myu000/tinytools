@@ -7,22 +7,43 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#FFFAE3;--text:#1F2F16;--primary:#395B50;--secondary:#96705B;--accent:#3F6F63;--glass:rgba(255,255,255,0.35);--shadow-1:0 8px 24px rgba(0,0,0,0.18);--shadow-2:0 12px 32px rgba(0,0,0,0.26);--tile-gap:24px;--tile-radius:20px;--tile-pad:24px;--dock-width:340px;--select-bg:rgba(255,255,255,0.30);--input-bg:rgba(255,255,255,0.28);}
+    :root{
+      --bg:#FFFAE3;--text:#1F2F16;--primary:#395B50;--secondary:#96705B;--accent:#3F6F63;
+      --glass:rgba(255,255,255,0.35);--shadow-1:0 8px 24px rgba(0,0,0,0.18);
+      --tile-gap:24px;--tile-radius:20px;--tile-pad:20px;--dock-width:340px;
+      --select-bg:rgba(255,255,255,0.30);--input-bg:rgba(255,255,255,0.28);
+      --menu-bg:rgba(0,0,0,0.65);--menu-text:#fff;
+    }
     [data-theme="dark"]{--bg:#1F2F16;--text:#F3EFE7;--accent:#78B3A7;--glass:rgba(30,30,30,0.45);}
-    *{box-sizing:border-box;}body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
-    header{background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;}
-    .brand{display:flex;gap:12px;align-items:baseline;} .brand h1{margin:0;font-family:'Sansita',sans-serif;} .brand span{font-family:'Jura',sans-serif;opacity:0.9;}
+    *{box-sizing:border-box;} body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
+    header{background:rgba(57,91,80,0.92);color:#fff;padding:14px 24px;display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;}
+    .brand{display:flex;gap:10px;align-items:baseline;} .brand h1{margin:0;font-family:'Sansita',sans-serif;}
+    .brand span{font-family:'Jura',sans-serif;opacity:0.9;}
     .select,.button{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;}
     .select{background:var(--select-bg);color:var(--text);} .button{background:var(--secondary);color:#fff;} .button.primary{background:var(--primary);}
-    .page{display:grid;grid-template-columns:1fr var(--dock-width);gap:var(--tile-gap);max-width:1500px;margin:40px auto;padding:0 40px;}
-    @media(max-width:1100px){.page{grid-template-columns:1fr;}.dock{order:2;}} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);}
+    .page{display:grid;grid-template-columns:1fr var(--dock-width);gap:var(--tile-gap);max-width:1400px;margin:30px auto;padding:0 24px;}
+    @media(max-width:1100px){.page{grid-template-columns:1fr;}.dock{order:2;}}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);}
     .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;} .dock h4{margin:0 0 10px;font-family:'Sansita',sans-serif;} .dock-area{display:grid;gap:12px;}
-    .card{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);border-radius:var(--tile-radius);padding:var(--tile-pad);box-shadow:var(--shadow-1);}
-    .card h3{margin:0 0 12px;font-family:'Sansita',sans-serif;cursor:grab;} .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;} .stack{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
-    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;} .btn{background:var(--primary);color:#fff;cursor:pointer;} .btn.secondary{background:var(--secondary);}
-    .input,.select-inline,textarea{background:var(--input-bg);} textarea{width:100%;min-height:220px;resize:vertical;}
-    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;} .thumb img{width:100%;height:100%;object-fit:cover;cursor:pointer;}
-    .player iframe{width:100%;height:300px;border:0;} #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;}
+    .card{position:relative;background:var(--glass);backdrop-filter:blur(16px) saturate(160%);border-radius:var(--tile-radius);padding:var(--tile-pad);box-shadow:var(--shadow-1);}
+    .tile-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .tile-title{margin:0;font-family:'Sansita',sans-serif;}
+    .dots-btn{background:transparent;border:none;font-size:20px;line-height:1;color:var(--text);cursor:pointer;padding:6px;border-radius:8px;}
+    .dots-btn:focus{outline:2px solid rgba(0,0,0,0.15);}
+    .tile-menu{position:absolute;top:10px;right:10px;background:var(--menu-bg);color:var(--menu-text);border-radius:12px;padding:8px 10px;display:none;min-width:160px;z-index:20;}
+    .tile-menu.open{display:block;}
+    .tile-menu button{display:block;width:100%;text-align:left;background:transparent;border:none;color:#fff;padding:8px;border-radius:8px;cursor:pointer;}
+    .tile-menu button:hover{background:rgba(255,255,255,0.12);}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+    .stack{display:flex;flex-direction:column;gap:10px;margin-bottom:10px;}
+    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:10px;}
+    .btn{background:var(--primary);color:#fff;cursor:pointer;} .btn.secondary{background:var(--secondary);}
+    .input,.select-inline,textarea{background:var(--input-bg);} textarea{width:100%;min-height:180px;resize:vertical;}
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;} .thumb img{width:100%;height:100%;object-fit:cover;cursor:pointer;border-radius:12px;}
+    .player iframe{width:100%;height:300px;border:0;}
+    #timeDisplay{font-family:'Jura',sans-serif;font-size:2rem;text-align:center;}
+    .drag-handle{cursor:grab;user-select:none;}
+    .draggable{user-select:none;}
   </style>
 </head>
 <body>
@@ -50,17 +71,36 @@
       <span id="layoutNote">Layout: Balanced</span>
     </div>
   </header>
-    <div class="page">
+
+  <div class="page">
     <main id="grid" class="grid">
       <!-- Wallpapers -->
-      <section class="card tile" data-tile="wallpapers"><h3>Wallpapers</h3>
-        <input type="file" id="wallpaperUpload" accept="image/*">
-        <button id="clearCustomWallpapers" class="btn secondary">Clear uploaded</button>
+      <section class="card tile" data-tile="wallpapers">
+        <div class="tile-header">
+          <h3 class="tile-title">Wallpapers</h3>
+          <button class="dots-btn" aria-label="Wallpapers menu">⋯</button>
+          <div class="tile-menu">
+            <button onclick="shrinkTile('wallpapers')">Move to dock</button>
+            <button onclick="applyEnvBackground(envSelect.value)">Shuffle current set</button>
+          </div>
+        </div>
+        <div class="row">
+          <input type="file" id="wallpaperUpload" accept="image/*">
+          <button id="clearCustomWallpapers" class="btn secondary">Clear uploaded</button>
+        </div>
         <div id="wallpaperThumbs" class="thumbs"></div>
       </section>
 
       <!-- Music -->
-      <section class="card tile" data-tile="music"><h3>Music</h3>
+      <section class="card tile" data-tile="music">
+        <div class="tile-header">
+          <h3 class="tile-title">Music</h3>
+          <button class="dots-btn" aria-label="Music menu">⋯</button>
+          <div class="tile-menu">
+            <button onclick="shrinkTile('music')">Move to dock</button>
+            <button onclick="shufflePlay()">Shuffle play</button>
+          </div>
+        </div>
         <div class="row">
           <input id="playlistName" class="input" placeholder="New playlist"/>
           <button class="btn" onclick="createPlaylist()">Create</button>
@@ -70,46 +110,115 @@
           <select id="playlistSelect" class="select-inline" onchange="renderPlaylist()"></select>
           <button class="btn" onclick="renderPlaylists()">Refresh</button>
           <button class="btn primary" onclick="playPlaylist()">Play</button>
+          <button class="btn secondary" onclick="shufflePlay()">Shuffle</button>
         </div>
         <div class="row">
           <input id="musicUrl" class="input" placeholder="Paste YouTube URL"/>
           <button class="btn secondary" onclick="addTrack()">Add</button>
         </div>
         <div id="playlistTracks" class="stack"></div>
+        <div class="row">
+          <button class="btn secondary" onclick="enableTrackReorder()">Reorder tracks</button>
+          <button class="btn" onclick="disableTrackReorder()">Done reordering</button>
+        </div>
         <div id="musicPlayer" class="player"></div>
       </section>
 
       <!-- Writing -->
-      <section class="card tile" data-tile="writing"><h3>Writing</h3>
-        <select id="writerMode" class="select-inline" onchange="renderWriterMode()">
-          <option value="prompts">Prompts</option>
-          <option value="todo">To‑Do</option>
-          <option value="free">Free</option>
-          <option value="brainstorm">Brainstorm</option>
-          <option value="journal">Journal</option>
-        </select>
-        <div id="writerArea"></div>
+      <section class="card tile" data-tile="writing">
+        <div class="tile-header">
+          <h3 class="tile-title">Writing</h3>
+          <button class="dots-btn" aria-label="Writing menu">⋯</button>
+          <div class="tile-menu">
+            <button onclick="shrinkTile('writing')">Move to dock</button>
+            <button onclick="localStorage.clear(); location.reload()">Clear local data</button>
+          </div>
+        </div>
+        <div class="row">
+          <select id="writerMode" class="select-inline" onchange="renderWriterMode()">
+            <option value="prompts">Prompts</option>
+            <option value="todo">To‑Do</option>
+            <option value="free">Free</option>
+            <option value="brainstorm">Brainstorm</option>
+            <option value="journal">Journal</option>
+          </select>
+        </div>
+        <div id="writerArea" class="stack">
+          <!-- Visible defaults to avoid “not showing” -->
+          <div id="brainstormVisible" class="stack" style="display:none;">
+            <p id="ideaText" class="small"></p>
+            <div class="row">
+              <button class="btn" onclick="generateIdea()">Generate idea</button>
+              <button class="btn secondary" onclick="clearIdeas()">Clear</button>
+            </div>
+            <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
+          </div>
+          <div id="journalVisible" class="stack" style="display:none;">
+            <textarea id="journalText" placeholder="Today's entry..."></textarea>
+            <div class="row">
+              <button class="btn" onclick="saveJournal()">Save entry</button>
+              <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
+              <button class="btn" onclick="exportJournalPrintable()">Printable</button>
+            </div>
+            <div id="journalEntries" class="stack"></div>
+          </div>
+        </div>
       </section>
 
       <!-- Habits -->
-      <section class="card tile" data-tile="habits"><h3>Habits</h3>
-        <input id="habitInput" class="input" placeholder="Add habit"/>
-        <button class="btn" onclick="addHabit()">Add</button>
-        <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
+      <section class="card tile" data-tile="habits">
+        <div class="tile-header">
+          <h3 class="tile-title">Habits</h3>
+          <button class="dots-btn" aria-label="Habits menu">⋯</button>
+          <div class="tile-menu">
+            <button onclick="shrinkTile('habits')">Move to dock</button>
+            <button onclick="resetAllHabits()">Reset all</button>
+          </div>
+        </div>
+        <div class="row">
+          <input id="habitInput" class="input" placeholder="Add habit"/>
+          <button class="btn" onclick="addHabit()">Add</button>
+        </div>
         <div id="habitList" class="stack"></div>
       </section>
 
       <!-- Clock -->
-      <section class="card tile" data-tile="clock"><h3>Clock</h3>
-        <select id="modeSelect" class="select-inline" onchange="switchMode()">
-          <option value="pomodoro">Pomodoro</option>
-          <option value="stopwatch">Stopwatch</option>
-          <option value="countdown">Countdown</option>
-          <option value="custom">Custom</option>
-        </select>
-        <button class="btn" onclick="startTimer()">Start</button>
-        <button class="btn secondary" onclick="pauseTimer()">Pause</button>
-        <button class="btn" onclick="resetTimer()">Reset</button>
+      <section class="card tile" data-tile="clock">
+        <div class="tile-header">
+          <h3 class="tile-title">Clock</h3>
+          <button class="dots-btn" aria-label="Clock menu">⋯</button>
+          <div class="tile-menu">
+            <button onclick="shrinkTile('clock')">Move to dock</button>
+            <button onclick="resetTimer()">Reset</button>
+          </div>
+        </div>
+        <div class="row">
+          <select id="modeSelect" class="select-inline" onchange="switchMode()">
+            <option value="pomodoro">Pomodoro</option>
+            <option value="stopwatch">Stopwatch</option>
+            <option value="countdown">Countdown</option>
+            <option value="custom">Custom</option>
+          </select>
+          <button class="btn" onclick="startTimer()">Start</button>
+          <button class="btn secondary" onclick="pauseTimer()">Pause</button>
+          <button class="btn" onclick="resetTimer()">Reset</button>
+        </div>
+        <div class="row">
+          <label class="input" style="display:inline-flex;gap:6px;align-items:center;">
+            <span>Pomodoro (min)</span>
+            <input id="pomodoroMinutes" type="number" min="1" value="25" style="width:70px;background:transparent;border:none;">
+          </label>
+          <label class="input" style="display:inline-flex;gap:6px;align-items:center;">
+            <span>Countdown (min)</span>
+            <input id="countdownMinutes" type="number" min="1" value="5" style="width:70px;background:transparent;border:none;">
+          </label>
+          <label class="input" style="display:inline-flex;gap:6px;align-items:center;">
+            <span>Custom (mm:ss)</span>
+            <input id="customMM" type="number" min="0" value="0" style="width:50px;background:transparent;border:none;">
+            <span>:</span>
+            <input id="customSS" type="number" min="0" value="30" style="width:50px;background:transparent;border:none;">
+          </label>
+        </div>
         <div id="timeDisplay">00:25:00</div>
         <p id="stats">Completed Pomodoros: 0</p>
       </section>
@@ -120,69 +229,77 @@
       <h4>Mini dock</h4>
       <div id="dockArea" class="dock-area"></div>
     </aside>
-  </div>  <!-- Wallpapers + Theme Script -->
+  </div>  <!-- Wallpapers + Theme + Menu Script -->
   <script>
     /* ---------------- WALLPAPERS ---------------- */
-    const wallpapers={
-      relax:[
+    const wallpapers = {
+      relax: [
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
         "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
       ],
-      study:[
+      study: [
         "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
         "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
         "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
       ],
-      focus:[
+      focus: [
         "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
         "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
         "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
       ],
-      creative:[
+      creative: [
         "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
-        "https://i.pinimg.com/736x/5b/f8/8f/5bf88fe147b4f5f591a5e07bb5afd5ec.jpg",
+        { url: "https://i.pinimg.com/736x/5b/f8/8f/5bf88fe147b4f5f591a5e07bb5afd5ec.jpg", rotate: true },
         "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
       ],
-      default:[
+      default: [
         "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
         "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
         "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
       ],
-      custom:[]
+      custom: []
     };
 
-    const envSelect=document.getElementById('envSelect');
-    const shuffleWallpaperBtn=document.getElementById('shuffleWallpaper');
-    const themeToggle=document.getElementById('themeToggle');
-    const wallpaperThumbs=document.getElementById('wallpaperThumbs');
-    const wallpaperUpload=document.getElementById('wallpaperUpload');
-    const clearCustomWallpapersBtn=document.getElementById('clearCustomWallpapers');
+    const envSelect = document.getElementById('envSelect');
+    const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
+    const themeToggle = document.getElementById('themeToggle');
+    const wallpaperThumbs = document.getElementById('wallpaperThumbs');
+    const wallpaperUpload = document.getElementById('wallpaperUpload');
+    const clearCustomWallpapersBtn = document.getElementById('clearCustomWallpapers');
 
-    function setBackground(url){
-      document.body.style.backgroundImage=`url('${url}')`;
-      document.body.style.backgroundPosition='center';
-      document.body.style.backgroundSize='cover';
-      document.body.style.backgroundAttachment='fixed';
-      localStorage.setItem('lastWallpaper',url);
+    function setBackground(url, rotate=false){
+      document.body.style.backgroundImage = `url('${url}')`;
+      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundAttachment = 'fixed';
+      document.body.style.transform = rotate ? "rotate(-90deg) scale(1.2)" : "none";
+      localStorage.setItem('lastWallpaper', JSON.stringify({url,rotate}));
     }
+
     function renderThumbnails(list){
-      wallpaperThumbs.innerHTML="";
-      list.forEach(url=>{
+      wallpaperThumbs.innerHTML = "";
+      list.forEach(item=>{
+        let url=item, rotate=false;
+        if(typeof item==="object"){url=item.url; rotate=item.rotate;}
         const div=document.createElement('div');
         div.className="thumb";
         div.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
-        div.addEventListener('click',()=>setBackground(url));
+        div.addEventListener('click',()=>setBackground(url,rotate));
         wallpaperThumbs.appendChild(div);
       });
     }
+
     function applyEnvBackground(env){
       const list=wallpapers[env]||wallpapers.default;
       const pick=list[Math.floor(Math.random()*list.length)];
-      if(pick) setBackground(pick);
+      let url=pick, rotate=false;
+      if(typeof pick==="object"){url=pick.url; rotate=pick.rotate;}
+      if(url) setBackground(url,rotate);
       renderThumbnails(list);
       localStorage.setItem('env',env);
     }
+
     function loadCustomWallpapers(){
       const custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
       wallpapers.custom=custom;
@@ -192,6 +309,7 @@
         envSelect.appendChild(opt);
       }
     }
+
     wallpaperUpload.addEventListener('change',e=>{
       const file=e.target.files[0]; if(!file) return;
       const reader=new FileReader();
@@ -206,6 +324,7 @@
       };
       reader.readAsDataURL(file);
     });
+
     clearCustomWallpapersBtn.addEventListener('click',()=>{
       localStorage.removeItem('customWallpapers');
       wallpapers.custom=[];
@@ -213,13 +332,31 @@
       if(opt) opt.remove();
       applyEnvBackground(envSelect.value);
     });
+
     envSelect.addEventListener('change',e=>applyEnvBackground(e.target.value));
     shuffleWallpaperBtn.addEventListener('click',()=>applyEnvBackground(envSelect.value));
+
     themeToggle.addEventListener('click',()=>{
       const cur=document.documentElement.getAttribute('data-theme')||'light';
       const next=cur==='light'?'dark':'light';
       document.documentElement.setAttribute('data-theme',next);
       localStorage.setItem('theme',next);
+    });
+
+    /* ---------------- TILE MENUS ---------------- */
+    document.addEventListener('click',e=>{
+      document.querySelectorAll('.tile-menu.open').forEach(menu=>{
+        if(!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)){
+          menu.classList.remove('open');
+        }
+      });
+    });
+    document.querySelectorAll('.dots-btn').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const menu=btn.nextElementSibling;
+        menu.classList.toggle('open');
+      });
     });
   </script>  <!-- YouTube IFrame API -->
   <script src="https://www.youtube.com/iframe_api"></script>
@@ -235,7 +372,7 @@
         height:'300',width:'100%',videoId:'',
         playerVars:{autoplay:0,controls:1,rel:0,modestbranding:1,playsinline:1},
         events:{
-          'onReady':e=>{try{e.target.mute();}catch(err){}window.playerReady=true;},
+          'onReady':()=>{window.playerReady=true;},
           'onStateChange':onPlayerStateChange
         }
       });
@@ -244,25 +381,18 @@
       if(event.data===YT.PlayerState.ENDED){
         currentIndex++;
         if(currentIndex>=currentPlaylist.length) currentIndex=0;
-        ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
+        if(currentPlaylist.length) ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
       }
     }
     function extractId(url){
       try{
         const u=new URL(url);
         if(u.hostname.includes("youtu.be")){
-          const id=u.pathname.split("/")[1];
-          return (id && id.length===11)?id:"";
+          return u.pathname.split("/")[1];
         }
         if(u.hostname.includes("youtube.com")){
-          if(u.searchParams.has("v")){
-            const id=u.searchParams.get("v");
-            return (id && id.length===11)?id:"";
-          }
-          if(u.pathname.includes("/embed/")){
-            const id=u.pathname.split("/embed/")[1].split(/[?&]/)[0];
-            return (id && id.length===11)?id:"";
-          }
+          if(u.searchParams.has("v")) return u.searchParams.get("v");
+          if(u.pathname.includes("/embed/")) return u.pathname.split("/embed/")[1].split(/[?&]/)[0];
         }
       }catch(e){
         if(/^[\w-]{11}$/.test(url)) return url;
@@ -293,13 +423,14 @@
         const opt=document.createElement('option'); opt.value=""; opt.textContent="No playlists"; sel.appendChild(opt); return;
       }
       names.forEach(n=>{const opt=document.createElement('option');opt.value=n;opt.textContent=n;sel.appendChild(opt);});
+      renderPlaylist();
     }
     function renderPlaylist(){
       const pls=getPlaylists(); const name=document.getElementById('playlistSelect').value;
       const list=document.getElementById('playlistTracks'); list.innerHTML="";
       if(!name||!pls[name]) return;
       pls[name].forEach((id,i)=>{
-        const row=document.createElement('div'); row.className='row';
+        const row=document.createElement('div'); row.className='row draggable'; row.draggable=true; row.dataset.index=i;
         row.innerHTML=`
           <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
           <button class="btn" onclick="playTrack('${name}',${i})">Play</button>
@@ -307,6 +438,7 @@
         `;
         list.appendChild(row);
       });
+      enableReorderDnD();
     }
     function addTrack(){
       const name=document.getElementById('playlistSelect').value;
@@ -324,22 +456,59 @@
       pls[name].splice(i,1); setPlaylists(pls); renderPlaylist();
     }
     function playPlaylist(){
-      if(!window.playerReady||!ytPlayer||typeof ytPlayer.loadVideoById!=="function"){
-        alert("Player not ready yet");return;
-      }
+      if(!window.playerReady||!ytPlayer){alert("Player not ready yet");return;}
       const name=document.getElementById('playlistSelect').value;
       const pls=getPlaylists(); if(!name||!pls[name]||!pls[name].length) return;
       currentPlaylist=pls[name]; currentIndex=0;
       ytPlayer.loadVideoById(currentPlaylist[0]);
     }
     function playTrack(name,i){
-      if(!window.playerReady||!ytPlayer||typeof ytPlayer.loadVideoById!=="function"){
-        alert("Player not ready yet");return;
-      }
+      if(!window.playerReady||!ytPlayer){alert("Player not ready yet");return;}
       const pls=getPlaylists(); currentPlaylist=pls[name]||[]; currentIndex=i;
       ytPlayer.loadVideoById(currentPlaylist[i]);
     }
-  </script>  <!-- Writing Suite Script — Part 4 i) -->
+    function shufflePlay(){
+      const name=document.getElementById('playlistSelect').value;
+      const pls=getPlaylists(); if(!name||!pls[name]||!pls[name].length) return;
+      currentPlaylist=[...pls[name]];
+      for(let i=currentPlaylist.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [currentPlaylist[i],currentPlaylist[j]]=[currentPlaylist[j],currentPlaylist[i]];
+      }
+      currentIndex=0;
+      if(window.playerReady) ytPlayer.loadVideoById(currentPlaylist[0]);
+    }
+
+    /* ---------------- REORDER ---------------- */
+    function enableTrackReorder(){
+      document.querySelectorAll('#playlistTracks .draggable').forEach(el=>{
+        el.addEventListener('dragstart',onDragStart);
+        el.addEventListener('dragover',onDragOver);
+        el.addEventListener('drop',onDrop);
+      });
+    }
+    function disableTrackReorder(){
+      document.querySelectorAll('#playlistTracks .draggable').forEach(el=>{
+        el.removeEventListener('dragstart',onDragStart);
+        el.removeEventListener('dragover',onDragOver);
+        el.removeEventListener('drop',onDrop);
+      });
+    }
+    let dragSrc=null;
+    function onDragStart(e){dragSrc=this; e.dataTransfer.effectAllowed='move';}
+    function onDragOver(e){e.preventDefault(); e.dataTransfer.dropEffect='move';}
+    function onDrop(e){
+      e.stopPropagation();
+      if(dragSrc!==this){
+        const name=document.getElementById('playlistSelect').value;
+        const pls=getPlaylists(); const arr=pls[name];
+        const from=parseInt(dragSrc.dataset.index), to=parseInt(this.dataset.index);
+        const moved=arr.splice(from,1)[0];
+        arr.splice(to,0,moved);
+        setPlaylists(pls); renderPlaylist();
+      }
+    }
+  </script>  <!-- Writing Suite Script — Part 4 (i) -->
   <script>
     /* ---------------- WRITING CORE ---------------- */
     const writerArea = document.getElementById('writerArea');
@@ -407,6 +576,10 @@
         });
         updateWordCount('freeDraft','freeWordCount');
       }
+
+      // Show/hide Brainstorm and Journal visible blocks
+      document.getElementById('brainstormVisible').style.display = (mode==="brainstorm")?"block":"none";
+      document.getElementById('journalVisible').style.display = (mode==="journal")?"block":"none";
     }
 
     /* ---------------- UTILITIES ---------------- */
@@ -491,7 +664,7 @@
         list.appendChild(li);
       });
     }
-  </script>  <!-- Writing Suite Script — Part 4 ii) -->
+  </script>  <!-- Writing Suite Script — Part 4 (ii) -->
   <script>
     /* ---------------- BRAINSTORM ---------------- */
     function generateIdea(){
@@ -509,6 +682,15 @@
     function clearIdeas(){
       document.getElementById('ideaText').innerText="";
       localStorage.removeItem('lastIdea');
+    }
+
+    // Autosave brainstorm notes
+    const brainstormDraft=document.getElementById('brainstormDraft');
+    if(brainstormDraft){
+      brainstormDraft.value=localStorage.getItem('brainstormDraft')||"";
+      brainstormDraft.addEventListener('input',()=>{
+        localStorage.setItem('brainstormDraft',brainstormDraft.value);
+      });
     }
 
     /* ---------------- JOURNAL ---------------- */
@@ -547,6 +729,9 @@
       const content=entries.map(e=>`<h3>${e.date} — ${e.time}</h3><p>${e.text.replace(/\n/g,'<br/>')}</p><hr/>`).join('');
       openPrintable('Journal',content);
     }
+
+    // Initialize journal on load
+    document.addEventListener('DOMContentLoaded',renderJournal);
   </script>  <!-- Habits Script -->
   <script>
     /* ---------------- HABITS ---------------- */
@@ -637,6 +822,7 @@
     function updateDisplay(){
       document.getElementById('timeDisplay').innerText=formatTime(timeLeft);
     }
+
     function startTimer(){
       if(running) return;
       running=true;
@@ -663,9 +849,20 @@
     }
     function resetTimer(){
       clearInterval(timer); running=false;
-      if(mode==="pomodoro"){ timeLeft=25*60; }
+      if(mode==="pomodoro"){
+        const mins=parseInt(document.getElementById('pomodoroMinutes').value)||25;
+        timeLeft=mins*60;
+      }
       else if(mode==="stopwatch"){ timeLeft=0; }
-      else if(mode==="countdown"||mode==="custom"){ timeLeft=5*60; }
+      else if(mode==="countdown"){
+        const mins=parseInt(document.getElementById('countdownMinutes').value)||5;
+        timeLeft=mins*60;
+      }
+      else if(mode==="custom"){
+        const mm=parseInt(document.getElementById('customMM').value)||0;
+        const ss=parseInt(document.getElementById('customSS').value)||30;
+        timeLeft=mm*60+ss;
+      }
       updateDisplay();
     }
     function switchMode(){
@@ -686,53 +883,51 @@
   <script>
     /* ---------------- DRAG & DROP ---------------- */
     const grid=document.getElementById('grid');
-    let drag={tile:null,ghost:null,offsetX:0,offsetY:0};
+    let dragSrcEl=null;
 
     function setupDraggableTiles(){
       const tiles=Array.from(grid.querySelectorAll('.tile'));
-      tiles.forEach((tile,i)=>{
-        tile.dataset.order=tile.dataset.order||String(i+1);
-        const handle=tile.querySelector('h3');
-        if(!handle) return;
-        handle.style.cursor='grab';
-        handle.addEventListener('pointerdown',(e)=>{
-          const tag=e.target.tagName;
-          if(['INPUT','SELECT','TEXTAREA','BUTTON','IFRAME'].includes(tag)) return;
-          startDrag(tile,e);
-        });
+      tiles.forEach(tile=>{
+        const handle=tile.querySelector('.tile-title');
+        if(handle){
+          handle.classList.add('drag-handle');
+          tile.draggable=true;
+          tile.addEventListener('dragstart',onTileDragStart);
+          tile.addEventListener('dragover',onTileDragOver);
+          tile.addEventListener('drop',onTileDrop);
+          tile.addEventListener('dragend',onTileDragEnd);
+        }
       });
     }
-    function startDrag(tile,e){
-      const rect=tile.getBoundingClientRect();
-      drag.tile=tile;
-      drag.offsetX=e.clientX-rect.left;
-      drag.offsetY=e.clientY-rect.top;
-      drag.ghost=document.createElement('div');
-      drag.ghost.className='card';
-      drag.ghost.style.position='fixed';
-      drag.ghost.style.left=rect.left+'px';
-      drag.ghost.style.top=rect.top+'px';
-      drag.ghost.style.width=rect.width+'px';
-      drag.ghost.style.height=rect.height+'px';
-      drag.ghost.style.zIndex='1000';
-      drag.ghost.style.opacity='0.9';
-      drag.ghost.innerHTML=`<div style="padding:10px;font-family:'Jura',sans-serif;">Moving: ${tile.querySelector('h3')?.textContent||'Tile'}</div>`;
-      document.body.appendChild(drag.ghost);
-      tile.classList.add('dragging-origin');
-      document.addEventListener('pointermove',onDragMove);
-      document.addEventListener('pointerup',onDragEnd);
+    function onTileDragStart(e){
+      dragSrcEl=this;
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/html',this.outerHTML);
+      this.classList.add('dragging');
     }
-    function onDragMove(e){
-      if(!drag.ghost) return;
-      const x=e.clientX-drag.offsetX, y=e.clientY-drag.offsetY;
-      drag.ghost.style.left=x+'px'; drag.ghost.style.top=y+'px';
+    function onTileDragOver(e){
+      if(e.preventDefault) e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      return false;
     }
-    function onDragEnd(){
-      if(drag.ghost){drag.ghost.remove(); drag.ghost=null;}
-      drag.tile?.classList.remove('dragging-origin');
-      drag.tile=null;
-      document.removeEventListener('pointermove',onDragMove);
-      document.removeEventListener('pointerup',onDragEnd);
+    function onTileDrop(e){
+      if(e.stopPropagation) e.stopPropagation();
+      if(dragSrcEl!==this){
+        this.insertAdjacentHTML('beforebegin',e.dataTransfer.getData('text/html'));
+        const dropped=this.previousSibling;
+        dropped.classList.remove('dragging');
+        dropped.querySelector('.tile-title').classList.add('drag-handle');
+        dropped.draggable=true;
+        dropped.addEventListener('dragstart',onTileDragStart);
+        dropped.addEventListener('dragover',onTileDragOver);
+        dropped.addEventListener('drop',onTileDrop);
+        dropped.addEventListener('dragend',onTileDragEnd);
+        dragSrcEl.remove();
+      }
+      return false;
+    }
+    function onTileDragEnd(){
+      this.classList.remove('dragging');
     }
 
     /* ---------------- DOCK ---------------- */
@@ -782,13 +977,28 @@
       const envSaved=localStorage.getItem('env')||'relax';
       envSelect.value=envSaved;
       const last=localStorage.getItem('lastWallpaper');
-      if(last) setBackground(last); else applyEnvBackground(envSaved);
+      if(last){
+        try{
+          const parsed=JSON.parse(last);
+          setBackground(parsed.url,parsed.rotate);
+        }catch(e){
+          setBackground(last);
+        }
+      } else {
+        applyEnvBackground(envSaved);
+      }
 
       // Music
       renderPlaylists();
 
       // Writing
       renderWriterMode();
+      // Restore brainstorm/journal drafts
+      const brainstormDraft=document.getElementById('brainstormDraft');
+      if(brainstormDraft){
+        brainstormDraft.value=localStorage.getItem('brainstormDraft')||"";
+      }
+      renderJournal();
 
       // Habits
       renderHabits();
@@ -796,7 +1006,7 @@
       // Clock
       document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;
       document.getElementById('modeSelect').value=mode;
-      switchMode();
+      resetTimer();
 
       // Drag + Layout
       setupDraggableTiles();
@@ -804,6 +1014,177 @@
     }
 
     document.addEventListener('DOMContentLoaded',init);
+  </script>  <!-- Tile Menu Enhancements -->
+  <script>
+    /* ---------------- TILE MENU ENHANCEMENTS ---------------- */
+    function closeAllMenus(){
+      document.querySelectorAll('.tile-menu.open').forEach(menu=>{
+        menu.classList.remove('open');
+      });
+    }
+
+    // Close menus when clicking outside
+    document.addEventListener('click',e=>{
+      document.querySelectorAll('.tile-menu.open').forEach(menu=>{
+        if(!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)){
+          menu.classList.remove('open');
+        }
+      });
+    });
+
+    // Close menus with Escape key
+    document.addEventListener('keydown',e=>{
+      if(e.key==="Escape"){ closeAllMenus(); }
+    });
+
+    // Toggle menu on ⋯ button click
+    document.querySelectorAll('.dots-btn').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const menu=btn.nextElementSibling;
+        const isOpen=menu.classList.contains('open');
+        closeAllMenus();
+        if(!isOpen){
+          menu.classList.add('open');
+          // Focus first button inside menu
+          const firstBtn=menu.querySelector('button');
+          if(firstBtn) firstBtn.focus();
+        }
+      });
+    });
+
+    // Keyboard navigation inside menu
+    document.querySelectorAll('.tile-menu').forEach(menu=>{
+      const buttons=menu.querySelectorAll('button');
+      buttons.forEach((btn,i)=>{
+        btn.addEventListener('keydown',e=>{
+          if(e.key==="ArrowDown"){
+            e.preventDefault();
+            const next=buttons[i+1]||buttons[0];
+            next.focus();
+          }
+          if(e.key==="ArrowUp"){
+            e.preventDefault();
+            const prev=buttons[i-1]||buttons[buttons.length-1];
+            prev.focus();
+          }
+        });
+      });
+    });
+  </script>  <!-- Music Tile Polish -->
+  <script>
+    /* ---------------- MUSIC POLISH ---------------- */
+    let shuffleActive=false;
+
+    function shufflePlay(){
+      const name=document.getElementById('playlistSelect').value;
+      const pls=getPlaylists(); if(!name||!pls[name]||!pls[name].length) return;
+      currentPlaylist=[...pls[name]];
+      // Fisher-Yates shuffle
+      for(let i=currentPlaylist.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [currentPlaylist[i],currentPlaylist[j]]=[currentPlaylist[j],currentPlaylist[i]];
+      }
+      currentIndex=0;
+      shuffleActive=true;
+      updateShuffleButton();
+      if(window.playerReady) ytPlayer.loadVideoById(currentPlaylist[0]);
+    }
+
+    function updateShuffleButton(){
+      const btns=document.querySelectorAll('#music .btn.secondary, #music .btn.primary');
+      document.querySelectorAll('button').forEach(b=>{
+        if(b.textContent.trim().toLowerCase()==="shuffle"){
+          b.style.background=shuffleActive?"#3F6F63":"var(--secondary)";
+        }
+      });
+    }
+
+    /* ---------------- REORDER POLISH ---------------- */
+    function enableReorderDnD(){
+      const rows=document.querySelectorAll('#playlistTracks .draggable');
+      rows.forEach(row=>{
+        row.addEventListener('dragstart',trackDragStart);
+        row.addEventListener('dragover',trackDragOver);
+        row.addEventListener('drop',trackDrop);
+        row.addEventListener('dragend',trackDragEnd);
+      });
+    }
+    let dragTrack=null;
+    function trackDragStart(e){
+      dragTrack=this;
+      e.dataTransfer.effectAllowed='move';
+      this.style.opacity='0.5';
+    }
+    function trackDragOver(e){
+      e.preventDefault();
+      this.style.borderTop='2px solid var(--accent)';
+    }
+    function trackDrop(e){
+      e.stopPropagation();
+      if(dragTrack!==this){
+        const name=document.getElementById('playlistSelect').value;
+        const pls=getPlaylists(); const arr=pls[name];
+        const from=parseInt(dragTrack.dataset.index), to=parseInt(this.dataset.index);
+        const moved=arr.splice(from,1)[0];
+        arr.splice(to,0,moved);
+        setPlaylists(pls);
+        renderPlaylist();
+      }
+    }
+    function trackDragEnd(){
+      this.style.opacity='1';
+      document.querySelectorAll('#playlistTracks .draggable').forEach(r=>r.style.borderTop='none');
+    }
+  </script>  <!-- Clock Tile Polish -->
+  <script>
+    /* ---------------- CLOCK POLISH ---------------- */
+    const timeDisplay=document.getElementById('timeDisplay');
+
+    // Add glow effect when running
+    function setRunningVisual(running){
+      if(running){
+        timeDisplay.style.textShadow="0 0 12px var(--accent)";
+      } else {
+        timeDisplay.style.textShadow="none";
+      }
+    }
+
+    // Override start/pause/reset to include visuals
+    const _startTimer=startTimer;
+    startTimer=function(){
+      _startTimer();
+      setRunningVisual(true);
+    };
+    const _pauseTimer=pauseTimer;
+    pauseTimer=function(){
+      _pauseTimer();
+      setRunningVisual(false);
+    };
+    const _resetTimer=resetTimer;
+    resetTimer=function(){
+      _resetTimer();
+      setRunningVisual(false);
+    };
+
+    // Live update when inputs change
+    document.getElementById('pomodoroMinutes').addEventListener('input',()=>{
+      if(mode==="pomodoro") resetTimer();
+    });
+    document.getElementById('countdownMinutes').addEventListener('input',()=>{
+      if(mode==="countdown") resetTimer();
+    });
+    document.getElementById('customMM').addEventListener('input',()=>{
+      if(mode==="custom") resetTimer();
+    });
+    document.getElementById('customSS').addEventListener('input',()=>{
+      if(mode==="custom") resetTimer();
+    });
+
+    // Update stats display on load
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;
+    });
   </script>
 </body>
 </html>
