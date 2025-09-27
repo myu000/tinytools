@@ -8,74 +8,162 @@
   <link rel="apple-touch-icon" href="favicon.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#FFFAE3;--text:#1F2F16;--primary:#395B50;--secondary:#96705B;--accent:#3F6F63;--glass:rgba(255,255,255,0.35);--shadow-1:0 8px 24px rgba(0,0,0,0.18);--shadow-2:0 12px 32px rgba(0,0,0,0.26);--tile-gap:24px;--tile-radius:20px;--tile-pad:24px;--dock-width:340px;--select-bg:rgba(255,255,255,0.30);--input-bg:rgba(255,255,255,0.28);}
-    [data-theme="dark"]{--bg:#1F2F16;--text:#F3EFE7;--accent:#78B3A7;--glass:rgba(30,30,30,0.45);--shadow-1:0 8px 24px rgba(0,0,0,0.35);--shadow-2:0 12px 32px rgba(0,0,0,0.48);--select-bg:rgba(255,255,255,0.20);--input-bg:rgba(255,255,255,0.18);}
+    :root{
+      --bg:#FFFAE3; --text:#1F2F16;
+      --primary:#395B50; --secondary:#96705B; --accent:#3F6F63;
+      --glass:rgba(255,255,255,0.35);
+      --shadow-1:0 8px 24px rgba(0,0,0,0.18);
+      --shadow-2:0 12px 32px rgba(0,0,0,0.26);
+      --tile-gap:24px; --tile-radius:20px; --tile-pad:24px;
+      --dock-width:340px; --select-bg:rgba(255,255,255,0.30); --input-bg:rgba(255,255,255,0.28);
+    }
+    [data-theme="dark"]{
+      --bg:#1F2F16; --text:#F3EFE7; --accent:#78B3A7;
+      --glass:rgba(30,30,30,0.45);
+      --shadow-1:0 8px 24px rgba(0,0,0,0.35);
+      --shadow-2:0 12px 32px rgba(0,0,0,0.48);
+      --select-bg:rgba(255,255,255,0.20); --input-bg:rgba(255,255,255,0.18);
+    }
     *{box-sizing:border-box;}
+    html,body{height:100%;}
     body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
-    header{background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;}
+
+    header{
+      background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;
+      display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;
+      backdrop-filter:saturate(180%) blur(8px);
+    }
     .brand{display:flex;gap:12px;align-items:baseline;}
     .brand h1{margin:0;font-family:'Sansita',sans-serif;}
     .brand span{font-family:'Jura',sans-serif;opacity:0.9;}
+    .top-controls,.layout-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
     .select,.button{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;}
     .select{background:var(--select-bg);color:var(--text);}
     .button{background:var(--secondary);color:#fff;}
     .button.primary{background:var(--primary);}
+    .button:hover{filter:brightness(1.06);transform:translateY(-1px);}
+
     .page{display:grid;grid-template-columns:1fr var(--dock-width);gap:var(--tile-gap);max-width:1500px;margin:40px auto;padding:0 40px;}
     @media(max-width:1100px){.page{grid-template-columns:1fr;}.dock{order:2;}}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);}
-    .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);align-content:start;}
+
+    .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;min-height:200px;}
     .dock h4{margin:0 0 10px;font-family:'Sansita',sans-serif;}
-    .dock-area{display:grid;gap:12px;}
-    .card{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);border-radius:var(--tile-radius);padding:var(--tile-pad);box-shadow:var(--shadow-1);}
-    .card h3{margin:0 0 12px;font-family:'Sansita',sans-serif;touch-action:none;cursor:grab;}
+    .dock-area{display:grid;grid-template-columns:1fr;gap:12px;}
+
+    .card{
+      position:relative;background:var(--glass);
+      backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
+      border-radius:var(--tile-radius); padding:var(--tile-pad); box-shadow:var(--shadow-1);
+      transition:transform .25s ease, box-shadow .25s ease, filter .25s ease; min-height:180px; user-select:none;
+    }
+    .card:hover{transform:translateY(-2px);filter:brightness(1.03);box-shadow:var(--shadow-2);}
+    .card h3{margin:0 0 16px;font-family:'Sansita',sans-serif;touch-action:none;cursor:grab;}
+
+    .menu{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.30);border:none;border-radius:8px;padding:6px 8px;cursor:pointer;font-family:'Jura',sans-serif;color:var(--text);}
+    .menu-options{position:absolute;top:42px;right:8px;display:none;background:#fff;border-radius:10px;box-shadow:var(--shadow-1);overflow:hidden;min-width:210px;z-index:10;}
+    .menu-options button{display:block;width:100%;padding:10px 12px;border:none;background:transparent;cursor:pointer;text-align:left;font-family:'Jura',sans-serif;color:#222;}
+    .menu-options button:hover{background:rgba(0,0,0,0.06);}
+
     .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
     .stack{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
-    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;}
+    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;color:var(--text);}
     .btn{background:var(--primary);color:#fff;cursor:pointer;}
     .btn.secondary{background:var(--secondary);}
     .input,.select-inline,textarea{background:var(--input-bg);}
-    textarea{width:100%;min-height:220px;resize:vertical;}
+    textarea{width:100%;min-height:220px;resize:vertical;outline:none;}
+
     .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
-    .thumb img{width:100%;height:100%;object-fit:cover;cursor:pointer;}
-    .player iframe{width:100%;height:300px;border:0;}
-    #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;}
+    .thumb{border-radius:12px;overflow:hidden;height:110px;position:relative;}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;}
+
+    .player{border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.18);}
+    .player iframe{display:block;width:100%;height:300px;border:0;}
+    @media(max-width:600px){.player iframe{height:200px;}}
+
+    #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;margin:10px 0 6px;}
+
+    .drag-placeholder{outline:2px dashed rgba(63,111,99,0.6);border-radius:var(--tile-radius);min-height:160px;opacity:0.8;}
+    .dragging-origin{outline:2px dashed rgba(63,111,99,0.35);}
+
+    .select:focus,.select-inline:focus,.input:focus,textarea:focus,.btn:focus,.button:focus{outline:2px solid var(--accent);outline-offset:2px;}
+
+    @media(max-width:480px){
+      header{padding:14px 16px;grid-template-columns:1fr;gap:10px;}
+      .page{padding:0 16px;margin:20px auto;}
+      .card{padding:16px;}
+      .thumb{height:80px;}
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="brand"><h1>Tiny Tools</h1><span>Creative & Focus Hub</span></div>
     <div class="top-controls">
-      <select id="envSelect" class="select"><option value="relax">Relax</option><option value="study">Study</option><option value="focus">Focus</option><option value="creative">Creative</option><option value="default">Default</option></select>
-      <button id="shuffleWallpaper" class="button">Shuffle</button>
+      <select id="envSelect" class="select" title="Environment">
+        <option value="relax">Relax</option>
+        <option value="study">Study</option>
+        <option value="focus">Focus</option>
+        <option value="creative">Creative</option>
+        <option value="default">Default</option>
+      </select>
+      <button id="shuffleWallpaper" class="button">Shuffle wallpaper</button>
       <button id="themeToggle" class="button primary">Theme</button>
+    </div>
+    <div class="layout-controls">
+      <select id="layoutSelect" class="select" title="Layout preset">
+        <option value="balanced">Balanced</option>
+        <option value="focus">Focus</option>
+        <option value="writing">Writing</option>
+        <option value="music">Music</option>
+      </select>
+      <button id="applyLayout" class="button">Apply layout</button>
+      <span id="layoutNote" class="layout-note">Layout: Balanced</span>
     </div>
   </header>
 
   <div class="page">
     <main id="grid" class="grid">
       <!-- Wallpapers -->
-      <section class="card tile" data-tile="wallpapers">
+      <section class="card tile" id="tile-wallpapers" data-tile="wallpapers" data-order="1">
+        <button class="menu" onclick="toggleMenu('menu-wallpapers')">⁝</button>
+        <div class="menu-options" id="menu-wallpapers">
+          <button onclick="shrinkTile('wallpapers')">Shrink to dock</button>
+          <button onclick="expandTile('wallpapers')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
         <h3>Wallpapers</h3>
-        <input type="file" id="wallpaperUpload" accept="image/*">
-        <button id="clearCustomWallpapers" class="btn secondary">Clear uploaded</button>
+        <p class="small">Click a thumbnail to set it as background, or upload your own.</p>
+        <div class="row">
+          <input type="file" id="wallpaperUpload" accept="image/*">
+          <button class="btn secondary" id="clearCustomWallpapers">Clear uploaded</button>
+        </div>
         <div id="wallpaperThumbs" class="thumbs"></div>
       </section>
 
       <!-- Music -->
-      <section class="card tile" data-tile="music">
-        <h3>Music</h3>
+      <section class="card tile" id="tile-music" data-tile="music" data-order="2">
+        <button class="menu" onclick="toggleMenu('menu-music')">⁝</button>
+        <div class="menu-options" id="menu-music">
+          <button onclick="shrinkTile('music')">Shrink to dock</button>
+          <button onclick="expandTile('music')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
+        <h3>Music Playlists</h3>
+        <p class="small">Create playlists, add YouTube links, play, and auto‑advance.</p>
         <div class="row">
           <input id="playlistName" class="input" placeholder="New playlist name"/>
           <button class="btn" onclick="createPlaylist()">Create</button>
-          <button class="btn secondary" onclick="deletePlaylist()">Delete</button>
+          <button class="btn secondary" onclick="deletePlaylist()">Delete playlist</button>
         </div>
         <div class="row">
           <select id="playlistSelect" class="select-inline" onchange="renderPlaylist()"></select>
-          <button class="btn" onclick="renderPlaylist()">Refresh</button>
-          <button class="btn primary" onclick="playPlaylist()">Play Playlist</button>
+          <button class="btn" onclick="renderPlaylists()">Refresh lists</button>
+          <button class="btn primary" onclick="playPlaylist()">Play playlist</button>
         </div>
         <div class="row">
-          <input id="musicUrl" class="input" placeholder="Paste YouTube URL"/>
+          <input id="musicUrl" class="input" placeholder="Paste YouTube URL (share or full)"/>
           <button class="btn secondary" onclick="addTrack()">Add track</button>
         </div>
         <div id="playlistTracks" class="stack"></div>
@@ -83,288 +171,17 @@
       </section>
 
       <!-- Writing -->
-      <section class="card tile" data-tile="writing"><h3>Writing</h3><div id="writerArea"></div></section>
-      <!-- Habits -->
-      <section class="card tile" data-tile="habits"><h3>Habits</h3><div id="habitList"></div></section>
-      <!-- Clock -->
-      <section class="card tile" data-tile="clock"><h3>Clock</h3><div id="timeDisplay">00:25:00</div><p id="stats">Completed Pomodoros: 0</p></section>
-    </main>
-    <aside class="dock"><h4>Dock</h4><div id="dockArea"></div></aside>
-  </div>
-  <!-- YouTube IFrame API -->
-  <script src="https://www.youtube.com/iframe_api"></script>
-  <script>
-    /* ---------------- WALLPAPERS ---------------- */
-    const wallpapers = {
-      relax: [
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
-      ],
-      study: [
-        "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
-        "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
-        "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
-      ],
-      focus: [
-        "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
-        "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
-        "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
-      ],
-      creative: [
-        "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
-        "https://i.pinimg.com/736x/5b/f8/8f/5bf88fe147b4f5f591a5e07bb5afd5ec.jpg",
-        "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
-      ],
-      default: [
-        "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
-        "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
-        "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
-      ],
-      custom: []
-    };
-
-    const envSelect = document.getElementById('envSelect');
-    const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
-    const themeToggle = document.getElementById('themeToggle');
-    const wallpaperThumbs = document.getElementById('wallpaperThumbs');
-    const wallpaperUpload = document.getElementById('wallpaperUpload');
-    const clearCustomWallpapersBtn = document.getElementById('clearCustomWallpapers');
-
-    function setBackground(url){
-      document.body.style.backgroundImage = `url('${url}')`;
-      localStorage.setItem('lastWallpaper', url);
-    }
-
-    function renderThumbnails(list){
-      wallpaperThumbs.innerHTML = "";
-      list.forEach(url=>{
-        const div = document.createElement('div');
-        div.className = "thumb";
-        div.innerHTML = `<img src="${url}" alt="wallpaper"/>`;
-        div.addEventListener('click', ()=>setBackground(url));
-        wallpaperThumbs.appendChild(div);
-      });
-    }
-
-    function applyEnvBackground(env){
-      const list = wallpapers[env] || wallpapers.default;
-      const pick = list[Math.floor(Math.random()*list.length)];
-      setBackground(pick);
-      renderThumbnails(list);
-      localStorage.setItem('env', env);
-    }
-
-    function loadCustomWallpapers(){
-      const custom = JSON.parse(localStorage.getItem('customWallpapers')||'[]');
-      wallpapers.custom = custom;
-      if(custom.length){
-        const hasOption = Array.from(envSelect.options).some(o=>o.value==="custom");
-        if(!hasOption){
-          const opt=document.createElement('option');
-          opt.value="custom"; opt.textContent="Custom";
-          envSelect.appendChild(opt);
-        }
-      }
-    }
-
-    wallpaperUpload.addEventListener('change', e=>{
-      const file = e.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = ev=>{
-        const url = ev.target.result;
-        setBackground(url);
-        let custom = JSON.parse(localStorage.getItem('customWallpapers')||'[]');
-        custom.push(url);
-        localStorage.setItem('customWallpapers', JSON.stringify(custom));
-        wallpapers.custom = custom;
-        if(envSelect.value==='custom') renderThumbnails(custom);
-        else{
-          const div=document.createElement('div');
-          div.className="thumb";
-          div.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
-          div.addEventListener('click', ()=>setBackground(url));
-          wallpaperThumbs.appendChild(div);
-        }
-      };
-      reader.readAsDataURL(file);
-      wallpaperUpload.value="";
-    });
-
-    clearCustomWallpapersBtn.addEventListener('click', ()=>{
-      localStorage.removeItem('customWallpapers');
-      wallpapers.custom = [];
-      const opt = Array.from(envSelect.options).find(o=>o.value==="custom");
-      if(opt) opt.remove();
-      applyEnvBackground(envSelect.value);
-    });
-
-    envSelect.addEventListener('change', e=>applyEnvBackground(e.target.value));
-    shuffleWallpaperBtn.addEventListener('click', ()=>applyEnvBackground(envSelect.value));
-    themeToggle.addEventListener('click', ()=>{
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = current === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
-
-    /* ---------------- MUSIC ---------------- */
-    let ytPlayer, currentPlaylist = [], currentIndex = 0;
-
-    function onYouTubeIframeAPIReady(){
-      ytPlayer = new YT.Player('musicPlayer', {
-        height: '300',
-        width: '100%',
-        videoId: '',
-        playerVars: {
-          autoplay: 0,
-          controls: 1,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1
-        },
-        events: {
-          'onReady': e => { try{ e.target.mute(); }catch(err){} },
-          'onStateChange': onPlayerStateChange
-        }
-      });
-    }
-
-    function onPlayerStateChange(event){
-      if(event.data === YT.PlayerState.ENDED){
-        currentIndex++;
-        if(currentIndex >= currentPlaylist.length) currentIndex = 0;
-        ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
-      }
-    }
-
-    function extractId(url){
-      try{
-        const u = new URL(url);
-        if(u.hostname.includes("youtu.be")) return u.pathname.split("/")[1];
-        if(u.hostname.includes("youtube.com")){
-          if(u.searchParams.has("v")) return u.searchParams.get("v");
-          if(u.pathname.includes("/embed/")) return u.pathname.split("/embed/")[1].split(/[?&]/)[0];
-        }
-      }catch(e){
-        if(/^[\w-]{11}$/.test(url)) return url;
-      }
-      return "";
-    }
-
-    function getPlaylists(){ return JSON.parse(localStorage.getItem('playlists')||'{}'); }
-    function setPlaylists(obj){ localStorage.setItem('playlists', JSON.stringify(obj)); }
-
-    function createPlaylist(){
-      const name = document.getElementById('playlistName').value.trim();
-      if (!name) return;
-      const pls = getPlaylists();
-      if (!pls[name]) pls[name] = [];
-      setPlaylists(pls);
-      document.getElementById('playlistName').value = "";
-      renderPlaylists();
-    }
-
-    function deletePlaylist(){
-      const name = document.getElementById('playlistSelect').value; if (!name) return;
-      const pls = getPlaylists();
-      delete pls[name];
-      setPlaylists(pls);
-      renderPlaylists();
-      document.getElementById('playlistTracks').innerHTML = "";
-    }
-
-    function renderPlaylists(){
-      const pls = getPlaylists();
-      const sel = document.getElementById('playlistSelect');
-      sel.innerHTML = "";
-      const names = Object.keys(pls);
-      if(!names.length){
-        const opt=document.createElement('option');
-        opt.value=""; opt.textContent="No playlists";
-        sel.appendChild(opt);
-        return;
-      }
-      names.forEach(n=>{
-        const opt=document.createElement('option'); opt.value=n; opt.textContent=n;
-        sel.appendChild(opt);
-      });
-    }
-
-    function renderPlaylist(){
-      const pls = getPlaylists();
-      const name = document.getElementById('playlistSelect').value;
-      const list = document.getElementById('playlistTracks');
-      list.innerHTML = "";
-      if (!name || !pls[name]) return;
-      pls[name].forEach((id, i)=>{
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.innerHTML = `
-          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
-          <button class="btn" onclick="playTrack('${name}', ${i})">Play</button>
-          <button class="btn secondary" onclick="removeTrack('${name}', ${i})">Remove</button>
-        `;
-        list.appendChild(row);
-      });
-    }
-
-    function addTrack(){
-      const name = document.getElementById('playlistSelect').value;
-      const raw = document.getElementById('musicUrl').value.trim();
-      if (!name || !raw) return;
-      const id = extractId(raw);
-      if(!id){ alert("Invalid YouTube link"); return; }
-      const pls = getPlaylists(); if (!pls[name]) pls[name] = [];
-      pls[name].push(id);
-      setPlaylists(pls);
-      document.getElementById('musicUrl').value = "";
-      renderPlaylist();
-    }
-
-    function removeTrack(name,i){
-      const pls = getPlaylists(); if (!pls[name]) return;
-      pls[name].splice(i,1);
-      setPlaylists(pls);
-      renderPlaylist();
-    }
-
-    function playPlaylist(){
-      if (!ytPlayer || typeof ytPlayer.loadVideoById !== "function"){
-        alert("Player not ready yet"); return;
-      }
-      const name = document.getElementById('playlistSelect').value;
-      const pls = getPlaylists();
-      if (!name || !pls[name] || !pls[name].length) return;
-      currentPlaylist = pls[name];
-      currentIndex = 0;
-      ytPlayer.loadVideoById(currentPlaylist[0]);
-    }
-
-    function playTrack(name,i){
-      if (!ytPlayer || typeof ytPlayer.loadVideoById !== "function"){
-        alert("Player not ready yet"); return;
-      }
-      const pls = getPlaylists();
-      currentPlaylist = pls[name] || [];
-      currentIndex = i;
-      ytPlayer.loadVideoById(currentPlaylist[i]);
-    }
-    /* ---------------- WRITING ---------------- */
-    const writerArea = document.getElementById('writerArea');
-    const promptsList = [
-      "Write about a moment that changes everything.",
-      "Describe a character who hides a secret.",
-      "Invent a world where memories are currency.",
-      "Start with a line of overheard dialogue.",
-      "Describe a place that feels like home but isn’t."
-    ];
-
-    function switchWriterMode(){
-      const modeSelectHtml = `
+      <section class="card tile" id="tile-writing" data-tile="writing" data-order="3">
+        <button class="menu" onclick="toggleMenu('menu-writing')">⁝</button>
+        <div class="menu-options" id="menu-writing">
+          <button onclick="shrinkTile('writing')">Shrink to dock</button>
+          <button onclick="expandTile('writing')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
+        <h3>Writing</h3>
+        <p class="small">Prompts, To‑Do, Free Writing, Brainstorm, Journal. Autosave + exports.</p>
         <div class="row">
-          <select id="writerMode" class="select-inline">
+          <select id="writerMode" class="select-inline" onchange="renderWriterMode()">
             <option value="prompts">Prompts</option>
             <option value="todo">To‑Do</option>
             <option value="free">Free Writing</option>
@@ -372,22 +189,307 @@
             <option value="journal">Journal</option>
           </select>
         </div>
-      `;
-      const container = document.createElement('div');
-      container.innerHTML = modeSelectHtml;
-      writerArea.parentNode.insertBefore(container, writerArea);
+        <div id="writerArea"></div>
+      </section>
 
-      const select = container.querySelector('#writerMode');
-      select.addEventListener('change', renderWriterMode);
-      renderWriterMode();
+      <!-- Habits -->
+      <section class="card tile" id="tile-habits" data-tile="habits" data-order="4">
+        <button class="menu" onclick="toggleMenu('menu-habits')">⁝</button>
+        <div class="menu-options" id="menu-habits">
+          <button onclick="shrinkTile('habits')">Shrink to dock</button>
+          <button onclick="expandTile('habits')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
+        <h3>Habit Garden</h3>
+        <p class="small">Grow streaks, earn badges, track daily history.</p>
+        <div class="row">
+          <input id="habitInput" class="input" placeholder="Add a new habit..."/>
+          <button class="btn" onclick="addHabit()">Add habit</button>
+          <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
+        </div>
+        <div id="habitList" class="stack"></div>
+      </section>
+
+      <!-- Clock -->
+      <section class="card tile" id="tile-clock" data-tile="clock" data-order="5">
+        <button class="menu" onclick="toggleMenu('menu-clock')">⁝</button>
+        <div class="menu-options" id="menu-clock">
+          <button onclick="shrinkTile('clock')">Shrink to dock</button>
+          <button onclick="expandTile('clock')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
+        <h3>Clock Tool</h3>
+        <p class="small">Pomodoro, Stopwatch, Countdown, Custom. Spacebar toggles when not typing.</p>
+        <div class="row">
+          <select id="modeSelect" class="select-inline" onchange="switchMode()">
+            <option value="pomodoro">Pomodoro</option>
+            <option value="stopwatch">Stopwatch</option>
+            <option value="countdown">Countdown</option>
+            <option value="custom">Custom</option>
+          </select>
+          <button class="btn" onclick="startTimer()">Start</button>
+          <button class="btn secondary" onclick="pauseTimer()">Pause</button>
+          <button class="btn" onclick="resetTimer()">Reset</button>
+        </div>
+        <div class="row" id="settingsRow">
+          <div class="row" id="pomodoroSettings" style="display:none;width:100%;">
+            <input id="workMinutes" class="input" type="number" min="1" value="25"/>
+            <input id="breakMinutes" class="input" type="number" min="1" value="5"/>
+            <button class="btn" onclick="completePomodoro()">Complete cycle</button>
+          </div>
+          <div class="row" id="customSettings" style="display:none;width:100%;">
+            <input id="customHours" class="input" type="number" min="0" value="0"/>
+            <input id="customMinutes" class="input" type="number" min="0" value="5"/>
+            <input id="customSeconds" class="input" type="number" min="0" value="0"/>
+          </div>
+        </div>
+        <div id="timeDisplay">00:25:00</div>
+        <p id="stats" class="small">Completed Pomodoros: 0</p>
+      </section>
+    </main>
+
+    <aside class="dock">
+      <h4>Mini dock</h4>
+      <div id="dockArea" class="dock-area"></div>
+    </aside>
+  </div>
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    /* ---------------- MENUS ---------------- */
+    function toggleMenu(id){ closeMenus(); const m=document.getElementById(id); if(m) m.style.display='block'; }
+    function closeMenus(){ document.querySelectorAll('.menu-options').forEach(m=>m.style.display='none'); }
+
+    /* ---------------- WALLPAPERS ---------------- */
+    const wallpapers={
+      relax:[
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+        "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+      ],
+      study:[
+        "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
+        "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
+        "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
+      ],
+      focus:[
+        "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
+        "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
+        "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
+      ],
+      creative:[
+        "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
+        "https://i.pinimg.com/736x/5b/f8/8f/5bf88fe147b4f5f591a5e07bb5afd5ec.jpg",
+        "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
+      ],
+      default:[
+        "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
+        "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
+        "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
+      ],
+      custom:[]
+    };
+
+    const envSelect=document.getElementById('envSelect');
+    const shuffleWallpaperBtn=document.getElementById('shuffleWallpaper');
+    const themeToggle=document.getElementById('themeToggle');
+    const wallpaperThumbs=document.getElementById('wallpaperThumbs');
+    const wallpaperUpload=document.getElementById('wallpaperUpload');
+    const clearCustomWallpapersBtn=document.getElementById('clearCustomWallpapers');
+
+    function setBackground(url){
+      document.body.style.backgroundImage=`url('${url}')`;
+      localStorage.setItem('lastWallpaper',url);
+    }
+    function renderThumbnails(list){
+      wallpaperThumbs.innerHTML="";
+      list.forEach(url=>{
+        const div=document.createElement('div');
+        div.className="thumb";
+        div.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
+        div.addEventListener('click',()=>setBackground(url));
+        wallpaperThumbs.appendChild(div);
+      });
+    }
+    function applyEnvBackground(env){
+      const list=wallpapers[env]||wallpapers.default;
+      const pick=list[Math.floor(Math.random()*list.length)];
+      setBackground(pick);
+      renderThumbnails(list);
+      localStorage.setItem('env',env);
+    }
+    function loadCustomWallpapers(){
+      const custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+      wallpapers.custom=custom;
+      if(custom.length){
+        const hasOption=[...envSelect.options].some(o=>o.value==="custom");
+        if(!hasOption){
+          const opt=document.createElement('option');
+          opt.value="custom"; opt.textContent="Custom";
+          envSelect.appendChild(opt);
+        }
+      }
+    }
+    wallpaperUpload.addEventListener('change',e=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        const url=ev.target.result;
+        setBackground(url);
+        let custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+        custom.push(url);
+        localStorage.setItem('customWallpapers',JSON.stringify(custom));
+        wallpapers.custom=custom;
+        if(envSelect.value==='custom'){ renderThumbnails(custom); }
+        else{
+          const thumb=document.createElement('div');
+          thumb.className="thumb"; thumb.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
+          thumb.addEventListener('click',()=>setBackground(url));
+          wallpaperThumbs.appendChild(thumb);
+        }
+      };
+      reader.readAsDataURL(file);
+      wallpaperUpload.value="";
+    });
+    clearCustomWallpapersBtn.addEventListener('click',()=>{
+      localStorage.removeItem('customWallpapers');
+      wallpapers.custom=[];
+      const opt=[...envSelect.options].find(o=>o.value==="custom");
+      if(opt) opt.remove();
+      applyEnvBackground(envSelect.value);
+    });
+    envSelect.addEventListener('change',e=>applyEnvBackground(e.target.value));
+    shuffleWallpaperBtn.addEventListener('click',()=>applyEnvBackground(envSelect.value));
+    themeToggle.addEventListener('click',()=>{
+      const cur=document.documentElement.getAttribute('data-theme')||'light';
+      const next=cur==='light'?'dark':'light';
+      document.documentElement.setAttribute('data-theme',next);
+      localStorage.setItem('theme',next);
+    });
+
+    /* ---------------- MUSIC (robust) ---------------- */
+    let ytPlayer,currentPlaylist=[],currentIndex=0;
+
+    function onYouTubeIframeAPIReady(){
+      ytPlayer=new YT.Player('musicPlayer',{
+        height:'300',width:'100%',videoId:'',
+        playerVars:{autoplay:0,controls:1,rel:0,modestbranding:1,playsinline:1},
+        events:{
+          'onReady': e => { try{ e.target.mute(); }catch(err){} }, // allow autoplay policies
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+    function onPlayerStateChange(event){
+      if(event.data===YT.PlayerState.ENDED){
+        currentIndex++;
+        if(currentIndex>=currentPlaylist.length) currentIndex=0;
+        ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
+      }
+    }
+    function extractId(url){
+      try{
+        const u=new URL(url);
+        // short share link
+        if(u.hostname.includes("youtu.be")){
+          const id=u.pathname.split("/")[1];
+          return (id && id.length===11)?id:"";
+        }
+        // full URL variants
+        if(u.hostname.includes("youtube.com")){
+          if(u.searchParams.has("v")){
+            const id=u.searchParams.get("v");
+            return (id && id.length===11)?id:"";
+          }
+          if(u.pathname.includes("/embed/")){
+            const id=u.pathname.split("/embed/")[1].split(/[?&]/)[0];
+            return (id && id.length===11)?id:"";
+          }
+        }
+      }catch(e){
+        // raw ID input
+        if(/^[\w-]{11}$/.test(url)) return url;
+      }
+      return "";
     }
 
-    function renderWriterMode(){
-      const mode = document.querySelector('#writerMode').value;
-      writerArea.innerHTML = "";
+    function getPlaylists(){return JSON.parse(localStorage.getItem('playlists')||'{}');}
+    function setPlaylists(obj){localStorage.setItem('playlists',JSON.stringify(obj));}
 
+    function createPlaylist(){
+      const name=document.getElementById('playlistName').value.trim();
+      if(!name) return;
+      const pls=getPlaylists(); if(!pls[name]) pls[name]=[];
+      setPlaylists(pls); document.getElementById('playlistName').value="";
+      renderPlaylists();
+    }
+    function deletePlaylist(){
+      const name=document.getElementById('playlistSelect').value; if(!name) return;
+      const pls=getPlaylists(); delete pls[name]; setPlaylists(pls);
+      renderPlaylists(); document.getElementById('playlistTracks').innerHTML="";
+    }
+    function renderPlaylists(){
+      const pls=getPlaylists(); const sel=document.getElementById('playlistSelect'); sel.innerHTML="";
+      const names=Object.keys(pls);
+      if(!names.length){ const opt=document.createElement('option'); opt.value=""; opt.textContent="No playlists"; sel.appendChild(opt); return; }
+      names.forEach(n=>{const opt=document.createElement('option');opt.value=n;opt.textContent=n;sel.appendChild(opt);});
+    }
+    function renderPlaylist(){
+      const pls=getPlaylists(); const name=document.getElementById('playlistSelect').value;
+      const list=document.getElementById('playlistTracks'); list.innerHTML="";
+      if(!name||!pls[name]) return;
+      pls[name].forEach((id,i)=>{
+        const row=document.createElement('div'); row.className='row';
+        row.innerHTML=`
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
+          <button class="btn" onclick="playTrack('${name}',${i})">Play</button>
+          <button class="btn secondary" onclick="removeTrack('${name}',${i})">Remove</button>
+        `;
+        list.appendChild(row);
+      });
+    }
+    function addTrack(){
+      const name=document.getElementById('playlistSelect').value;
+      const raw=document.getElementById('musicUrl').value.trim();
+      if(!name||!raw) return;
+      const id=extractId(raw); if(!id){alert("Invalid YouTube link");return;}
+      const pls=getPlaylists(); if(!pls[name]) pls[name]=[];
+      pls[name].push(id); setPlaylists(pls);
+      document.getElementById('musicUrl').value="";
+      renderPlaylist();
+    }
+    function removeTrack(name,i){
+      const pls=getPlaylists(); if(!pls[name]) return;
+      pls[name].splice(i,1); setPlaylists(pls); renderPlaylist();
+    }
+    function playPlaylist(){
+      if(!ytPlayer||typeof ytPlayer.loadVideoById!=="function"){alert("Player not ready yet");return;}
+      const name=document.getElementById('playlistSelect').value;
+      const pls=getPlaylists(); if(!name||!pls[name]||!pls[name].length) return;
+      currentPlaylist=pls[name]; currentIndex=0;
+      ytPlayer.loadVideoById(currentPlaylist[0]);
+    }
+    function playTrack(name,i){
+      if(!ytPlayer||typeof ytPlayer.loadVideoById!=="function"){alert("Player not ready yet");return;}
+      const pls=getPlaylists(); currentPlaylist=pls[name]||[]; currentIndex=i;
+      ytPlayer.loadVideoById(currentPlaylist[i]);
+    }
+    /* ---------------- WRITING ---------------- */
+    const writerArea=document.getElementById('writerArea');
+    const promptsList=[
+      "Write about a moment that changes everything.",
+      "Describe a character who hides a secret.",
+      "Invent a world where memories are currency.",
+      "Start with a line of overheard dialogue.",
+      "Describe a place that feels like home but isn’t."
+    ];
+
+    function renderWriterMode(){
+      const mode=document.getElementById('writerMode').value;
+      writerArea.innerHTML="";
       if(mode==="prompts"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <div class="row">
             <button class="btn" onclick="shufflePrompt()">Shuffle</button>
             <button class="btn secondary" onclick="exportPromptDraft('txt')">Export TXT</button>
@@ -400,12 +502,11 @@
         `;
         const pd=document.getElementById('promptDraft');
         pd.value=localStorage.getItem('promptDraft')||"";
-        pd.addEventListener('input',()=>{ localStorage.setItem('promptDraft',pd.value); updateWordCount('promptDraft','promptWordCount'); });
+        pd.addEventListener('input',()=>{localStorage.setItem('promptDraft',pd.value);updateWordCount('promptDraft','promptWordCount');});
         shufflePrompt(); updateWordCount('promptDraft','promptWordCount');
       }
-
       if(mode==="todo"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <div class="row">
             <input id="todoInput" class="input" placeholder="Add task..."/>
             <button class="btn" onclick="addTodo()">Add</button>
@@ -415,9 +516,8 @@
         `;
         renderTodos();
       }
-
       if(mode==="free"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <div class="row">
             <button class="btn secondary" onclick="exportFreeDraft('txt')">Export TXT</button>
             <button class="btn secondary" onclick="exportFreeDraft('md')">Export MD</button>
@@ -428,12 +528,11 @@
         `;
         const fd=document.getElementById('freeDraft');
         fd.value=localStorage.getItem('freeDraft')||"";
-        fd.addEventListener('input',()=>{ localStorage.setItem('freeDraft',fd.value); updateWordCount('freeDraft','freeWordCount'); });
+        fd.addEventListener('input',()=>{localStorage.setItem('freeDraft',fd.value);updateWordCount('freeDraft','freeWordCount');});
         updateWordCount('freeDraft','freeWordCount');
       }
-
       if(mode==="brainstorm"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <div class="row">
             <button class="btn" onclick="generateIdea()">Generate Idea</button>
             <button class="btn secondary" onclick="clearIdeas()">Clear</button>
@@ -444,13 +543,12 @@
         `;
         const bd=document.getElementById('brainstormDraft');
         bd.value=localStorage.getItem('brainstormDraft')||"";
-        bd.addEventListener('input',()=>{ localStorage.setItem('brainstormDraft',bd.value); updateWordCount('brainstormDraft','brainstormWordCount'); });
+        bd.addEventListener('input',()=>{localStorage.setItem('brainstormDraft',bd.value);updateWordCount('brainstormDraft','brainstormWordCount');});
         const last=localStorage.getItem('lastIdea'); if(last) document.getElementById('ideaText').innerText=last;
         updateWordCount('brainstormDraft','brainstormWordCount');
       }
-
       if(mode==="journal"){
-        writerArea.innerHTML = `
+        writerArea.innerHTML=`
           <textarea id="journalText" placeholder="Today's entry..."></textarea>
           <div class="row">
             <button class="btn" onclick="saveJournal()">Save entry</button>
@@ -535,7 +633,7 @@
       openPrintable('Journal',content);
     }
 
-    /* ---------------- TO-DO ---------------- */
+    /* ---------------- TO‑DO ---------------- */
     function getTodos(){return JSON.parse(localStorage.getItem('todos')||'[]');}
     function setTodos(list){localStorage.setItem('todos',JSON.stringify(list));}
     function addTodo(){
@@ -559,6 +657,216 @@
       });
     }
 
+    /* ---------------- BRAINSTORM IDEA GEN ---------------- */
+    function generateIdea(){
+      const seeds=[
+        "A tool that saves memories as scents.",
+        "A habit that grows into a garden.",
+        "A playlist that changes with the weather.",
+        "A journal that talks back.",
+        "A clock that counts inspiration, not seconds."
+      ];
+      const idea=seeds[Math.floor(Math.random()*seeds.length)];
+      document.getElementById('ideaText').innerText=idea;
+      localStorage.setItem('lastIdea',idea);
+    }
+    function clearIdeas(){document.getElementById('ideaText').innerText=""; localStorage.removeItem('lastIdea');}
+    /* ---------------- WRITING ---------------- */
+    const writerArea=document.getElementById('writerArea');
+    const promptsList=[
+      "Write about a moment that changes everything.",
+      "Describe a character who hides a secret.",
+      "Invent a world where memories are currency.",
+      "Start with a line of overheard dialogue.",
+      "Describe a place that feels like home but isn’t."
+    ];
+
+    function renderWriterMode(){
+      const mode=document.getElementById('writerMode').value;
+      writerArea.innerHTML="";
+      if(mode==="prompts"){
+        writerArea.innerHTML=`
+          <div class="row">
+            <button class="btn" onclick="shufflePrompt()">Shuffle</button>
+            <button class="btn secondary" onclick="exportPromptDraft('txt')">Export TXT</button>
+            <button class="btn secondary" onclick="exportPromptDraft('md')">Export MD</button>
+            <button class="btn" onclick="exportPromptPrintable()">Printable</button>
+          </div>
+          <p id="promptText" class="small"></p>
+          <textarea id="promptDraft" placeholder="Write here..."></textarea>
+          <p id="promptWordCount" class="small">Words: 0</p>
+        `;
+        const pd=document.getElementById('promptDraft');
+        pd.value=localStorage.getItem('promptDraft')||"";
+        pd.addEventListener('input',()=>{localStorage.setItem('promptDraft',pd.value);updateWordCount('promptDraft','promptWordCount');});
+        shufflePrompt(); updateWordCount('promptDraft','promptWordCount');
+      }
+      if(mode==="todo"){
+        writerArea.innerHTML=`
+          <div class="row">
+            <input id="todoInput" class="input" placeholder="Add task..."/>
+            <button class="btn" onclick="addTodo()">Add</button>
+            <button class="btn secondary" onclick="clearTodos()">Clear all</button>
+          </div>
+          <ul id="todoList" class="stack"></ul>
+        `;
+        renderTodos();
+      }
+      if(mode==="free"){
+        writerArea.innerHTML=`
+          <div class="row">
+            <button class="btn secondary" onclick="exportFreeDraft('txt')">Export TXT</button>
+            <button class="btn secondary" onclick="exportFreeDraft('md')">Export MD</button>
+            <button class="btn" onclick="exportFreePrintable()">Printable</button>
+          </div>
+          <textarea id="freeDraft" placeholder="Free writing..."></textarea>
+          <p id="freeWordCount" class="small">Words: 0</p>
+        `;
+        const fd=document.getElementById('freeDraft');
+        fd.value=localStorage.getItem('freeDraft')||"";
+        fd.addEventListener('input',()=>{localStorage.setItem('freeDraft',fd.value);updateWordCount('freeDraft','freeWordCount');});
+        updateWordCount('freeDraft','freeWordCount');
+      }
+      if(mode==="brainstorm"){
+        writerArea.innerHTML=`
+          <div class="row">
+            <button class="btn" onclick="generateIdea()">Generate Idea</button>
+            <button class="btn secondary" onclick="clearIdeas()">Clear</button>
+          </div>
+          <p id="ideaText" class="small"></p>
+          <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
+          <p id="brainstormWordCount" class="small">Words: 0</p>
+        `;
+        const bd=document.getElementById('brainstormDraft');
+        bd.value=localStorage.getItem('brainstormDraft')||"";
+        bd.addEventListener('input',()=>{localStorage.setItem('brainstormDraft',bd.value);updateWordCount('brainstormDraft','brainstormWordCount');});
+        const last=localStorage.getItem('lastIdea'); if(last) document.getElementById('ideaText').innerText=last;
+        updateWordCount('brainstormDraft','brainstormWordCount');
+      }
+      if(mode==="journal"){
+        writerArea.innerHTML=`
+          <textarea id="journalText" placeholder="Today's entry..."></textarea>
+          <div class="row">
+            <button class="btn" onclick="saveJournal()">Save entry</button>
+            <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
+            <button class="btn" onclick="exportJournalPrintable()">Printable</button>
+          </div>
+          <div id="journalEntries" class="stack"></div>
+        `;
+        renderJournal();
+      }
+    }
+
+    function updateWordCount(textareaId,labelId){
+      const el=document.getElementById(textareaId), lbl=document.getElementById(labelId);
+      if(!el||!lbl) return; const words=el.value.trim().split(/\s+/).filter(Boolean).length;
+      lbl.innerText="Words: "+words;
+    }
+    function shufflePrompt(){
+      const prompt=promptsList[Math.floor(Math.random()*promptsList.length)];
+      document.getElementById('promptText').innerText=prompt;
+      localStorage.setItem('currentPromptTitle',prompt);
+    }
+    function downloadFile(content,filename){
+      const blob=new Blob([content],{type:"text/plain"}); const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
+    }
+    function openPrintable(title,contentHtml){
+      const html=`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
+      <style>body{font-family:Georgia,serif;margin:40px;color:#222}h1{font-size:24px;margin-bottom:20px}.content{font-size:16px;line-height:1.6}</style>
+      </head><body><h1>${escapeHtml(title)}</h1><div class="content">${contentHtml}</div></body></html>`;
+      const w=window.open('', '_blank'); if(!w) return; w.document.open(); w.document.write(html); w.document.close(); setTimeout(()=>w.print(),300);
+    }
+    function escapeHtml(str){return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+    function exportPromptDraft(format){
+      const title=(localStorage.getItem('currentPromptTitle')||"Prompt Draft").replace(/[^\w\s-]/g,'').trim()||"Prompt Draft";
+      let content=document.getElementById('promptDraft').value;
+      if(format==='md') content=`# ${title}\n\n${content}`;
+      downloadFile(content,`${title}.${format}`);
+    }
+    function exportPromptPrintable(){
+      const title=localStorage.getItem('currentPromptTitle')||"Prompt Draft";
+      const content=document.getElementById('promptDraft').value.replace(/\n/g,'<br/>'); openPrintable(title,content);
+    }
+    function exportFreeDraft(format){
+      const title="Free Writing"; let content=document.getElementById('freeDraft').value;
+      if(format==='md') content=`# ${title}\n\n${content}`; downloadFile(content,`${title}.${format}`);
+    }
+    function exportFreePrintable(){
+      const title="Free Writing"; const content=document.getElementById('freeDraft').value.replace(/\n/g,'<br/>'); openPrintable(title,content);
+    }
+    function getJournal(){return JSON.parse(localStorage.getItem('journal')||'[]');}
+    function setJournal(list){localStorage.setItem('journal',JSON.stringify(list));}
+    function saveJournal(){
+      const text=document.getElementById('journalText').value.trim(); if(!text) return;
+      const entries=getJournal(); const d=new Date();
+      entries.unshift({date:d.toLocaleDateString(), time:d.toLocaleTimeString(), text});
+      setJournal(entries); document.getElementById('journalText').value=""; renderJournal();
+    }
+    function clearJournal(){localStorage.removeItem('journal'); renderJournal();}
+    function renderJournal(){
+      const wrap=document.getElementById('journalEntries'); if(!wrap) return; wrap.innerHTML="";
+      getJournal().forEach((e,i)=>{
+        const div=document.createElement('div'); div.className='card'; div.style.padding='12px';
+        div.innerHTML=`
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong style="font-family:'Sansita',sans-serif;">${e.date} — ${e.time}</strong>
+            <div><button class="btn secondary" onclick="deleteJournal(${i})">Delete</button></div>
+          </div>
+          <p class="small" style="margin-top:8px;">${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p>
+        `;
+        wrap.appendChild(div);
+      });
+    }
+    function deleteJournal(i){const entries=getJournal(); entries.splice(i,1); setJournal(entries); renderJournal();}
+    function exportJournal(){
+      const entries=getJournal(); let content=entries.map(e=>`${e.date} ${e.time}\n${e.text}\n`).join('\n');
+      downloadFile(content,'Journal.txt');
+    }
+    function exportJournalPrintable(){
+      const entries=getJournal();
+      const content=entries.map(e=>`<h3>${e.date} — ${e.time}</h3><p>${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p><hr/>`).join('');
+      openPrintable('Journal',content);
+    }
+
+    /* ---------------- TO‑DO ---------------- */
+    function getTodos(){return JSON.parse(localStorage.getItem('todos')||'[]');}
+    function setTodos(list){localStorage.setItem('todos',JSON.stringify(list));}
+    function addTodo(){
+      const val=document.getElementById('todoInput').value.trim(); if(!val) return;
+      const todos=getTodos(); todos.push({text:val,done:false}); setTodos(todos);
+      document.getElementById('todoInput').value=""; renderTodos();
+    }
+    function toggleTodo(i){const todos=getTodos(); todos[i].done=!todos[i].done; setTodos(todos); renderTodos();}
+    function removeTodo(i){const todos=getTodos(); todos.splice(i,1); setTodos(todos); renderTodos();}
+    function clearTodos(){localStorage.removeItem('todos'); renderTodos();}
+    function renderTodos(){
+      const list=document.getElementById('todoList'); if(!list) return; list.innerHTML="";
+      getTodos().forEach((t,i)=>{
+        const li=document.createElement('li');
+        li.innerHTML=`
+          <input type="checkbox" ${t.done?"checked":""} onchange="toggleTodo(${i})"/>
+          <span style="${t.done?'text-decoration:line-through;opacity:0.7;':''}">${escapeHtml(t.text)}</span>
+          <button class="btn secondary" style="margin-left:8px;" onclick="removeTodo(${i})">x</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    /* ---------------- BRAINSTORM IDEA GEN ---------------- */
+    function generateIdea(){
+      const seeds=[
+        "A tool that saves memories as scents.",
+        "A habit that grows into a garden.",
+        "A playlist that changes with the weather.",
+        "A journal that talks back.",
+        "A clock that counts inspiration, not seconds."
+      ];
+      const idea=seeds[Math.floor(Math.random()*seeds.length)];
+      document.getElementById('ideaText').innerText=idea;
+      localStorage.setItem('lastIdea',idea);
+    }
+    function clearIdeas(){document.getElementById('ideaText').innerText=""; localStorage.removeItem('lastIdea');}
     /* ---------------- HABITS ---------------- */
     function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
     function setHabits(list){localStorage.setItem('habits',JSON.stringify(list));}
@@ -809,10 +1117,7 @@
       applyEnvBackground(envSaved);
 
       renderPlaylists();
-
-      // Inject writer mode selector and render default
-      switchWriterMode();
-
+      renderWriterMode();
       renderHabits();
 
       // Clock
