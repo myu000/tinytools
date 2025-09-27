@@ -344,20 +344,44 @@
     });
 
     /* ---------------- TILE MENUS ---------------- */
-    document.addEventListener('click',e=>{
-      document.querySelectorAll('.tile-menu.open').forEach(menu=>{
-        if(!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)){
-          menu.classList.remove('open');
-        }
-      });
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+  function closeAllMenus(){
+    document.querySelectorAll('.tile-menu.open').forEach(menu=>{
+      menu.classList.remove('open');
     });
-    document.querySelectorAll('.dots-btn').forEach(btn=>{
-      btn.addEventListener('click',e=>{
-        e.stopPropagation();
-        const menu=btn.nextElementSibling;
-        menu.classList.toggle('open');
-      });
+  }
+
+  // Toggle menu on ⋯ button click
+  document.querySelectorAll('.dots-btn').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      const menu=btn.nextElementSibling;
+      const isOpen=menu.classList.contains('open');
+      closeAllMenus();
+      if(!isOpen){
+        menu.classList.add('open');
+        const firstBtn=menu.querySelector('button');
+        if(firstBtn) firstBtn.focus();
+      }
     });
+  });
+
+  // Close menus when clicking outside
+  document.addEventListener('click', e=>{
+    document.querySelectorAll('.tile-menu.open').forEach(menu=>{
+      if(!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)){
+        menu.classList.remove('open');
+      }
+    });
+  });
+
+  // Close menus with Escape key
+  document.addEventListener('keydown', e=>{
+    if(e.key==="Escape"){ closeAllMenus(); }
+  });
+});
+</script>
   </script>  <!-- YouTube IFrame API -->
   <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -1188,3 +1212,4 @@
   </script>
   </body>
 </html>
+
