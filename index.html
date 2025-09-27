@@ -226,10 +226,6 @@
           <button class="btn secondary" onclick="addTrack()">Add</button>
         </div>
         <div id="playlistTracks" class="stack"></div>
-        <div class="row">
-          <button class="btn secondary" onclick="enableTrackReorder()">Reorder</button>
-          <button class="btn" onclick="disableTrackReorder()">Done</button>
-        </div>
         <div id="musicPlayer" class="player"></div>
       </section>
 
@@ -670,10 +666,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     currentIndex = 0;
     if (window.playerReady) ytPlayer.loadVideoById(currentPlaylist[0]);
   }
-
-  // No-op stubs to keep buttons functional without drag & drop
-  function enableTrackReorder() {}
-  function disableTrackReorder() {}
   </script>
   
   <!-- Part 4: Writing Logic -->
@@ -1425,6 +1417,7 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
   </script>
 </body>
 </html>
+
 
 
 
