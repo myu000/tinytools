@@ -3,94 +3,137 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Tiny Tools — Premium Dashboard</title>
+  <title>Tiny Tools — Your Moodspace</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="apple-touch-icon" href="favicon.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
-    :root {
+    :root{
       --bg:#FFFAE3; --text:#1F2F16;
       --primary:#395B50; --secondary:#96705B; --accent:#3F6F63;
-      --glass: rgba(255,255,255,0.16);
-      --shadow-1: 0 8px 24px rgba(0,0,0,0.18);
-      --tile-gap: 24px; --tile-radius: 20px; --tile-pad: 24px;
+      --glass:rgba(255,255,255,0.35);
+      --shadow-1:0 8px 24px rgba(0,0,0,0.18);
+      --shadow-2:0 12px 32px rgba(0,0,0,0.26);
+      --tile-gap:24px; --tile-radius:20px; --tile-pad:24px;
+      --dock-width:340px; --select-bg:rgba(255,255,255,0.30); --input-bg:rgba(255,255,255,0.28);
     }
-    [data-theme="dark"] {
+    [data-theme="dark"]{
       --bg:#1F2F16; --text:#F3EFE7; --accent:#78B3A7;
-      --glass: rgba(30,30,30,0.22);
-      --shadow-1: 0 8px 24px rgba(0,0,0,0.35);
+      --glass:rgba(30,30,30,0.45);
+      --shadow-1:0 8px 24px rgba(0,0,0,0.35);
+      --shadow-2:0 12px 32px rgba(0,0,0,0.48);
+      --select-bg:rgba(255,255,255,0.20); --input-bg:rgba(255,255,255,0.18);
     }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family:'Forum',serif; color:var(--text); background:var(--bg) center/cover fixed no-repeat; }
-    header { background:rgba(57,91,80,0.92); color:#fff; padding:18px 40px; display:flex; justify-content:space-between; align-items:center; }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
+    header{background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;}
+    .brand{display:flex;gap:12px;align-items:baseline;}
     .brand h1{margin:0;font-family:'Sansita',sans-serif;}
+    .brand span{font-family:'Jura',sans-serif;opacity:0.9;}
     .select,.button{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;}
-    .select{background:rgba(255,255,255,0.25);color:var(--text);}
-    .button{background:#96705B;color:#fff;}
-    .button.primary{background:#395B50;}
-    .page{display:grid;grid-template-columns:1fr 320px;gap:24px;max-width:1400px;margin:40px auto;padding:0 40px;}
-    @media (max-width:1100px){ .page{grid-template-columns:1fr;} aside{order:2;} }
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:24px;}
-    .card{background:var(--glass);border-radius:20px;padding:24px;box-shadow:var(--shadow-1);}
-    .card h3{margin-top:0;font-family:'Sansita',sans-serif;}
-    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:10px;}
-    .thumb img{width:100%;height:100%;object-fit:cover;border-radius:12px;}
-    .input{padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.25);flex:1;color:var(--text);}
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-    .player iframe{width:100%;height:300px;border:0;}
-    textarea{width:100%;min-height:220px;border-radius:12px;padding:12px;background:rgba(255,255,255,0.25);color:var(--text);border:none;}
-    .list{display:flex;flex-direction:column;gap:8px;}
-    .small{opacity:0.8;font-family:'Jura',sans-serif;}
+    .select{background:var(--select-bg);color:var(--text);}
+    .button{background:var(--secondary);color:#fff;}
+    .button.primary{background:var(--primary);}
+    .page{display:grid;grid-template-columns:1fr var(--dock-width);gap:var(--tile-gap);max-width:1500px;margin:40px auto;padding:0 40px;}
+    @media(max-width:1100px){.page{grid-template-columns:1fr;}.dock{order:2;}}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);align-content:start;}
+    .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;min-height:200px;}
+    .dock h4{margin:0 0 10px;font-family:'Sansita',sans-serif;}
+    .dock-area{display:grid;grid-template-columns:1fr;gap:12px;}
+    .card{
+      position:relative;background:var(--glass);
+      backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
+      border-radius:var(--tile-radius); padding:var(--tile-pad); box-shadow:var(--shadow-1);
+      transition:transform .25s ease, box-shadow .25s ease, filter .25s ease; min-height:180px; user-select:none;
+    }
+    .card:hover{transform:translateY(-2px);filter:brightness(1.03);box-shadow:var(--shadow-2);}
+    .card h3{margin:0 0 16px;font-family:'Sansita',sans-serif;}
+    .menu{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.30);border:none;border-radius:8px;padding:6px 8px;cursor:pointer;}
+    .menu-options{position:absolute;top:42px;right:8px;display:none;background:#fff;border-radius:10px;box-shadow:var(--shadow-1);overflow:hidden;min-width:210px;z-index:10;}
+    .menu-options button{display:block;width:100%;padding:10px 12px;border:none;background:transparent;cursor:pointer;text-align:left;}
+    .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+    .stack{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
+    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;color:var(--text);}
+    .btn{background:var(--primary);color:#fff;cursor:pointer;}
+    .btn.secondary{background:var(--secondary);}
+    .input,.select-inline,textarea{background:var(--input-bg);}
+    textarea{width:100%;min-height:220px;resize:vertical;outline:none;}
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
+    .thumb{border-radius:12px;overflow:hidden;height:110px;position:relative;}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+    .player{border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.18);}
+    .player iframe{display:block;width:100%;height:300px;border:0;}
+    @media(max-width:600px){.player iframe{height:200px;}}
+    #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;margin:10px 0 6px;}
+    .drag-placeholder{outline:2px dashed rgba(63,111,99,0.6);border-radius:var(--tile-radius);min-height:160px;opacity:0.8;}
+    .dragging-origin{outline:2px dashed rgba(63,111,99,0.35);}
+    .select:focus,.select-inline:focus,.input:focus,textarea:focus,.btn:focus,.button:focus{outline:2px solid var(--accent);outline-offset:2px;}
+    @media(max-width:480px){header{padding:14px 16px;grid-template-columns:1fr;gap:10px;} .page{padding:0 16px;margin:20px auto;} .card{padding:16px;} .thumb{height:80px;}}
   </style>
 </head>
 <body>
   <header>
-    <div class="brand"><h1>Tiny Tools</h1><span class="small">Creative Hub</span></div>
-    <div>
-      <select id="envSelect" class="select">
-        <option value="relax">Relax</option>
-        <option value="study">Study</option>
-        <option value="focus">Focus</option>
-        <option value="creative">Creative</option>
-        <option value="default">Default</option>
-      </select>
-      <button id="shuffleWallpaper" class="button">Shuffle wallpaper</button>
+    <div class="brand"><h1>Tiny Tools</h1><span>Creative & Focus Hub</span></div>
+    <div class="top-controls">
+      <select id="envSelect" class="select"><option value="relax">Relax</option><option value="study">Study</option><option value="focus">Focus</option><option value="creative">Creative</option><option value="default">Default</option></select>
+      <button id="shuffleWallpaper" class="button">Shuffle</button>
       <button id="themeToggle" class="button primary">Theme</button>
+    </div>
+    <div class="layout-controls">
+      <select id="layoutSelect" class="select"><option value="balanced">Balanced</option><option value="focus">Focus</option><option value="writing">Writing</option><option value="music">Music</option></select>
+      <button id="applyLayout" class="button">Apply</button>
+      <span id="layoutNote">Layout: Balanced</span>
     </div>
   </header>
 
-  <main class="page">
-    <section class="grid">
-      <!-- Wallpapers -->
-      <section class="card">
+  <div class="page">
+    <main id="grid" class="grid">
+      <section class="card tile" id="tile-wallpapers" data-tile="wallpapers" data-order="1">
+        <button class="menu" onclick="toggleMenu('menu-wallpapers')">⁝</button>
+        <div class="menu-options" id="menu-wallpapers">
+          <button onclick="shrinkTile('wallpapers')">Shrink to dock</button>
+          <button onclick="expandTile('wallpapers')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
         <h3>Wallpapers</h3>
-        <p class="small">Curated sets per mood. Shuffle or switch mood to change background.</p>
         <div id="wallpaperThumbs" class="thumbs"></div>
       </section>
 
-      <!-- Music -->
-      <section class="card">
+      <section class="card tile" id="tile-music" data-tile="music" data-order="2">
+        <button class="menu" onclick="toggleMenu('menu-music')">⁝</button>
+        <div class="menu-options" id="menu-music">
+          <button onclick="shrinkTile('music')">Shrink to dock</button>
+          <button onclick="expandTile('music')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
         <h3>Music Playlists</h3>
         <div class="row">
           <input id="playlistName" class="input" placeholder="New playlist name"/>
-          <button class="button" onclick="createPlaylist()">Create</button>
+          <button class="btn" onclick="createPlaylist()">Create</button>
+          <button class="btn secondary" onclick="deletePlaylist()">Delete</button>
         </div>
         <div class="row">
-          <select id="playlistSelect" class="select" onchange="renderPlaylist()"></select>
-          <button class="button" onclick="deletePlaylist()">Delete</button>
+          <select id="playlistSelect" class="select-inline" onchange="renderPlaylist()"></select>
+          <button class="btn" onclick="renderPlaylist()">Refresh</button>
         </div>
         <div class="row">
           <input id="musicUrl" class="input" placeholder="Paste YouTube URL (video or playlist)"/>
-          <button class="button" onclick="addTrack()">Add Track</button>
+          <button class="btn secondary" onclick="addTrack()">Add track</button>
         </div>
-        <div id="playlistTracks" class="list"></div>
+        <div id="playlistTracks" class="stack"></div>
         <div id="musicPlayer" class="player"></div>
       </section>
 
-      <!-- Writing -->
-      <section class="card">
+      <section class="card tile" id="tile-writing" data-tile="writing" data-order="3">
+        <button class="menu" onclick="toggleMenu('menu-writing')">⁝</button>
+        <div class="menu-options" id="menu-writing">
+          <button onclick="shrinkTile('writing')">Shrink to dock</button>
+          <button onclick="expandTile('writing')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
         <h3>Writing</h3>
-        <p class="small">Multi‑mode writing with autosave and export options.</p>
         <div class="row">
-          <select id="writerMode" class="select" onchange="switchWriterMode()">
+          <select id="writerMode" class="select-inline" onchange="switchWriterMode()">
             <option value="prompts">Prompts</option>
             <option value="todo">To‑Do</option>
             <option value="free">Free Writing</option>
@@ -101,193 +144,178 @@
         <div id="writerArea"></div>
       </section>
 
-      <!-- Habits -->
-      <section class="card">
+      <section class="card tile" id="tile-habits" data-tile="habits" data-order="4">
+        <button class="menu" onclick="toggleMenu('menu-habits')">⁝</button>
+        <div class="menu-options" id="menu-habits">
+          <button onclick="shrinkTile('habits')">Shrink to dock</button>
+          <button onclick="expandTile('habits')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
         <h3>Habit Garden</h3>
         <div class="row">
           <input id="habitInput" class="input" placeholder="Add a new habit..."/>
-          <button class="button" onclick="addHabit()">Add habit</button>
-          <button class="button" onclick="resetAllHabits()">Reset all</button>
+          <button class="btn" onclick="addHabit()">Add habit</button>
+          <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
         </div>
-        <div id="habitList" class="list"></div>
+        <div id="habitList" class="stack"></div>
       </section>
 
-      <!-- Clock -->
-      <section class="card">
+      <section class="card tile" id="tile-clock" data-tile="clock" data-order="5">
+        <button class="menu" onclick="toggleMenu('menu-clock')">⁝</button>
+        <div class="menu-options" id="menu-clock">
+          <button onclick="shrinkTile('clock')">Shrink to dock</button>
+          <button onclick="expandTile('clock')">Expand to grid</button>
+          <button onclick="closeMenus()">Close menu</button>
+        </div>
         <h3>Clock Tool</h3>
-        <p class="small">Pomodoro, Stopwatch, Countdown, Custom.</p>
         <div class="row">
-          <select id="modeSelect" class="select" onchange="switchMode()">
+          <select id="modeSelect" class="select-inline" onchange="switchMode()">
             <option value="pomodoro">Pomodoro</option>
             <option value="stopwatch">Stopwatch</option>
             <option value="countdown">Countdown</option>
             <option value="custom">Custom</option>
           </select>
-          <button class="button" onclick="startTimer()">Start</button>
-          <button class="button" onclick="pauseTimer()">Pause</button>
-          <button class="button" onclick="resetTimer()">Reset</button>
+          <button class="btn" onclick="startTimer()">Start</button>
+          <button class="btn secondary" onclick="pauseTimer()">Pause</button>
+          <button class="btn" onclick="resetTimer()">Reset</button>
         </div>
         <div class="row" id="settingsRow">
-          <div id="pomodoroSettings" class="row" style="display:none;width:100%;">
+          <div class="row" id="pomodoroSettings" style="display:none;width:100%;">
             <input id="workMinutes" class="input" type="number" min="1" value="25"/>
             <input id="breakMinutes" class="input" type="number" min="1" value="5"/>
-            <button class="button" onclick="completePomodoro()">Complete cycle</button>
+            <button class="btn" onclick="completePomodoro()">Complete cycle</button>
           </div>
-          <div id="customSettings" class="row" style="display:none;width:100%;">
+          <div class="row" id="customSettings" style="display:none;width:100%;">
             <input id="customHours" class="input" type="number" min="0" value="0"/>
             <input id="customMinutes" class="input" type="number" min="0" value="5"/>
             <input id="customSeconds" class="input" type="number" min="0" value="0"/>
           </div>
         </div>
-        <div id="timeDisplay" style="font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;margin-top:8px;">00:25:00</div>
+        <div id="timeDisplay">00:25:00</div>
         <p id="stats" class="small">Completed Pomodoros: 0</p>
       </section>
-    </section>
+    </main>
 
-    <aside>
-      <section class="card">
-        <h3>Notes</h3>
-        <p class="small">All content saves locally in your browser. You can export your writing in TXT/MD or print it.</p>
-      </section>
+    <aside class="dock">
+      <h4>Mini dock</h4>
+      <div id="dockArea" class="dock-area"></div>
     </aside>
-  </main>
+  </div>
 
   <script>
-    /* ---------------- Wallpapers ---------------- */
-    const wallpapers = {
-      relax: [
+    function toggleMenu(id){ closeMenus(); const m=document.getElementById(id); if(m) m.style.display='block'; }
+    function closeMenus(){ document.querySelectorAll('.menu-options').forEach(m=>m.style.display='none'); }
+
+    const wallpapers={
+      relax:[
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
         "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
       ],
-      study: [
+      study:[
         "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
         "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
         "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
       ],
-      focus: [
+      focus:[
         "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
         "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
         "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
       ],
-      creative: [
+      creative:[
         "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
         "https://i.pinimg.com/736x/5b/f8/8f/5bf88fe147b4f5f591a5e07bb5afd5ec.jpg",
         "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
       ],
-      default: [
+      default:[
         "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
         "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
         "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
       ]
     };
 
+    const envSelect=document.getElementById('envSelect');
+    const shuffleWallpaperBtn=document.getElementById('shuffleWallpaper');
+    const themeToggle=document.getElementById('themeToggle');
+
     function setBackground(url){
-      document.body.style.backgroundImage = `url('${url}')`;
-      localStorage.setItem('lastWallpaper', url);
+      document.body.style.backgroundImage=`url('${url}')`;
+      localStorage.setItem('lastWallpaper',url);
     }
-
     function applyEnvBackground(env){
-      const list = wallpapers[env] || wallpapers.default;
-      const pick = list[Math.floor(Math.random() * list.length)];
+      const list=wallpapers[env]||wallpapers.default;
+      const pick=list[Math.floor(Math.random()*list.length)];
       setBackground(pick);
-
-      const thumbs = document.getElementById('wallpaperThumbs');
-      thumbs.innerHTML = "";
+      const thumbs=document.getElementById('wallpaperThumbs');
+      thumbs.innerHTML="";
       list.forEach(url=>{
         const div=document.createElement('div');
         div.className="thumb";
         div.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
         thumbs.appendChild(div);
       });
+      localStorage.setItem('env',env);
     }
-
-    document.getElementById('envSelect').addEventListener('change', e=>applyEnvBackground(e.target.value));
-    document.getElementById('shuffleWallpaper').addEventListener('click', ()=>applyEnvBackground(document.getElementById('envSelect').value));
-    document.getElementById('themeToggle').addEventListener('click', ()=>{
+    envSelect.addEventListener('change',e=>applyEnvBackground(e.target.value));
+    shuffleWallpaperBtn.addEventListener('click',()=>applyEnvBackground(envSelect.value));
+    themeToggle.addEventListener('click',()=>{
       const cur=document.documentElement.getAttribute('data-theme')||'light';
-      document.documentElement.setAttribute('data-theme',cur==='light'?'dark':'light');
-      localStorage.setItem('theme', document.documentElement.getAttribute('data-theme'));
+      const next=cur==='light'?'dark':'light';
+      document.documentElement.setAttribute('data-theme',next);
+      localStorage.setItem('theme',next);
     });
 
-    /* ---------------- Music ---------------- */
-    const playlistSelect = document.getElementById('playlistSelect');
-    const musicPlayer = document.getElementById('musicPlayer');
-
-    function getPlaylists(){ return JSON.parse(localStorage.getItem('playlists')||'{}'); }
-    function setPlaylists(obj){ localStorage.setItem('playlists', JSON.stringify(obj)); }
-
+    const playlistSelect=document.getElementById('playlistSelect');
+    const musicPlayer=document.getElementById('musicPlayer');
+    function getPlaylists(){return JSON.parse(localStorage.getItem('playlists')||'{}');}
+    function setPlaylists(obj){localStorage.setItem('playlists',JSON.stringify(obj));}
     function createPlaylist(){
       const name=document.getElementById('playlistName').value.trim();
-      if(!name) return;
-      const pls=getPlaylists();
-      if(!pls[name]) pls[name]=[];
-      setPlaylists(pls);
-      document.getElementById('playlistName').value="";
-      renderPlaylists();
-      playlistSelect.value=name;
-      renderPlaylist();
+      if(!name)return;
+      const pls=getPlaylists(); if(!pls[name]) pls[name]=[];
+      setPlaylists(pls); document.getElementById('playlistName').value="";
+      renderPlaylists(); playlistSelect.value=name; renderPlaylist();
     }
-
     function deletePlaylist(){
-      const name=playlistSelect.value;
-      if(!name) return;
-      const pls=getPlaylists(); delete pls[name];
-      setPlaylists(pls);
-      renderPlaylists();
-      document.getElementById('playlistTracks').innerHTML="";
-      ensureMusicIframe();
+      const name=playlistSelect.value; if(!name)return;
+      const pls=getPlaylists(); delete pls[name]; setPlaylists(pls);
+      renderPlaylists(); document.getElementById('playlistTracks').innerHTML=""; musicIframeEnsure();
     }
-
     function renderPlaylists(){
-      const pls=getPlaylists();
-      playlistSelect.innerHTML="";
+      const pls=getPlaylists(); playlistSelect.innerHTML="";
       const names=Object.keys(pls);
-      if(!names.length){
-        const opt=document.createElement('option'); opt.value=""; opt.textContent="No playlists";
-        playlistSelect.appendChild(opt); return;
-      }
-      names.forEach(n=>{
-        const opt=document.createElement('option'); opt.value=n; opt.textContent=n;
-        playlistSelect.appendChild(opt);
-      });
+      if(!names.length){ const opt=document.createElement('option'); opt.value=""; opt.textContent="No playlists"; playlistSelect.appendChild(opt); return; }
+      names.forEach(n=>{ const opt=document.createElement('option'); opt.value=n; opt.textContent=n; playlistSelect.appendChild(opt); });
     }
-
     function renderPlaylist(){
       const pls=getPlaylists(); const name=playlistSelect.value;
       const list=document.getElementById('playlistTracks'); list.innerHTML="";
-      if(!name || !pls[name]) return;
+      if(!name||!pls[name]) return;
       pls[name].forEach((url,i)=>{
         const row=document.createElement('div');
         row.className='row';
         row.innerHTML=`
           <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">${url}</span>
-          <button class="button" onclick="playTrack('${name}',${i})">Play</button>
-          <button class="button" onclick="removeTrack('${name}',${i})">Remove</button>
+          <button class="btn" onclick="playTrack('${name}',${i})">Play</button>
+          <button class="btn secondary" onclick="removeTrack('${name}',${i})">Remove</button>
         `;
         list.appendChild(row);
       });
     }
-
     function addTrack(){
       const name=playlistSelect.value;
       const raw=document.getElementById('musicUrl').value.trim();
-      if(!name || !raw) return;
+      if(!name||!raw) return;
       const url=normalizeYouTubeUrl(raw);
-      const pls=getPlaylists();
-      if(!pls[name]) pls[name]=[];
-      pls[name].push(url);
-      setPlaylists(pls);
-      document.getElementById('musicUrl').value="";
+      const pls=getPlaylists(); if(!pls[name]) pls[name]=[];
+      pls[name].push(url); setPlaylists(pls); document.getElementById('musicUrl').value="";
       renderPlaylist();
     }
-
     function removeTrack(name,i){
       const pls=getPlaylists(); if(!pls[name]) return;
       pls[name].splice(i,1); setPlaylists(pls); renderPlaylist();
     }
-
-    function ensureMusicIframe(){
+    function musicIframeEnsure(){
       if(!musicPlayer.querySelector('iframe')){
         const iframe=document.createElement('iframe');
         iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
@@ -296,14 +324,11 @@
         musicPlayer.appendChild(iframe);
       }
     }
-
     function playTrack(name,i){
       const pls=getPlaylists(); if(!pls[name]) return;
-      const url=pls[name][i]; ensureMusicIframe();
-      const iframe=musicPlayer.querySelector('iframe');
-      iframe.src=url;
+      const url=pls[name][i]; musicIframeEnsure();
+      const iframe=musicPlayer.querySelector('iframe'); iframe.src=url;
     }
-
     function normalizeYouTubeUrl(input){
       try{
         const u=new URL(input);
@@ -319,7 +344,6 @@
       return input;
     }
 
-    /* ---------------- Writing (with exports) ---------------- */
     const writerArea=document.getElementById('writerArea');
     const promptsList=[
       "Write about a moment that changes everything.",
@@ -328,17 +352,16 @@
       "Start with a line of overheard dialogue.",
       "Describe a place that feels like home but isn’t."
     ];
-
     function switchWriterMode(){
       const mode=document.getElementById('writerMode').value;
       writerArea.innerHTML="";
       if(mode==="prompts"){
         writerArea.innerHTML=`
           <div class="row">
-            <button class="button" onclick="shufflePrompt()">Shuffle prompt</button>
-            <button class="button" onclick="exportPromptDraft('txt')">Export TXT</button>
-            <button class="button" onclick="exportPromptDraft('md')">Export MD</button>
-            <button class="button" onclick="exportPromptPrintable()">Printable</button>
+            <button class="btn" onclick="shufflePrompt()">Shuffle</button>
+            <button class="btn secondary" onclick="exportPromptDraft('txt')">Export TXT</button>
+            <button class="btn secondary" onclick="exportPromptDraft('md')">Export MD</button>
+            <button class="btn" onclick="exportPromptPrintable()">Printable</button>
           </div>
           <p id="promptText" class="small"></p>
           <textarea id="promptDraft" placeholder="Write here..."></textarea>
@@ -346,41 +369,40 @@
         `;
         const pd=document.getElementById('promptDraft');
         pd.value=localStorage.getItem('promptDraft')||"";
-        pd.addEventListener('input',()=>{ localStorage.setItem('promptDraft', pd.value); updateWordCount('promptDraft','promptWordCount'); });
-        shufflePrompt();
-        updateWordCount('promptDraft','promptWordCount');
+        pd.addEventListener('input',()=>{ localStorage.setItem('promptDraft',pd.value); updateWordCount('promptDraft','promptWordCount'); });
+        shufflePrompt(); updateWordCount('promptDraft','promptWordCount');
       }
       if(mode==="todo"){
         writerArea.innerHTML=`
           <div class="row">
             <input id="todoInput" class="input" placeholder="Add task..."/>
-            <button class="button" onclick="addTodo()">Add</button>
-            <button class="button" onclick="clearTodos()">Clear all</button>
+            <button class="btn" onclick="addTodo()">Add</button>
+            <button class="btn secondary" onclick="clearTodos()">Clear all</button>
           </div>
-          <ul id="todoList" class="list"></ul>
+          <ul id="todoList" class="stack"></ul>
         `;
         renderTodos();
       }
       if(mode==="free"){
         writerArea.innerHTML=`
           <div class="row">
-            <button class="button" onclick="exportFreeDraft('txt')">Export TXT</button>
-            <button class="button" onclick="exportFreeDraft('md')">Export MD</button>
-            <button class="button" onclick="exportFreePrintable()">Printable</button>
+            <button class="btn secondary" onclick="exportFreeDraft('txt')">Export TXT</button>
+            <button class="btn secondary" onclick="exportFreeDraft('md')">Export MD</button>
+            <button class="btn" onclick="exportFreePrintable()">Printable</button>
           </div>
           <textarea id="freeDraft" placeholder="Free writing..."></textarea>
           <p id="freeWordCount" class="small">Words: 0</p>
         `;
         const fd=document.getElementById('freeDraft');
         fd.value=localStorage.getItem('freeDraft')||"";
-        fd.addEventListener('input',()=>{ localStorage.setItem('freeDraft', fd.value); updateWordCount('freeDraft','freeWordCount'); });
+        fd.addEventListener('input',()=>{ localStorage.setItem('freeDraft',fd.value); updateWordCount('freeDraft','freeWordCount'); });
         updateWordCount('freeDraft','freeWordCount');
       }
       if(mode==="brainstorm"){
         writerArea.innerHTML=`
           <div class="row">
-            <button class="button" onclick="generateIdea()">Generate Idea</button>
-            <button class="button" onclick="clearIdeas()">Clear</button>
+            <button class="btn" onclick="generateIdea()">Generate Idea</button>
+            <button class="btn secondary" onclick="clearIdeas()">Clear</button>
           </div>
           <p id="ideaText" class="small"></p>
           <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
@@ -388,7 +410,7 @@
         `;
         const bd=document.getElementById('brainstormDraft');
         bd.value=localStorage.getItem('brainstormDraft')||"";
-        bd.addEventListener('input',()=>{ localStorage.setItem('brainstormDraft', bd.value); updateWordCount('brainstormDraft','brainstormWordCount'); });
+        bd.addEventListener('input',()=>{ localStorage.setItem('brainstormDraft',bd.value); updateWordCount('brainstormDraft','brainstormWordCount'); });
         const last=localStorage.getItem('lastIdea'); if(last) document.getElementById('ideaText').innerText=last;
         updateWordCount('brainstormDraft','brainstormWordCount');
       }
@@ -396,208 +418,131 @@
         writerArea.innerHTML=`
           <textarea id="journalText" placeholder="Today's entry..."></textarea>
           <div class="row">
-            <button class="button" onclick="saveJournal()">Save entry</button>
-            <button class="button" onclick="exportJournal()">Export All (TXT)</button>
-            <button class="button" onclick="exportJournalPrintable()">Printable</button>
+            <button class="btn" onclick="saveJournal()">Save entry</button>
+            <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
+            <button class="btn" onclick="exportJournalPrintable()">Printable</button>
           </div>
-          <div id="journalEntries" class="list"></div>
+          <div id="journalEntries" class="stack"></div>
         `;
         renderJournal();
       }
     }
-
     function updateWordCount(textareaId,labelId){
-      const el=document.getElementById(textareaId);
-      const lbl=document.getElementById(labelId);
-      if(!el || !lbl) return;
-      const words=el.value.trim().split(/\s+/).filter(Boolean).length;
+      const el=document.getElementById(textareaId), lbl=document.getElementById(labelId);
+      if(!el||!lbl) return; const words=el.value.trim().split(/\s+/).filter(Boolean).length;
       lbl.innerText="Words: "+words;
     }
-
     function shufflePrompt(){
       const prompt=promptsList[Math.floor(Math.random()*promptsList.length)];
       document.getElementById('promptText').innerText=prompt;
-      localStorage.setItem('currentPromptTitle', prompt);
+      localStorage.setItem('currentPromptTitle',prompt);
     }
-
-    // Exports for Prompts
+    function downloadFile(content,filename){
+      const blob=new Blob([content],{type:"text/plain"}); const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
+    }
+    function openPrintable(title,contentHtml){
+      const html=`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
+      <style>body{font-family:Georgia,serif;margin:40px;color:#222}h1{font-size:24px;margin-bottom:20px}.content{font-size:16px;line-height:1.6}</style>
+      </head><body><h1>${escapeHtml(title)}</h1><div class="content">${contentHtml}</div></body></html>`;
+      const w=window.open('', '_blank'); if(!w) return; w.document.open(); w.document.write(html); w.document.close(); setTimeout(()=>w.print(),300);
+    }
+    function escapeHtml(str){return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
     function exportPromptDraft(format){
       const title=(localStorage.getItem('currentPromptTitle')||"Prompt Draft").replace(/[^\w\s-]/g,'').trim()||"Prompt Draft";
       let content=document.getElementById('promptDraft').value;
       if(format==='md') content=`# ${title}\n\n${content}`;
-      downloadFile(content, `${title}.${format}`);
+      downloadFile(content,`${title}.${format}`);
     }
     function exportPromptPrintable(){
       const title=localStorage.getItem('currentPromptTitle')||"Prompt Draft";
-      const content=document.getElementById('promptDraft').value.replace(/\n/g,'<br/>');
-      openPrintable(title, content);
+      const content=document.getElementById('promptDraft').value.replace(/\n/g,'<br/>'); openPrintable(title,content);
     }
-
-    // To‑Do
-    function getTodos(){ return JSON.parse(localStorage.getItem('todos')||'[]'); }
-    function setTodos(list){ localStorage.setItem('todos', JSON.stringify(list)); }
-    function addTodo(){
-      const val=document.getElementById('todoInput').value.trim();
-      if(!val) return;
-      const todos=getTodos(); todos.push({text:val, done:false});
-      setTodos(todos); document.getElementById('todoInput').value="";
-      renderTodos();
-    }
-    function toggleTodo(i){ const todos=getTodos(); todos[i].done=!todos[i].done; setTodos(todos); renderTodos(); }
-    function removeTodo(i){ const todos=getTodos(); todos.splice(i,1); setTodos(todos); renderTodos(); }
-    function clearTodos(){ localStorage.removeItem('todos'); renderTodos(); }
-    function renderTodos(){
-      const list=document.getElementById('todoList'); if(!list) return;
-      list.innerHTML="";
-      getTodos().forEach((t,i)=>{
-        const li=document.createElement('li');
-        li.innerHTML=`
-          <input type="checkbox" ${t.done?"checked":""} onchange="toggleTodo(${i})"/>
-          <span style="${t.done?'text-decoration:line-through;opacity:0.7;':''}">${t.text}</span>
-          <button class="button" style="margin-left:8px;" onclick="removeTodo(${i})">x</button>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    // Brainstorm
-    const ideas=[
-      "A city that never sleeps",
-      "A machine that records dreams",
-      "A hidden door in the library",
-      "A festival of lights in the desert",
-      "A message from a future self"
-    ];
-    function generateIdea(){
-      const idea=ideas[Math.floor(Math.random()*ideas.length)];
-      document.getElementById('ideaText').innerText=idea;
-      localStorage.setItem('lastIdea', idea);
-    }
-    function clearIdeas(){
-      localStorage.removeItem('lastIdea');
-      const el=document.getElementById('ideaText'); if(el) el.innerText="";
-    }
-
-    // Free writing exports
     function exportFreeDraft(format){
-      const title="Free Writing";
-      let content=document.getElementById('freeDraft').value;
-      if(format==='md') content=`# ${title}\n\n${content}`;
-      downloadFile(content, `${title}.${format}`);
+      const title="Free Writing"; let content=document.getElementById('freeDraft').value;
+      if(format==='md') content=`# ${title}\n\n${content}`; downloadFile(content,`${title}.${format}`);
     }
     function exportFreePrintable(){
-      const title="Free Writing";
-      const content=document.getElementById('freeDraft').value.replace(/\n/g,'<br/>');
-      openPrintable(title, content);
+      const title="Free Writing"; const content=document.getElementById('freeDraft').value.replace(/\n/g,'<br/>'); openPrintable(title,content);
     }
-
-    // Journal
-    function getJournal(){ return JSON.parse(localStorage.getItem('journal')||'[]'); }
-    function setJournal(list){ localStorage.setItem('journal', JSON.stringify(list)); }
+    function getJournal(){return JSON.parse(localStorage.getItem('journal')||'[]');}
+    function setJournal(list){localStorage.setItem('journal',JSON.stringify(list));}
     function saveJournal(){
-      const text=document.getElementById('journalText').value.trim();
-      if(!text) return;
-      const entries=getJournal();
-      const date=new Date();
-      entries.unshift({date: date.toLocaleDateString(), time: date.toLocaleTimeString(), text});
-      setJournal(entries);
-      document.getElementById('journalText').value="";
-      renderJournal();
+      const text=document.getElementById('journalText').value.trim(); if(!text) return;
+      const entries=getJournal(); const d=new Date();
+      entries.unshift({date:d.toLocaleDateString(), time:d.toLocaleTimeString(), text});
+      setJournal(entries); document.getElementById('journalText').value=""; renderJournal();
     }
-    function clearJournal(){ localStorage.removeItem('journal'); renderJournal(); }
+    function clearJournal(){localStorage.removeItem('journal'); renderJournal();}
     function renderJournal(){
-      const wrap=document.getElementById('journalEntries'); if(!wrap) return;
-      wrap.innerHTML="";
-      getJournal().forEach((e, idx)=>{
-        const div=document.createElement('div');
-        div.className='card';
-        div.style.padding='12px';
+      const wrap=document.getElementById('journalEntries'); if(!wrap) return; wrap.innerHTML="";
+      getJournal().forEach((e,i)=>{
+        const div=document.createElement('div'); div.className='card'; div.style.padding='12px';
         div.innerHTML=`
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <strong style="font-family:'Sansita',sans-serif;">${e.date} — ${e.time}</strong>
-            <div>
-              <button class="button" onclick="deleteJournal(${idx})">Delete</button>
-            </div>
+            <div><button class="btn secondary" onclick="deleteJournal(${i})">Delete</button></div>
           </div>
           <p class="small" style="margin-top:8px;">${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p>
         `;
         wrap.appendChild(div);
       });
     }
-    function deleteJournal(i){
-      const entries=getJournal();
-      entries.splice(i,1);
-      setJournal(entries);
-      renderJournal();
-    }
+    function deleteJournal(i){const entries=getJournal(); entries.splice(i,1); setJournal(entries); renderJournal();}
     function exportJournal(){
-      const entries=getJournal();
-      let content=entries.map(e=>`${e.date} ${e.time}\n${e.text}\n`).join('\n');
-      downloadFile(content, 'Journal.txt');
+      const entries=getJournal(); let content=entries.map(e=>`${e.date} ${e.time}\n${e.text}\n`).join('\n');
+      downloadFile(content,'Journal.txt');
     }
     function exportJournalPrintable(){
       const entries=getJournal();
       const content=entries.map(e=>`<h3>${e.date} — ${e.time}</h3><p>${escapeHtml(e.text).replace(/\n/g,'<br/>')}</p><hr/>`).join('');
-      openPrintable('Journal', content);
+      openPrintable('Journal',content);
     }
 
-    // Export utils
-    function downloadFile(content, filename){
-      const blob=new Blob([content],{type:"text/plain"});
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a'); a.href=url; a.download=filename; a.click();
-      URL.revokeObjectURL(url);
+    function getTodos(){return JSON.parse(localStorage.getItem('todos')||'[]');}
+    function setTodos(list){localStorage.setItem('todos',JSON.stringify(list));}
+    function addTodo(){
+      const val=document.getElementById('todoInput').value.trim(); if(!val) return;
+      const todos=getTodos(); todos.push({text:val,done:false}); setTodos(todos);
+      document.getElementById('todoInput').value=""; renderTodos();
     }
-    function openPrintable(title, contentHtml){
-      const html=`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
-      <style>body{font-family:Georgia,serif;margin:40px;color:#222}h1{font-size:24px;margin-bottom:20px}.content{font-size:16px;line-height:1.6}</style>
-      </head><body><h1>${escapeHtml(title)}</h1><div class="content">${contentHtml}</div></body></html>`;
-      const w=window.open('', '_blank'); if(!w) return;
-      w.document.open(); w.document.write(html); w.document.close();
-      setTimeout(()=>w.print(), 300);
+    function toggleTodo(i){const todos=getTodos(); todos[i].done=!todos[i].done; setTodos(todos); renderTodos();}
+    function removeTodo(i){const todos=getTodos(); todos.splice(i,1); setTodos(todos); renderTodos();}
+    function clearTodos(){localStorage.removeItem('todos'); renderTodos();}
+    function renderTodos(){
+      const list=document.getElementById('todoList'); if(!list) return; list.innerHTML="";
+      getTodos().forEach((t,i)=>{
+        const li=document.createElement('li');
+        li.innerHTML=`
+          <input type="checkbox" ${t.done?"checked":""} onchange="toggleTodo(${i})"/>
+          <span style="${t.done?'text-decoration:line-through;opacity:0.7;':''}">${escapeHtml(t.text)}</span>
+          <button class="btn secondary" style="margin-left:8px;" onclick="removeTodo(${i})">x</button>
+        `;
+        list.appendChild(li);
+      });
     }
-    function escapeHtml(str){ return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-    /* ---------------- Habits ---------------- */
-    function getHabits(){ return JSON.parse(localStorage.getItem('habits')||'[]'); }
-    function setHabits(list){ localStorage.setItem('habits', JSON.stringify(list)); }
-
+    function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
+    function setHabits(list){localStorage.setItem('habits',JSON.stringify(list));}
     function addHabit(){
-      const name=document.getElementById('habitInput').value.trim();
-      if(!name) return;
-      const habits=getHabits(); habits.push({name, history: []});
-      setHabits(habits);
-      document.getElementById('habitInput').value="";
-      renderHabits();
+      const name=document.getElementById('habitInput').value.trim(); if(!name) return;
+      const habits=getHabits(); habits.push({name,history:[]}); setHabits(habits);
+      document.getElementById('habitInput').value=""; renderHabits();
     }
-    function resetAllHabits(){
-      localStorage.removeItem('habits'); renderHabits();
-    }
+    function resetAllHabits(){localStorage.removeItem('habits'); renderHabits();}
     function checkInHabit(idx){
-      const habits=getHabits();
-      const today=new Date().toDateString();
-      if(!habits[idx].history.includes(today)){
-        habits[idx].history.push(today);
-        setHabits(habits);
-        renderHabits();
-      }
+      const habits=getHabits(); const today=new Date().toDateString();
+      if(!habits[idx].history.includes(today)){ habits[idx].history.push(today); setHabits(habits); renderHabits(); }
     }
-    function resetHabit(idx){
-      const habits=getHabits();
-      habits[idx].history=[];
-      setHabits(habits);
-      renderHabits();
-    }
+    function resetHabit(idx){const habits=getHabits(); habits[idx].history=[]; setHabits(habits); renderHabits();}
     function renderHabits(){
-      const wrap=document.getElementById('habitList'); if(!wrap) return;
-      wrap.innerHTML="";
+      const wrap=document.getElementById('habitList'); if(!wrap) return; wrap.innerHTML="";
       const habits=getHabits();
-      habits.forEach((h, idx)=>{
+      habits.forEach((h,idx)=>{
         const streak=h.history.length;
         let plant="🌱"; if(streak>=3) plant="🌿"; if(streak>=7) plant="🌳"; if(streak>=14) plant="🌸"; if(streak>=30) plant="🌲";
         const badges=[]; if(streak>=7) badges.push("🔥"); if(streak>=30) badges.push("🌟"); if(streak>=100) badges.push("🏆");
-        const div=document.createElement('div');
-        div.className='card'; div.style.padding='12px';
+        const div=document.createElement('div'); div.className='card'; div.style.padding='12px';
         div.innerHTML=`
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <strong style="font-family:'Sansita',sans-serif;">${escapeHtml(h.name)}</strong>
@@ -606,112 +551,225 @@
           <div style="font-size:2rem;margin:6px 0;">${plant}</div>
           <div class="small">${badges.join(" ")}</div>
           <div class="row">
-            <button class="button" onclick="checkInHabit(${idx})">Check in</button>
-            <button class="button" onclick="resetHabit(${idx})">Reset</button>
+            <button class="btn" onclick="checkInHabit(${idx})">Check in</button>
+            <button class="btn secondary" onclick="resetHabit(${idx})">Reset</button>
           </div>
-          <p class="small"><strong>History:</strong><br>${h.history.join("<br>") || "No check‑ins yet"}</p>
+          <p class="small"><strong>History:</strong><br>${h.history.join("<br>")||"No check‑ins yet"}</p>
         `;
         wrap.appendChild(div);
       });
     }
 
-    /* ---------------- Clock ---------------- */
     let timer=null, timeLeft=1500, running=false;
     let mode=localStorage.getItem('clockMode')||"pomodoro";
     let pomodoroCompleted=parseInt(localStorage.getItem('pomodoroCompleted')||"0",10);
-
     function formatTime(sec){
       const h=Math.floor(sec/3600).toString().padStart(2,'0');
       const m=Math.floor((sec%3600)/60).toString().padStart(2,'0');
       const s=(sec%60).toString().padStart(2,'0');
       return `${h}:${m}:${s}`;
     }
-    function updateDisplay(){ document.getElementById('timeDisplay').innerText=formatTime(timeLeft); }
-
+    function updateDisplay(){document.getElementById('timeDisplay').innerText=formatTime(timeLeft);}
     function startTimer(){
       if(running) return; running=true;
       timer=setInterval(()=>{
-        if(mode==="stopwatch"){
-          timeLeft++;
-        } else {
-          timeLeft--;
-          if(timeLeft<=0){
+        if(mode==="stopwatch"){ timeLeft++; }
+        else{
+          timeLeft--; if(timeLeft<=0){
             clearInterval(timer); running=false;
             if(mode==="pomodoro"){
-              pomodoroCompleted++;
-              localStorage.setItem('pomodoroCompleted', pomodoroCompleted);
-              document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
+              pomodoroCompleted++; localStorage.setItem('pomodoroCompleted',pomodoroCompleted);
+              document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;
             }
             alert("Time's up!");
           }
         }
         updateDisplay();
-      }, 1000);
+      },1000);
     }
-    function pauseTimer(){ clearInterval(timer); running=false; }
+    function pauseTimer(){clearInterval(timer); running=false;}
     function resetTimer(){
       clearInterval(timer); running=false;
       if(mode==="pomodoro"){
-        const w=parseInt(document.getElementById('workMinutes')?.value || "25",10);
+        const w=parseInt(document.getElementById('workMinutes')?.value||"25",10);
         timeLeft=w*60;
-      } else if(mode==="stopwatch"){
+      }else if(mode==="stopwatch"){
         timeLeft=0;
-      } else if(mode==="countdown" || mode==="custom"){
-        const h=parseInt(document.getElementById('customHours')?.value || "0",10);
-        const m=parseInt(document.getElementById('customMinutes')?.value || "5",10);
-        const s=parseInt(document.getElementById('customSeconds')?.value || "0",10);
-        timeLeft=h*3600 + m*60 + s;
+      }else if(mode==="countdown"||mode==="custom"){
+        const h=parseInt(document.getElementById('customHours')?.value||"0",10);
+        const m=parseInt(document.getElementById('customMinutes')?.value||"5",10);
+        const s=parseInt(document.getElementById('customSeconds')?.value||"0",10);
+        timeLeft=h*3600+m*60+s;
       }
       updateDisplay();
     }
     function switchMode(){
       mode=document.getElementById('modeSelect').value;
-      localStorage.setItem('clockMode', mode);
-      document.getElementById('pomodoroSettings').style.display = (mode==="pomodoro") ? "flex" : "none";
-      document.getElementById('customSettings').style.display = (mode==="countdown" || mode==="custom") ? "flex" : "none";
+      localStorage.setItem('clockMode',mode);
+      document.getElementById('pomodoroSettings').style.display=(mode==="pomodoro")?"flex":"none";
+      document.getElementById('customSettings').style.display=(mode==="countdown"||mode==="custom")?"flex":"none";
       resetTimer();
     }
     function completePomodoro(){
-      pomodoroCompleted++;
-      localStorage.setItem('pomodoroCompleted', pomodoroCompleted);
-      document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
+      pomodoroCompleted++; localStorage.setItem('pomodoroCompleted',pomodoroCompleted);
+      document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;
     }
     document.addEventListener('keydown',(e)=>{
       if(e.code==='Space'){
         const ae=document.activeElement;
-        const typing=ae && (ae.tagName==='INPUT' || ae.tagName==='TEXTAREA' || ae.isContentEditable);
+        const typing=ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'||ae.isContentEditable);
         if(typing) return;
         e.preventDefault();
         if(running) pauseTimer(); else startTimer();
       }
     });
 
-    /* ---------------- Init ---------------- */
+    const grid=document.getElementById('grid');
+    let drag={tile:null,handle:null,ghost:null,placeholderIndex:null,offsetX:0,offsetY:0};
+    function setupDraggableTiles(){
+      const tiles=Array.from(grid.querySelectorAll('.tile'));
+      tiles.forEach((tile,i)=>{
+        tile.dataset.order=tile.dataset.order||String(i+1);
+        const handle=tile.querySelector('h3'); if(!handle) return;
+        handle.style.cursor='grab';
+        handle.addEventListener('pointerdown',(e)=>{
+          const tag=e.target.tagName;
+          if(['INPUT','SELECT','TEXTAREA','BUTTON','IFRAME'].includes(tag)||e.target.classList.contains('menu')||e.target.closest('.menu-options')) return;
+          startDrag(tile,e);
+        });
+      });
+    }
+    function startDrag(tile,e){
+      e.preventDefault(); const rect=tile.getBoundingClientRect();
+      drag.tile=tile; drag.offsetX=e.clientX-rect.left; drag.offsetY=e.clientY-rect.top;
+      drag.ghost=document.createElement('div'); drag.ghost.className='card';
+      drag.ghost.style.position='fixed'; drag.ghost.style.left=rect.left+'px'; drag.ghost.style.top=rect.top+'px';
+      drag.ghost.style.width=rect.width+'px'; drag.ghost.style.height=rect.height+'px'; drag.ghost.style.zIndex='1000'; drag.ghost.style.opacity='0.9';
+      drag.ghost.innerHTML=`<div style="padding:10px;font-family:'Jura',sans-serif;">Moving: ${tile.querySelector('h3')?.textContent||'Tile'}</div>`;
+      document.body.appendChild(drag.ghost); tile.classList.add('dragging-origin');
+      document.addEventListener('pointermove',onDragMove); document.addEventListener('pointerup',onDragEnd);
+    }
+    function onDragMove(e){
+      if(!drag.ghost) return;
+      const x=e.clientX-drag.offsetX, y=e.clientY-drag.offsetY;
+      drag.ghost.style.left=x+'px'; drag.ghost.style.top=y+'px';
+      const tiles=Array.from(grid.querySelectorAll('.tile'));
+      const centers=tiles.map(t=>{const r=t.getBoundingClientRect();return{el:t,cy:r.top+r.height/2};});
+      const ghostCy=y+(drag.ghost.getBoundingClientRect().height/2);
+      let nearestIndex=0,minDist=Infinity;
+      centers.forEach((c,i)=>{const d=Math.abs(c.cy-ghostCy);if(d<minDist){minDist=d;nearestIndex=i;}});
+      drag.placeholderIndex=nearestIndex;
+      tiles.forEach((t,i)=>t.classList.toggle('drag-placeholder',i===drag.placeholderIndex));
+    }
+    function onDragEnd(){
+      const tiles=Array.from(grid.querySelectorAll('.tile')); tiles.forEach(t=>t.classList.remove('drag-placeholder'));
+      if(drag.tile!=null && Number.isInteger(drag.placeholderIndex)){
+        const ordered=tiles.map(t=>({el:t,order:parseInt(t.dataset.order||"1",10)})).sort((a,b)=>a.order-b.order);
+        const idx=ordered.findIndex(x=>x.el===drag.tile); const item=ordered.splice(idx,1)[0];
+        ordered.splice(drag.placeholderIndex,0,item);
+        ordered.forEach((x,i)=>{x.el.dataset.order=String(i+1); x.el.style.order=String(i+1);});
+        saveLayout();
+      }
+      if(drag.ghost){drag.ghost.remove(); drag.ghost=null;}
+      drag.tile?.classList.remove('dragging-origin'); drag.tile=null; drag.placeholderIndex=null;
+      document.removeEventListener('pointermove',onDragMove); document.removeEventListener('pointerup',onDragEnd);
+    }
+
+    const dockArea=document.getElementById('dockArea');
+    function titleFor(key){
+      switch(key){case'wallpapers':return'Wallpapers';case'music':return'Music';case'writing':return'Writing';case'habits':return'Habits';case'clock':return'Clock';default:return key;}
+    }
+    function shrinkTile(key){
+      const tile=document.querySelector(`.tile[data-tile="${key}"]`); if(!tile) return;
+      const mini=document.createElement('div'); mini.className='card'; mini.dataset.tile=key;
+      mini.innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong style="font-family:'Sansita',sans-serif;">${titleFor(key)}</strong>
+          <div><button class="button primary" onclick="expandTile('${key}')">Expand</button></div>
+        </div>
+      `;
+      dockArea.appendChild(mini); tile.style.display='none'; saveLayout(); closeMenus();
+    }
+    function expandTile(key){
+      const tile=document.querySelector(`.tile[data-tile="${key}"]`); if(!tile) return;
+      tile.style.display=''; const minis=Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===key);
+      minis.forEach(m=>m.remove()); saveLayout(); closeMenus();
+    }
+
+    const layoutSelect=document.getElementById('layoutSelect');
+    const applyLayoutBtn=document.getElementById('applyLayout');
+    const layoutNote=document.getElementById('layoutNote');
+    const layouts={
+      balanced:[{key:'wallpapers',order:1},{key:'music',order:2},{key:'writing',order:3},{key:'habits',order:4},{key:'clock',order:5}],
+      focus:[{key:'clock',order:1},{key:'writing',order:2},{key:'music',order:3},{key:'habits',order:4},{key:'wallpapers',order:5}],
+      writing:[{key:'writing',order:1},{key:'wallpapers',order:2},{key:'music',order:3},{key:'clock',order:4},{key:'habits',order:5}],
+      music:[{key:'music',order:1},{key:'wallpapers',order:2},{key:'writing',order:3},{key:'clock',order:4},{key:'habits',order:5}]
+    };
+    applyLayoutBtn.addEventListener('click',()=>{
+      const preset=layoutSelect.value||'balanced'; applyLayoutPreset(preset);
+      layoutNote.textContent=`Layout: ${preset.charAt(0).toUpperCase()+preset.slice(1)}`;
+      saveLayout();
+    });
+    function applyLayoutPreset(name){
+      const config=layouts[name]||layouts.balanced;
+      config.forEach(item=>{
+        const tile=document.querySelector(`.tile[data-tile="${item.key}"]`);
+        if(tile){
+          tile.dataset.order=String(item.order); tile.style.order=String(item.order); tile.style.display='';
+          const minis=Array.from(dockArea.querySelectorAll('.card')).filter(m=>m.dataset.tile===item.key); minis.forEach(m=>m.remove());
+        }
+      });
+    }
+    function saveLayout(){
+      const state={
+        tiles:Array.from(grid.querySelectorAll('.tile')).map(t=>({key:t.dataset.tile,order:parseInt(t.dataset.order,10),hidden:t.style.display==='none'})),
+        dock:Array.from(dockArea.querySelectorAll('.card')).map(m=>m.dataset.tile)
+      };
+      localStorage.setItem('layoutState',JSON.stringify(state));
+    }
+    function restoreLayout(){
+      const raw=localStorage.getItem('layoutState'); if(!raw) return;
+      try{
+        const state=JSON.parse(raw);
+        state.tiles.forEach(item=>{
+          const tile=document.querySelector(`.tile[data-tile="${item.key}"]`);
+          if(tile){ tile.dataset.order=String(item.order); tile.style.order=String(item.order); tile.style.display=item.hidden?'none':''; }
+        });
+        state.dock.forEach(key=>{
+          const tile=document.querySelector(`.tile[data-tile="${key}"]`);
+          if(tile && tile.style.display==='none'){
+            const mini=document.createElement('div'); mini.className='card'; mini.dataset.tile=key;
+            mini.innerHTML=`
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong style="font-family:'Sansita',sans-serif;">${titleFor(key)}</strong>
+                <div><button class="button primary" onclick="expandTile('${key}')">Expand</button></div>
+              </div>
+            `;
+            dockArea.appendChild(mini);
+          }
+        });
+      }catch(e){}
+    }
+
     function init(){
-      // Theme
       const savedTheme=localStorage.getItem('theme')||'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
+      document.documentElement.setAttribute('data-theme',savedTheme);
+      const envSaved=localStorage.getItem('env')||'relax'; envSelect.value=envSaved;
+      const last=localStorage.getItem('lastWallpaper'); if(last) setBackground(last);
+      applyEnvBackground(envSaved);
 
-      // Wallpapers
-      const saved=localStorage.getItem('lastWallpaper');
-      const envSaved=localStorage.getItem('env')||'relax';
-      document.getElementById('envSelect').value = envSaved;
-      if(saved){ setBackground(saved); applyEnvBackground(envSaved); }
-      else { applyEnvBackground(envSaved); }
+      renderPlaylists(); musicIframeEnsure();
 
-      // Music
-      renderPlaylists(); ensureMusicIframe();
-
-      // Writing
       switchWriterMode();
 
-      // Habits
       renderHabits();
 
-      // Clock
-      document.getElementById('modeSelect').value = mode;
-      document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
+      document.getElementById('modeSelect').value=mode;
+      document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;
       switchMode();
+
+      setupDraggableTiles(); restoreLayout();
+      layoutNote.textContent=`Layout: ${(layoutSelect.value||'balanced').charAt(0).toUpperCase()+(layoutSelect.value||'balanced').slice(1)}`;
     }
     init();
   </script>
