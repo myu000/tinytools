@@ -6,32 +6,83 @@
   <title>Tiny Tools — Final Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
-    :root { --bg:#FFFAE3; --text:#1F2F16; --primary:#395B50; --secondary:#96705B; }
+    :root {
+      --bg:#FFFAE3; --text:#1F2F16;
+      --primary:#395B50; --secondary:#96705B;
+      --glass: rgba(255,255,255,0.15);
+    }
     [data-theme="dark"] { --bg:#1F2F16; --text:#F3EFE7; }
-    body { margin:0; font-family:'Forum',serif; background:var(--bg) center/cover fixed no-repeat; color:var(--text); transition:background 0.3s ease,color 0.3s ease; }
-    header { background:rgba(57,91,80,0.92); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; backdrop-filter:saturate(180%) blur(8px); }
-    .brand h1{margin:0;font-family:'Sansita',sans-serif;}
-    .dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;max-width:1200px;margin:28px auto;padding:0 20px;}
-    .card{background:rgba(255,255,255,0.15);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;}
-    .card:hover{transform:translateY(-4px);filter:brightness(1.05);box-shadow:0 12px 32px rgba(0,0,0,0.25);}
-    .btn,.input,.select{font-family:'Jura',sans-serif;padding:10px;border-radius:10px;border:none;}
-    .btn{background:var(--primary);color:#fff;cursor:pointer;} .btn.secondary{background:var(--secondary);}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-    #timeDisplay{font-family:'Jura',sans-serif;font-size:2rem;text-align:center;margin:14px 0;}
-    .player audio{width:100%;}
-    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:10px;}
-    .thumb{border-radius:10px;overflow:hidden;height:90px;position:relative;}
-    .thumb img{width:100%;height:100%;object-fit:cover;}
-    .thumb button{position:absolute;bottom:6px;right:6px;font-size:0.8rem;padding:4px 6px;border:none;border-radius:6px;background:rgba(0,0,0,0.5);color:#fff;}
+
+    * { box-sizing: border-box; }
+    body {
+      margin:0; font-family:'Forum',serif; color:var(--text);
+      background:var(--bg) center/cover fixed no-repeat;
+      transition:background 0.3s ease, color 0.3s ease;
+    }
+
+    header {
+      background:rgba(57,91,80,0.92); color:#fff;
+      padding:14px 20px; display:flex; justify-content:space-between; align-items:center;
+      backdrop-filter:saturate(180%) blur(8px);
+    }
+    .brand { display:flex; gap:10px; align-items:baseline; }
+    .brand h1 { margin:0; font-family:'Sansita',sans-serif; }
+    .brand span { font-family:'Jura',sans-serif; font-size:0.95rem; opacity:0.9; }
+    .top-controls { display:flex; gap:10px; align-items:center; }
+
+    .dashboard {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+      gap:20px; max-width:1200px; margin:28px auto; padding:0 20px;
+    }
+
+    .card {
+      background:var(--glass);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border-radius:18px; padding:20px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.2);
+      transition:transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+    }
+    .card:hover { transform:translateY(-4px); filter:brightness(1.05); box-shadow:0 12px 32px rgba(0,0,0,0.25); }
+    .card h3 { margin:0 0 10px; font-family:'Sansita',sans-serif; }
+
+    .btn, .input, .select {
+      font-family:'Jura',sans-serif; padding:10px; border-radius:10px; border:none;
+    }
+    .btn { background:var(--primary); color:#fff; cursor:pointer; }
+    .btn.secondary { background:var(--secondary); }
+    .select, .input { background:rgba(255,255,255,0.25); color:inherit; }
+    [data-theme="dark"] .select, [data-theme="dark"] .input { background:rgba(255,255,255,0.12); }
+
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+    .thumbs { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-top:10px; }
+    .thumb { border-radius:10px; overflow:hidden; height:90px; position:relative; }
+    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .thumb .actions { position:absolute; bottom:6px; right:6px; display:flex; gap:6px; }
+    .thumb .actions button { font-size:0.8rem; padding:4px 6px; border:none; border-radius:6px; background:rgba(0,0,0,0.5); color:#fff; }
+
+    #timeDisplay { font-family:'Jura',sans-serif; font-size:2.2rem; text-align:center; margin:14px 0; }
+    .player audio { width:100%; }
+
+    textarea {
+      width:100%; min-height:200px; border:none; border-radius:10px; padding:12px;
+      background:rgba(255,255,255,0.25); color:inherit; resize:vertical;
+    }
+    [data-theme="dark"] textarea { background:rgba(255,255,255,0.12); }
   </style>
 </head>
 <body>
   <header>
-    <div class="brand"><h1>Tiny Tools</h1><span>Creative & Focus Hub</span></div>
-    <div>
-      <select id="envSelect" class="select">
-        <option value="relax">Relax</option><option value="study">Study</option>
-        <option value="focus">Focus</option><option value="creative">Creative</option>
+    <div class="brand">
+      <h1>Tiny Tools</h1>
+      <span>Creative & Focus Hub</span>
+    </div>
+    <div class="top-controls">
+      <select id="envSelect" class="select" title="Environment">
+        <option value="relax">Relax</option>
+        <option value="study">Study</option>
+        <option value="focus">Focus</option>
+        <option value="creative">Creative</option>
         <option value="default">Default</option>
       </select>
       <button id="shuffleWallpaper" class="btn secondary">Shuffle wallpaper</button>
@@ -41,11 +92,12 @@
 
   <main class="dashboard">
     <!-- Wallpapers -->
-    <section class="card">
+    <section class="card" id="wallpaperCard">
       <h3>Wallpapers</h3>
+      <p>Add by URL or upload; your set takes priority when shuffling. Defaults always available.</p>
       <div class="row">
         <input id="wallpaperUrl" class="input" placeholder="Paste image URL" />
-        <button class="btn" onclick="addWallpaperUrl()">Add</button>
+        <button class="btn" onclick="addWallpaperUrl()">Add URL</button>
       </div>
       <div class="row">
         <input id="wallpaperFile" class="input" type="file" accept="image/*" />
@@ -53,14 +105,15 @@
       </div>
       <div class="row">
         <button class="btn" onclick="shuffleCustomWallpapers()">Shuffle mine</button>
-        <button class="btn secondary" onclick="clearWallpapers()">Clear</button>
+        <button class="btn secondary" onclick="clearWallpapers()">Clear all</button>
       </div>
       <div id="wallpaperThumbs" class="thumbs"></div>
     </section>
 
-    <!-- Music -->
+    <!-- Mood-to-Music (no YouTube) -->
     <section class="card" id="musicCard">
       <h3>Mood‑to‑Music</h3>
+      <p>Default tracks per mood. Add your own via MP3 URL or upload and they’ll take priority.</p>
       <select id="moodSelect" class="select" onchange="playMoodMusic()">
         <option value="">Select mood</option>
         <option value="calm">Calm</option>
@@ -69,95 +122,162 @@
         <option value="wistful">Wistful</option>
       </select>
       <div class="row">
-        <input id="musicUrl" class="input" placeholder="Paste MP3 URL" />
-        <button class="btn" onclick="addMusicUrl()">Add</button>
+        <input id="musicUrl" class="input" placeholder="Paste MP3 URL for selected mood" />
+        <button class="btn" onclick="addMusicUrl()">Add track</button>
       </div>
       <div class="row">
         <input id="musicFile" class="input" type="file" accept="audio/*" />
-        <button class="btn secondary" onclick="addMusicFile()">Upload</button>
+        <button class="btn secondary" onclick="addMusicFile()">Upload track</button>
       </div>
       <div id="musicPlayer" class="player"></div>
+      <div id="musicList"></div>
     </section>
 
     <!-- Prompt Shuffle -->
-    <section class="card">
+    <section class="card" id="promptCard">
       <h3>Prompt Shuffle</h3>
-      <button class="btn" onclick="shufflePrompt()">Shuffle prompt</button>
+      <div class="row">
+        <button class="btn" onclick="shufflePrompt()">Shuffle prompt</button>
+        <button class="btn secondary" onclick="exportDraft('txt')">Export TXT</button>
+      </div>
       <p id="promptText">Click shuffle to get a prompt.</p>
-      <div id="writingArea"><textarea id="writingText" placeholder="Start writing..."></textarea><p id="wordCount">Words: 0</p></div>
+      <textarea id="writingText" placeholder="Start writing here..."></textarea>
+      <div class="row">
+        <button class="btn" onclick="exportDraft('md')">Export MD</button>
+        <button class="btn secondary" onclick="exportPrintable()">Printable view</button>
+      </div>
+      <p id="wordCount">Words: 0</p>
     </section>
 
     <!-- Habit Garden -->
-    <section class="card"><h3>Habit Garden</h3><input id="habitInput" class="input" placeholder="Add habit..." /><button class="btn" onclick="addHabit()">Add</button><div id="habitList"></div></section>
+    <section class="card" id="habitCard">
+      <h3>Habit Garden</h3>
+      <input id="habitInput" class="input" placeholder="Add a new habit..." />
+      <div class="row">
+        <button class="btn" onclick="addHabit()">Add habit</button>
+        <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
+      </div>
+      <div id="habitList"></div>
+    </section>
 
     <!-- Clock Tool -->
-    <section class="card"><h3>Clock Tool</h3>
-      <select id="modeSelect" class="select" onchange="switchMode()"><option value="pomodoro">Pomodoro</option><option value="stopwatch">Stopwatch</option><option value="countdown">Countdown</option></select>
+    <section class="card" id="clockCard">
+      <h3>Clock Tool</h3>
+      <select id="modeSelect" class="select" onchange="switchMode()">
+        <option value="pomodoro">Pomodoro</option>
+        <option value="stopwatch">Stopwatch</option>
+        <option value="countdown">Countdown</option>
+        <option value="custom">Custom</option>
+      </select>
+      <div id="pomodoroSettings" style="display:none; margin-top:8px;">
+        <input id="workMinutes" class="input" type="number" min="1" value="25" /> Work (min)
+        <input id="breakMinutes" class="input" type="number" min="1" value="5" /> Break (min)
+      </div>
+      <div id="customSettings" style="display:none; margin-top:8px;">
+        <input id="customHours" class="input" type="number" min="0" value="0" /> Hours
+        <input id="customMinutes" class="input" type="number" min="0" value="5" /> Minutes
+        <input id="customSeconds" class="input" type="number" min="0" value="0" /> Seconds
+      </div>
       <div id="timeDisplay">00:25:00</div>
-      <button class="btn" onclick="startTimer()">Start</button><button class="btn secondary" onclick="pauseTimer()">Pause</button><button class="btn" onclick="resetTimer()">Reset</button>
-      <div id="stats"></div>
+      <div class="row">
+        <button class="btn" onclick="startTimer()">Start</button>
+        <button class="btn secondary" onclick="pauseTimer()">Pause</button>
+      </div>
+      <button class="btn" style="width:100%;" onclick="resetTimer()">Reset</button>
+      <div id="stats" style="margin-top:10px; font-family:'Jura', sans-serif;"></div>
     </section>
   </main>
 
   <script>
-    /* Wallpapers */
-    const envSelect=document.getElementById('envSelect'), shuffleWallpaperBtn=document.getElementById('shuffleWallpaper');
-    const wallpaperQueries={relax:"forest,beach",study:"library,desk",focus:"dark,minimal",creative:"abstract,art",default:"aesthetic,workspace"};
-    function getWallpapers(){return JSON.parse(localStorage.getItem('wallpapers')||'[]');}
-    function setWallpapers(list){localStorage.setItem('wallpapers',JSON.stringify(list));}
-    function setBackground(url){document.body.style.backgroundImage=`url('${url}')`;localStorage.setItem('lastWallpaper',url);}
-    function applyEnvBackground(env){const q=wallpaperQueries[env]||wallpaperQueries.default;const url=`https://source.unsplash.com/1600x900/?${encodeURIComponent(q)}&sig=${Math.random()}`;setBackground(url);localStorage.setItem('env',env);}
-    shuffleWallpaperBtn.addEventListener('click',()=>{const env=envSelect.value||'default';const custom=getWallpapers();if(custom.length){const pick=custom[Math.floor(Math.random()*custom.length)    ... // continuing from shuffleWallpaperBtn.addEventListener
+    /* ---------- Theme & environment ---------- */
+    const envSelect = document.getElementById('envSelect');
+    const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
+    const themeToggle = document.getElementById('themeToggle');
+    const wallpaperQueries = {
+      relax: "forest,beach,calm,nature",
+      study: "library,desk,books,study",
+      focus: "dark,minimal,texture",
+      creative: "abstract,art,colorful",
+      default: "aesthetic,workspace"
+    };
+    function setBackground(url){
+      document.body.style.backgroundImage = `url('${url}')`;
+      localStorage.setItem('lastWallpaper', url);
+    }
+    function applyEnvBackground(env){
+      const q = wallpaperQueries[env] || wallpaperQueries.default;
+      const url = `https://source.unsplash.com/1600x900/?${encodeURIComponent(q)}&sig=${Math.random()}`;
+      setBackground(url);
+      localStorage.setItem('env', env);
+    }
+    envSelect.addEventListener('change', () => applyEnvBackground(envSelect.value));
+    shuffleWallpaperBtn.addEventListener('click', () => {
+      const env = envSelect.value || 'default';
+      const custom = getWallpapers();
+      if (custom.length) {
+        const pick = custom[Math.floor(Math.random()*custom.length)];
+        setBackground(pick.url);
+      } else {
+        applyEnvBackground(env);
+      }
+    });
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
 
-    }); // end shuffleWallpaperBtn
-
+    /* ---------- Wallpaper manager ---------- */
+    function getWallpapers(){ return JSON.parse(localStorage.getItem('wallpapers')||'[]'); }
+    function setWallpapers(list){ localStorage.setItem('wallpapers', JSON.stringify(list)); }
     function addWallpaperUrl(){
-      const url=document.getElementById('wallpaperUrl').value.trim();
-      if(!url) return;
-      const list=getWallpapers(); list.push({url});
-      setWallpapers(list); renderThumbs();
-      document.getElementById('wallpaperUrl').value='';
+      const url = document.getElementById('wallpaperUrl').value.trim();
+      if (!url) return;
+      const list = getWallpapers(); list.push({url, ts: Date.now()});
+      setWallpapers(list);
+      document.getElementById('wallpaperUrl').value = "";
+      renderThumbs();
     }
     function addWallpaperFile(){
-      const file=document.getElementById('wallpaperFile').files[0];
-      if(!file) return;
-      const reader=new FileReader();
-      reader.onload=()=>{
-        const list=getWallpapers(); list.push({url:reader.result});
+      const file = document.getElementById('wallpaperFile').files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const list = getWallpapers(); list.push({url: reader.result, ts: Date.now()});
         setWallpapers(list); renderThumbs();
       };
       reader.readAsDataURL(file);
+      document.getElementById('wallpaperFile').value = "";
     }
     function removeWallpaper(idx){
-      const list=getWallpapers(); list.splice(idx,1);
-      setWallpapers(list); renderThumbs();
+      const list = getWallpapers(); list.splice(idx,1); setWallpapers(list); renderThumbs();
     }
     function useWallpaper(idx){
-      const list=getWallpapers(); const item=list[idx];
-      if(item) setBackground(item.url);
+      const list = getWallpapers(); const item = list[idx]; if (item) setBackground(item.url);
     }
     function shuffleCustomWallpapers(){
-      const list=getWallpapers(); if(!list.length) return;
-      const item=list[Math.floor(Math.random()*list.length)];
+      const list = getWallpapers(); if (!list.length) return;
+      const item = list[Math.floor(Math.random()*list.length)];
       setBackground(item.url);
     }
-    function clearWallpapers(){
-      localStorage.removeItem('wallpapers'); renderThumbs();
-    }
+    function clearWallpapers(){ localStorage.removeItem('wallpapers'); renderThumbs(); }
     function renderThumbs(){
-      const wrap=document.getElementById('wallpaperThumbs'); wrap.innerHTML='';
+      const wrap = document.getElementById('wallpaperThumbs'); wrap.innerHTML = "";
       getWallpapers().forEach((w,idx)=>{
-        const div=document.createElement('div'); div.className='thumb';
-        div.innerHTML=`
+        const div = document.createElement('div'); div.className = "thumb";
+        div.innerHTML = `
           <img src="${w.url}" alt="wallpaper"/>
-          <button onclick="useWallpaper(${idx})">Use</button>
-          <button style="left:6px;right:auto;" onclick="removeWallpaper(${idx})">Delete</button>
+          <div class="actions">
+            <button onclick="useWallpaper(${idx})">Use</button>
+            <button onclick="removeWallpaper(${idx})">Delete</button>
+          </div>
         `;
         wrap.appendChild(div);
       });
     }
 
-    /* ---------- Music: defaults + user overrides ---------- */
+    /* ---------- Music (defaults + user overrides, no YouTube) ---------- */
     const defaultTracks = {
       calm: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
       energized: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
@@ -165,144 +285,227 @@
       wistful: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
     };
     function getMusic(){ return JSON.parse(localStorage.getItem('musicTracks')||'{}'); }
-    function setMusic(obj){ localStorage.setItem('musicTracks',JSON.stringify(obj)); }
-
+    function setMusic(obj){ localStorage.setItem('musicTracks', JSON.stringify(obj)); }
+    function renderMusicList(){
+      const container = document.getElementById('musicList');
+      const obj = getMusic();
+      const mood = document.getElementById('moodSelect').value;
+      const list = (mood && obj[mood]) ? obj[mood] : [];
+      container.innerHTML = list.length ? "<p><strong>Your tracks for this mood:</strong></p>" : "";
+      list.forEach((url, idx)=>{
+        const item = document.createElement('div');
+        item.style.marginTop = "6px";
+        item.innerHTML = `<span>${url}</span> <button class="btn secondary" style="margin-left:8px;" onclick="removeMusic(${mood ? `'${mood}'` : `'calm'`}, ${idx})">Remove</button>`;
+        container.appendChild(item);
+      });
+    }
+    function removeMusic(mood, idx){
+      const obj = getMusic(); if (!obj[mood]) return;
+      obj[mood].splice(idx,1); setMusic(obj); renderMusicList();
+    }
     function playMoodMusic(){
-      const mood=document.getElementById('moodSelect').value;
-      if(!mood) return;
-      const userTracks=getMusic()[mood]||[];
-      let url;
-      if(userTracks.length){
-        url=userTracks[Math.floor(Math.random()*userTracks.length)];
-      } else {
-        url=defaultTracks[mood];
-      }
-      document.getElementById('musicPlayer').innerHTML=`
+      const mood = document.getElementById('moodSelect').value;
+      if (!mood) { document.getElementById('musicPlayer').innerHTML = ""; return; }
+      const obj = getMusic(); const user = obj[mood] || [];
+      const url = user.length ? user[Math.floor(Math.random()*user.length)] : defaultTracks[mood];
+      document.getElementById('musicPlayer').innerHTML = `
         <h4>${mood.charAt(0).toUpperCase()+mood.slice(1)} Mode</h4>
         <audio controls autoplay loop>
           <source src="${url}" type="audio/mpeg">
         </audio>
       `;
+      renderMusicList();
     }
     function addMusicUrl(){
-      const url=document.getElementById('musicUrl').value.trim();
-      const mood=document.getElementById('moodSelect').value;
-      if(!url||!mood) return;
-      const obj=getMusic(); if(!obj[mood]) obj[mood]=[];
+      const mood = document.getElementById('moodSelect').value;
+      const url = document.getElementById('musicUrl').value.trim();
+      if (!mood || !url) return;
+      const obj = getMusic(); if (!obj[mood]) obj[mood] = [];
       obj[mood].push(url); setMusic(obj);
-      document.getElementById('musicUrl').value='';
+      document.getElementById('musicUrl').value = "";
       playMoodMusic();
     }
     function addMusicFile(){
-      const file=document.getElementById('musicFile').files[0];
-      const mood=document.getElementById('moodSelect').value;
-      if(!file||!mood) return;
-      const reader=new FileReader();
-      reader.onload=()=>{
-        const obj=getMusic(); if(!obj[mood]) obj[mood]=[];
+      const mood = document.getElementById('moodSelect').value;
+      const file = document.getElementById('musicFile').files[0];
+      if (!mood || !file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const obj = getMusic(); if (!obj[mood]) obj[mood] = [];
         obj[mood].push(reader.result); setMusic(obj);
-        playMoodMusic();
+        renderMusicList(); playMoodMusic();
       };
       reader.readAsDataURL(file);
+      document.getElementById('musicFile').value = "";
     }
 
     /* ---------- Prompt Shuffle ---------- */
+    const basePrompts = [
+      "Write about a moment that changes everything.",
+      "Describe a character who hides a secret.",
+      "Invent a world where memories are currency.",
+      "Start with a line of overheard dialogue.",
+      "Describe a place that feels like home but isn’t.",
+      "A reunion with someone you thought lost for good."
+    ];
     function shufflePrompt(){
-      const prompts=[
-        "Write about a moment that changes everything.",
-        "Describe a character who hides a secret.",
-        "Invent a world where memories are currency.",
-        "Start with a line of overheard dialogue.",
-        "Describe a place that feels like home but isn’t."
-      ];
-      const prompt=prompts[Math.floor(Math.random()*prompts.length)];
-      document.getElementById('promptText').innerText=prompt;
-      document.getElementById('writingText').value='';
-      updateWordCount();
+      const prompt = basePrompts[Math.floor(Math.random()*basePrompts.length)];
+      document.getElementById('promptText').innerText = prompt;
+      // Attach prompt as header for exports
+      localStorage.setItem('currentDraftHeader', prompt);
     }
-    const writingText=document.getElementById('writingText');
-    const wordCount=document.getElementById('wordCount');
-    writingText.addEventListener('input',()=>{updateWordCount();});
+    const writingText = document.getElementById('writingText');
+    const wordCount = document.getElementById('wordCount');
+    writingText.value = localStorage.getItem('writingDraft') || "";
+    updateWordCount();
+    writingText.addEventListener('input', ()=>{
+      localStorage.setItem('writingDraft', writingText.value);
+      updateWordCount();
+    });
     function updateWordCount(){
-      const words=writingText.value.trim().split(/\s+/).filter(Boolean).length;
-      wordCount.innerText="Words: "+words;
+      const words = writingText.value.trim().split(/\s+/).filter(Boolean).length;
+      wordCount.innerText = "Words: " + words;
+    }
+    function exportDraft(format){
+      const title = (localStorage.getItem('currentDraftHeader') || "Untitled").replace(/[^\w\s-]/g,'').trim() || "Untitled";
+      let content = writingText.value;
+      if (format === 'md') content = `# ${title}\n\n${content}`;
+      const blob = new Blob([content], {type:"text/plain"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `${title}.${format}`;
+      a.click(); URL.revokeObjectURL(url);
+    }
+    function exportPrintable(){
+      const title = localStorage.getItem('currentDraftHeader') || "Untitled";
+      const content = writingText.value.replace(/\n/g,'<br/>');
+      const html = `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
+      <style>body{font-family:Georgia,serif;margin:40px;color:#222}h1{font-size:24px;margin-bottom:20px}.content{font-size:16px;line-height:1.6}</style>
+      </head><body><h1>${title}</h1><div class="content">${content}</div></body></html>`;
+      const w = window.open('', '_blank'); if(!w) return;
+      w.document.open(); w.document.write(html); w.document.close();
+      setTimeout(()=>w.print(), 300);
     }
 
     /* ---------- Habit Garden ---------- */
-    function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
-    function setHabits(list){localStorage.setItem('habits',JSON.stringify(list));}
+    function getHabits(){ return JSON.parse(localStorage.getItem('habits')||'[]'); }
+    function setHabits(list){ localStorage.setItem('habits', JSON.stringify(list)); }
     function addHabit(){
-      const name=document.getElementById('habitInput').value.trim();
-      if(!name) return;
-      const habits=getHabits(); habits.push({name,history:[]});
-      setHabits(habits); document.getElementById('habitInput').value='';
+      const name = document.getElementById('habitInput').value.trim();
+      if (!name) return;
+      const habits = getHabits(); habits.push({name, history: []});
+      setHabits(habits); document.getElementById('habitInput').value = "";
       renderHabits();
     }
+    function resetAllHabits(){ localStorage.removeItem('habits'); renderHabits(); }
     function checkInHabit(idx){
-      const habits=getHabits(); const today=new Date().toDateString();
-      if(!habits[idx].history.includes(today)){
+      const habits = getHabits(); const today = new Date().toDateString();
+      if (!habits[idx].history.includes(today)) {
         habits[idx].history.push(today); setHabits(habits); renderHabits();
       }
     }
     function renderHabits(){
-      const wrap=document.getElementById('habitList'); wrap.innerHTML='';
-      getHabits().forEach((h,idx)=>{
-        const streak=h.history.length;
-        let plant="🌱"; if(streak>=3)plant="🌿"; if(streak>=7)plant="🌳";
-        const div=document.createElement('div'); div.className='habit';
-        div.innerHTML=`
+      const wrap = document.getElementById('habitList'); wrap.innerHTML = "";
+      const habits = getHabits();
+      habits.forEach((h, idx)=>{
+        const streak = h.history.length;
+        let plant = "🌱"; if (streak>=3) plant="🌿"; if (streak>=7) plant="🌳"; if (streak>=14) plant="🌸"; if (streak>=30) plant="🌲";
+        const badges = []; if (streak>=7) badges.push("🔥"); if (streak>=30) badges.push("🌟"); if (streak>=100) badges.push("🏆");
+        const div = document.createElement('div');
+        div.className = "habit";
+        div.innerHTML = `
           <h4>${h.name}</h4>
-          <p>Status: ${h.history.includes(new Date().toDateString())?"Done today":"Not yet"}</p>
+          <p>Status: ${h.history.includes(new Date().toDateString()) ? "Done today" : "Not yet"}</p>
           <div style="font-size:2rem;">${plant}</div>
+          <div style="margin:6px 0;">${badges.join(" ")}</div>
           <button class="btn" onclick="checkInHabit(${idx})">Check in</button>
+          <p style="margin-top:6px;"><strong>History:</strong><br>${h.history.join("<br>") || "No check‑ins yet"}</p>
         `;
         wrap.appendChild(div);
       });
     }
 
     /* ---------- Clock Tool ---------- */
-    let timer=null,timeLeft=1500,running=false;
-    let mode=localStorage.getItem('clockMode')||"pomodoro";
-    let pomodoroCompleted=parseInt(localStorage.getItem('pomodoroCompleted')||"0",10);
+    let timer = null, timeLeft = 1500, running = false;
+    let mode = localStorage.getItem('clockMode') || "pomodoro";
+    let pomodoroCompleted = parseInt(localStorage.getItem('pomodoroCompleted') || "0", 10);
     function formatTime(sec){
-      const h=Math.floor(sec/3600).toString().padStart(2,'0');
-      const m=Math.floor((sec%3600)/60).toString().padStart(2,'0');
-      const s=(sec%60).toString().padStart(2,'0');
+      const h = Math.floor(sec/3600).toString().padStart(2,'0');
+      const m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
+      const s = (sec%60).toString().padStart(2,'0');
       return `${h}:${m}:${s}`;
     }
-    function updateDisplay(){document.getElementById('timeDisplay').innerText=formatTime(timeLeft);}
+    function updateDisplay(){ document.getElementById('timeDisplay').innerText = formatTime(timeLeft); }
     function startTimer(){
-      if(running)return;running=true;
-      timer=setInterval(()=>{
-        if(mode==="stopwatch"){timeLeft++;}
-        else{timeLeft--;if(timeLeft<=0){clearInterval(timer);running=false;if(mode==="pomodoro"){pomodoroCompleted++;localStorage.setItem('pomodoroCompleted',pomodoroCompleted);document.getElementById('stats').innerText=`Completed Pomodoros: ${pomodoroCompleted}`;}alert("Time's up!");}}
+      if (running) return; running = true;
+      timer = setInterval(()=>{
+        if (mode === "stopwatch") { timeLeft++; }
+        else {
+          timeLeft--;
+          if (timeLeft <= 0) {
+            clearInterval(timer); running = false;
+            if (mode === "pomodoro") {
+              pomodoroCompleted++; localStorage.setItem('pomodoroCompleted', pomodoroCompleted);
+              document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
+            }
+            alert("Time's up!");
+          }
+        }
         updateDisplay();
-      },1000);
+      }, 1000);
     }
-    function pauseTimer(){clearInterval(timer);running=false;}
+    function pauseTimer(){ clearInterval(timer); running = false; }
     function resetTimer(){
-      clearInterval(timer);running=false;
-      if(mode==="pomodoro")timeLeft=1500;
-      if(mode==="stopwatch")timeLeft=0;
-      if(mode==="countdown")timeLeft=300;
+      clearInterval(timer); running = false;
+      if (mode === "pomodoro") {
+        const w = parseInt(document.getElementById('workMinutes').value||"25", 10);
+        timeLeft = w * 60;
+      } else if (mode === "stopwatch") {
+        timeLeft = 0;
+      } else if (mode === "countdown" || mode === "custom") {
+        const h = parseInt(document.getElementById('customHours').value||"0", 10);
+        const m = parseInt(document.getElementById('customMinutes').value||"0", 10);
+        const s = parseInt(document.getElementById('customSeconds').value||"0", 10);
+        timeLeft = h*3600 + m*60 + s;
+      }
       updateDisplay();
     }
     function switchMode(){
-      mode=document.getElementById('modeSelect').value;
-      localStorage.setItem('clockMode',mode);
+      mode = document.getElementById('modeSelect').value;
+      localStorage.setItem('clockMode', mode);
+      document.getElementById('pomodoroSettings').style.display = (mode==="pomodoro") ? "block" : "none";
+      document.getElementById('customSettings').style.display = (mode==="countdown"||mode==="custom") ? "block" : "none";
       resetTimer();
     }
+    document.addEventListener('keydown', (e)=>{
+      if (e.code === 'Space') { e.preventDefault(); if (running) pauseTimer(); else startTimer(); }
+    });
 
     /* ---------- Init ---------- */
-    (function init(){
-      const savedTheme=localStorage.getItem('theme')||'light';
-      document.documentElement.setAttribute('data-theme',savedTheme);
-      const savedEnv=localStorage.getItem('env')||'relax';
-      envSelect.value=savedEnv;
-      const last=localStorage.getItem('lastWallpaper');
-      const custom=getWallpapers();
-      if(last){setBackground(last);}
-      else if(custom.length){setBackground(custom[custom.length-1].url);}
-      else{applyEnvBackground(savedEnv);}
-      renderThumbs(); renderHabits(); switchMode();
-      document.getElementById('
+    function init(){
+      // Theme & env
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      const savedEnv = localStorage.getItem('env') || 'relax';
+      envSelect.value = savedEnv;
+      const last = localStorage.getItem('lastWallpaper');
+      const custom = getWallpapers();
+      if (last) setBackground(last);
+      else if (custom.length) setBackground(custom[custom.length-1].url);
+      else applyEnvBackground(savedEnv);
+
+      // Managers
+      renderThumbs();
+      renderHabits();
+
+      // Music
+      playMoodMusic();
+
+      // Clock
+      document.getElementById('modeSelect').value = mode;
+      document.getElementById('stats').innerText = `Completed Pomodoros: ${pomodoroCompleted}`;
+      switchMode();
+    }
+    init();
+  </script>
+</body>
+</html>
