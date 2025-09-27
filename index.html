@@ -231,155 +231,150 @@
     </aside>
   </div>  <!-- Wallpapers + Theme + Menu Script -->
   <script>
-    /* ---------------- WALLPAPERS ---------------- */
-    const wallpapers = {
-      relax: [
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
-      ],
-      study: [
-        "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
-        "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
-        "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
-      ],
-      focus: [
-        "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
-        "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
-        "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
-      ],
-      creative: [
-        "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
-        { url: "https://i.pinimg.com/736x/5b/f8/8f/5bf88fe147b4f5f591a5e07bb5afd5ec.jpg", rotate: true },
-        "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
-      ],
-      default: [
-        "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
-        "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
-        "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
-      ],
-      custom: []
-    };
+      /* ---------------- WALLPAPERS ---------------- */
+  const wallpapers = {
+    relax: [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+    ],
+    study: [
+      "https://i.pinimg.com/736x/0c/91/e7/0c91e79c4024d00d4f590a0fa089e7e0.jpg",
+      "https://i.pinimg.com/736x/b6/28/9c/b6289cc1fa53e0a16b68718462ef32de.jpg",
+      "https://i.pinimg.com/736x/99/51/56/995156895d4e404bc3219ac544b071ed.jpg"
+    ],
+    focus: [
+      "https://i.pinimg.com/736x/c5/dd/a3/c5dda30b4f4fa740b7d392d2494679b8.jpg",
+      "https://i.pinimg.com/736x/13/86/3e/13863e5a80feecfa438c88e460288d46.jpg",
+      "https://i.pinimg.com/736x/f9/4e/18/f94e1868e32eb2bc7b0feffb9c8071b9.jpg"
+    ],
+    creative: [
+      "https://i.pinimg.com/1200x/0c/5e/7c/0c5e7c4b722fbbf281ec94b5b2f3ee79.jpg",
+      "https://i.pinimg.com/736x/58/e9/ec/58e9ecd7dca392d1681d9d0c3578dec3.jpg"
+    ],
+    default: [
+      "https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg",
+      "https://i.pinimg.com/736x/fe/c3/db/fec3db297d630dbcec7a984a3cb7acbf.jpg",
+      "https://i.pinimg.com/736x/64/e7/38/64e7384a95add6c4ebf89ab4b9d9d603.jpg"
+    ],
+    custom: []
+  };
 
-    const envSelect = document.getElementById('envSelect');
-    const shuffleWallpaperBtn = document.getElementById('shuffleWallpaper');
-    const themeToggle = document.getElementById('themeToggle');
-    const wallpaperThumbs = document.getElementById('wallpaperThumbs');
-    const wallpaperUpload = document.getElementById('wallpaperUpload');
-    const clearCustomWallpapersBtn = document.getElementById('clearCustomWallpapers');
+  const envSelect=document.getElementById('envSelect');
+  const shuffleWallpaperBtn=document.getElementById('shuffleWallpaper');
+  const themeToggle=document.getElementById('themeToggle');
+  const wallpaperThumbs=document.getElementById('wallpaperThumbs');
+  const wallpaperUpload=document.getElementById('wallpaperUpload');
+  const clearCustomWallpapersBtn=document.getElementById('clearCustomWallpapers');
 
-    function setBackground(url, rotate=false){
-      document.body.style.backgroundImage = `url('${url}')`;
-      document.body.style.backgroundPosition = 'center';
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundAttachment = 'fixed';
-      document.body.style.transform = rotate ? "rotate(-90deg) scale(1.2)" : "none";
-      localStorage.setItem('lastWallpaper', JSON.stringify({url,rotate}));
-    }
+  function setBackground(url){
+    document.body.style.backgroundImage = `url('${url}')`;
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundAttachment = 'fixed';
+    document.body.style.transform = "none"; // no rotation anymore
+    localStorage.setItem('lastWallpaper', url);
+  }
 
-    function renderThumbnails(list){
-      wallpaperThumbs.innerHTML = "";
-      list.forEach(item=>{
-        let url=item, rotate=false;
-        if(typeof item==="object"){url=item.url; rotate=item.rotate;}
-        const div=document.createElement('div');
-        div.className="thumb";
-        div.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
-        div.addEventListener('click',()=>setBackground(url,rotate));
-        wallpaperThumbs.appendChild(div);
-      });
-    }
-
-    function applyEnvBackground(env){
-      const list=wallpapers[env]||wallpapers.default;
-      const pick=list[Math.floor(Math.random()*list.length)];
-      let url=pick, rotate=false;
-      if(typeof pick==="object"){url=pick.url; rotate=pick.rotate;}
-      if(url) setBackground(url,rotate);
-      renderThumbnails(list);
-      localStorage.setItem('env',env);
-    }
-
-    function loadCustomWallpapers(){
-      const custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
-      wallpapers.custom=custom;
-      if(custom.length && ![...envSelect.options].some(o=>o.value==="custom")){
-        const opt=document.createElement('option');
-        opt.value="custom"; opt.textContent="Custom";
-        envSelect.appendChild(opt);
-      }
-    }
-
-    wallpaperUpload.addEventListener('change',e=>{
-      const file=e.target.files[0]; if(!file) return;
-      const reader=new FileReader();
-      reader.onload=ev=>{
-        const url=ev.target.result;
-        setBackground(url);
-        let custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
-        custom.push(url);
-        localStorage.setItem('customWallpapers',JSON.stringify(custom));
-        wallpapers.custom=custom;
-        renderThumbnails(custom);
-      };
-      reader.readAsDataURL(file);
-    });
-
-    clearCustomWallpapersBtn.addEventListener('click',()=>{
-      localStorage.removeItem('customWallpapers');
-      wallpapers.custom=[];
-      const opt=[...envSelect.options].find(o=>o.value==="custom");
-      if(opt) opt.remove();
-      applyEnvBackground(envSelect.value);
-    });
-
-    envSelect.addEventListener('change',e=>applyEnvBackground(e.target.value));
-    shuffleWallpaperBtn.addEventListener('click',()=>applyEnvBackground(envSelect.value));
-
-    themeToggle.addEventListener('click',()=>{
-      const cur=document.documentElement.getAttribute('data-theme')||'light';
-      const next=cur==='light'?'dark':'light';
-      document.documentElement.setAttribute('data-theme',next);
-      localStorage.setItem('theme',next);
-    });
-
-    /* ---------------- TILE MENUS ---------------- */
-    document.addEventListener('DOMContentLoaded', () => {
-  function closeAllMenus(){
-    document.querySelectorAll('.tile-menu.open').forEach(menu=>{
-      menu.classList.remove('open');
+  function renderThumbnails(list){
+    wallpaperThumbs.innerHTML="";
+    list.forEach(url=>{
+      const div=document.createElement('div');
+      div.className="thumb";
+      div.innerHTML=`<img src="${url}" alt="wallpaper"/>`;
+      div.addEventListener('click',()=>setBackground(url));
+      wallpaperThumbs.appendChild(div);
     });
   }
 
-  // Toggle menu on ⋯ button click
-  document.querySelectorAll('.dots-btn').forEach(btn=>{
-    btn.addEventListener('click', e=>{
-      e.stopPropagation();
-      const menu=btn.nextElementSibling;
-      const isOpen=menu.classList.contains('open');
-      closeAllMenus();
-      if(!isOpen){
-        menu.classList.add('open');
-        const firstBtn=menu.querySelector('button');
-        if(firstBtn) firstBtn.focus();
-      }
-    });
+  function applyEnvBackground(env){
+    const list=wallpapers[env]||wallpapers.default;
+    const url=list[Math.floor(Math.random()*list.length)];
+    if(url) setBackground(url);
+    renderThumbnails(list);
+    localStorage.setItem('env',env);
+  }
+
+  function loadCustomWallpapers(){
+    const custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+    wallpapers.custom=custom;
+    if(custom.length && ![...envSelect.options].some(o=>o.value==="custom")){
+      const opt=document.createElement('option');
+      opt.value="custom"; opt.textContent="Custom";
+      envSelect.appendChild(opt);
+    }
+  }
+
+  wallpaperUpload.addEventListener('change',e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const url=ev.target.result;
+      setBackground(url);
+      let custom=JSON.parse(localStorage.getItem('customWallpapers')||'[]');
+      custom.push(url);
+      localStorage.setItem('customWallpapers',JSON.stringify(custom));
+      wallpapers.custom=custom;
+      renderThumbnails(custom);
+    };
+    reader.readAsDataURL(file);
   });
 
-  // Close menus when clicking outside
-  document.addEventListener('click', e=>{
-    document.querySelectorAll('.tile-menu.open').forEach(menu=>{
-      if(!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)){
+  clearCustomWallpapersBtn.addEventListener('click',()=>{
+    localStorage.removeItem('customWallpapers');
+    wallpapers.custom=[];
+    const opt=[...envSelect.options].find(o=>o.value==="custom");
+    if(opt) opt.remove();
+    applyEnvBackground(envSelect.value);
+  });
+
+  envSelect.addEventListener('change',e=>applyEnvBackground(e.target.value));
+  shuffleWallpaperBtn.addEventListener('click',()=>applyEnvBackground(envSelect.value));
+
+  themeToggle.addEventListener('click',()=>{
+    const cur=document.documentElement.getAttribute('data-theme')||'light';
+    const next=cur==='light'?'dark':'light';
+    document.documentElement.setAttribute('data-theme',next);
+    localStorage.setItem('theme',next);
+  });
+
+  /* ---------------- TILE MENUS ---------------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    function closeAllMenus(){
+      document.querySelectorAll('.tile-menu.open').forEach(menu=>{
         menu.classList.remove('open');
-      }
+      });
+    }
+
+    // Toggle menu on ⋯ button click
+    document.querySelectorAll('.dots-btn').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        const menu=btn.nextElementSibling;
+        const isOpen=menu.classList.contains('open');
+        closeAllMenus();
+        if(!isOpen){
+          menu.classList.add('open');
+          const firstBtn=menu.querySelector('button');
+          if(firstBtn) firstBtn.focus();
+        }
+      });
+    });
+
+    // Close menus when clicking outside
+    document.addEventListener('click', e=>{
+      document.querySelectorAll('.tile-menu.open').forEach(menu=>{
+        if(!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)){
+          menu.classList.remove('open');
+        }
+      });
+    });
+
+    // Close menus with Escape key
+    document.addEventListener('keydown', e=>{
+      if(e.key==="Escape"){ closeAllMenus(); }
     });
   });
-
-  // Close menus with Escape key
-  document.addEventListener('keydown', e=>{
-    if(e.key==="Escape"){ closeAllMenus(); }
-  });
-});
   </script>  <!-- YouTube IFrame API -->
   <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -1210,4 +1205,5 @@
   </script>
   </body>
 </html>
+
 
