@@ -7,54 +7,22 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg:#FFFAE3; --text:#1F2F16;
-      --primary:#395B50; --secondary:#96705B; --accent:#3F6F63;
-      --glass:rgba(255,255,255,0.35);
-      --shadow-1:0 8px 24px rgba(0,0,0,0.18);
-      --shadow-2:0 12px 32px rgba(0,0,0,0.26);
-      --tile-gap:24px; --tile-radius:20px; --tile-pad:24px;
-      --dock-width:340px;
-      --select-bg:rgba(255,255,255,0.30);
-      --input-bg:rgba(255,255,255,0.28);
-    }
-    [data-theme="dark"] {
-      --bg:#1F2F16; --text:#F3EFE7; --accent:#78B3A7;
-      --glass:rgba(30,30,30,0.45);
-      --shadow-1:0 8px 24px rgba(0,0,0,0.35);
-      --shadow-2:0 12px 32px rgba(0,0,0,0.48);
-      --select-bg:rgba(255,255,255,0.20);
-      --input-bg:rgba(255,255,255,0.18);
-    }
-    *{box-sizing:border-box;}
-    body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
+    :root{--bg:#FFFAE3;--text:#1F2F16;--primary:#395B50;--secondary:#96705B;--accent:#3F6F63;--glass:rgba(255,255,255,0.35);--shadow-1:0 8px 24px rgba(0,0,0,0.18);--shadow-2:0 12px 32px rgba(0,0,0,0.26);--tile-gap:24px;--tile-radius:20px;--tile-pad:24px;--dock-width:340px;--select-bg:rgba(255,255,255,0.30);--input-bg:rgba(255,255,255,0.28);}
+    [data-theme="dark"]{--bg:#1F2F16;--text:#F3EFE7;--accent:#78B3A7;--glass:rgba(30,30,30,0.45);}
+    *{box-sizing:border-box;}body{margin:0;font-family:'Forum',serif;color:var(--text);background:var(--bg) center/cover fixed no-repeat;}
     header{background:rgba(57,91,80,0.92);color:#fff;padding:18px 40px;display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;}
-    .brand{display:flex;gap:12px;align-items:baseline;}
-    .brand h1{margin:0;font-family:'Sansita',sans-serif;}
-    .brand span{font-family:'Jura',sans-serif;opacity:0.9;}
+    .brand{display:flex;gap:12px;align-items:baseline;} .brand h1{margin:0;font-family:'Sansita',sans-serif;} .brand span{font-family:'Jura',sans-serif;opacity:0.9;}
     .select,.button{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;}
-    .select{background:var(--select-bg);color:var(--text);}
-    .button{background:var(--secondary);color:#fff;}
-    .button.primary{background:var(--primary);}
+    .select{background:var(--select-bg);color:var(--text);} .button{background:var(--secondary);color:#fff;} .button.primary{background:var(--primary);}
     .page{display:grid;grid-template-columns:1fr var(--dock-width);gap:var(--tile-gap);max-width:1500px;margin:40px auto;padding:0 40px;}
-    @media(max-width:1100px){.page{grid-template-columns:1fr;}.dock{order:2;}}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);}
-    .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;}
-    .dock h4{margin:0 0 10px;font-family:'Sansita',sans-serif;}
-    .dock-area{display:grid;gap:12px;}
+    @media(max-width:1100px){.page{grid-template-columns:1fr;}.dock{order:2;}} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--tile-gap);}
+    .dock{background:rgba(0,0,0,0.08);border-radius:16px;padding:16px;} .dock h4{margin:0 0 10px;font-family:'Sansita',sans-serif;} .dock-area{display:grid;gap:12px;}
     .card{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);border-radius:var(--tile-radius);padding:var(--tile-pad);box-shadow:var(--shadow-1);}
-    .card h3{margin:0 0 12px;font-family:'Sansita',sans-serif;cursor:grab;}
-    .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
-    .stack{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
-    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;}
-    .btn{background:var(--primary);color:#fff;cursor:pointer;}
-    .btn.secondary{background:var(--secondary);}
-    .input,.select-inline,textarea{background:var(--input-bg);}
-    textarea{width:100%;min-height:220px;resize:vertical;}
-    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
-    .thumb img{width:100%;height:100%;object-fit:cover;cursor:pointer;}
-    .player iframe{width:100%;height:300px;border:0;}
-    #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;}
+    .card h3{margin:0 0 12px;font-family:'Sansita',sans-serif;cursor:grab;} .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;} .stack{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
+    .btn,.input,.select-inline,textarea{font-family:'Jura',sans-serif;border:none;border-radius:12px;padding:12px;} .btn{background:var(--primary);color:#fff;cursor:pointer;} .btn.secondary{background:var(--secondary);}
+    .input,.select-inline,textarea{background:var(--input-bg);} textarea{width:100%;min-height:220px;resize:vertical;}
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;} .thumb img{width:100%;height:100%;object-fit:cover;cursor:pointer;}
+    .player iframe{width:100%;height:300px;border:0;} #timeDisplay{font-family:'Jura',sans-serif;font-size:2.2rem;text-align:center;}
   </style>
 </head>
 <body>
@@ -82,14 +50,77 @@
       <span id="layoutNote">Layout: Balanced</span>
     </div>
   </header>
-
-  <div class="page">
+    <div class="page">
     <main id="grid" class="grid">
-      <!-- Tiles will be added in Parts 2–6 -->
+      <!-- Wallpapers -->
+      <section class="card tile" data-tile="wallpapers"><h3>Wallpapers</h3>
+        <input type="file" id="wallpaperUpload" accept="image/*">
+        <button id="clearCustomWallpapers" class="btn secondary">Clear uploaded</button>
+        <div id="wallpaperThumbs" class="thumbs"></div>
+      </section>
+
+      <!-- Music -->
+      <section class="card tile" data-tile="music"><h3>Music</h3>
+        <div class="row">
+          <input id="playlistName" class="input" placeholder="New playlist"/>
+          <button class="btn" onclick="createPlaylist()">Create</button>
+          <button class="btn secondary" onclick="deletePlaylist()">Delete</button>
+        </div>
+        <div class="row">
+          <select id="playlistSelect" class="select-inline" onchange="renderPlaylist()"></select>
+          <button class="btn" onclick="renderPlaylists()">Refresh</button>
+          <button class="btn primary" onclick="playPlaylist()">Play</button>
+        </div>
+        <div class="row">
+          <input id="musicUrl" class="input" placeholder="Paste YouTube URL"/>
+          <button class="btn secondary" onclick="addTrack()">Add</button>
+        </div>
+        <div id="playlistTracks" class="stack"></div>
+        <div id="musicPlayer" class="player"></div>
+      </section>
+
+      <!-- Writing -->
+      <section class="card tile" data-tile="writing"><h3>Writing</h3>
+        <select id="writerMode" class="select-inline" onchange="renderWriterMode()">
+          <option value="prompts">Prompts</option>
+          <option value="todo">To‑Do</option>
+          <option value="free">Free</option>
+          <option value="brainstorm">Brainstorm</option>
+          <option value="journal">Journal</option>
+        </select>
+        <div id="writerArea"></div>
+      </section>
+
+      <!-- Habits -->
+      <section class="card tile" data-tile="habits"><h3>Habits</h3>
+        <input id="habitInput" class="input" placeholder="Add habit"/>
+        <button class="btn" onclick="addHabit()">Add</button>
+        <button class="btn secondary" onclick="resetAllHabits()">Reset all</button>
+        <div id="habitList" class="stack"></div>
+      </section>
+
+      <!-- Clock -->
+      <section class="card tile" data-tile="clock"><h3>Clock</h3>
+        <select id="modeSelect" class="select-inline" onchange="switchMode()">
+          <option value="pomodoro">Pomodoro</option>
+          <option value="stopwatch">Stopwatch</option>
+          <option value="countdown">Countdown</option>
+          <option value="custom">Custom</option>
+        </select>
+        <button class="btn" onclick="startTimer()">Start</button>
+        <button class="btn secondary" onclick="pauseTimer()">Pause</button>
+        <button class="btn" onclick="resetTimer()">Reset</button>
+        <div id="timeDisplay">00:25:00</div>
+        <p id="stats">Completed Pomodoros: 0</p>
+      </section>
     </main>
-    <aside class="dock"><h4>Mini dock</h4><div id="dockArea" class="dock-area"></div></aside>
-  </div>
-    <!-- Wallpapers + Theme Script -->
+
+    <!-- Dock Sidebar -->
+    <aside class="dock">
+      <h4>Mini dock</h4>
+      <div id="dockArea" class="dock-area"></div>
+    </aside>
+  </div>  <!-- Wallpapers + Theme Script -->
   <script>
     /* ---------------- WALLPAPERS ---------------- */
     const wallpapers={
@@ -190,11 +221,14 @@
       document.documentElement.setAttribute('data-theme',next);
       localStorage.setItem('theme',next);
     });
-  </script>
-    <!-- Music / YouTube Playlist Script -->
+  </script>  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <!-- Music / YouTube Playlist Script -->
   <script>
     /* ---------------- MUSIC ---------------- */
-    let ytPlayer,currentPlaylist=[],currentIndex=0;window.playerReady=false;
+    let ytPlayer, currentPlaylist=[], currentIndex=0;
+    window.playerReady=false;
 
     function onYouTubeIframeAPIReady(){
       ytPlayer=new YT.Player('musicPlayer',{
@@ -305,8 +339,7 @@
       const pls=getPlaylists(); currentPlaylist=pls[name]||[]; currentIndex=i;
       ytPlayer.loadVideoById(currentPlaylist[i]);
     }
-  </script>
-    <!-- Writing Suite Script — Part 4 i) -->
+  </script>  <!-- Writing Suite Script — Part 4 i) -->
   <script>
     /* ---------------- WRITING CORE ---------------- */
     const writerArea = document.getElementById('writerArea');
@@ -458,8 +491,7 @@
         list.appendChild(li);
       });
     }
-  </script>
-    <!-- Writing Suite Script — Part 4 ii) -->
+  </script>  <!-- Writing Suite Script — Part 4 ii) -->
   <script>
     /* ---------------- BRAINSTORM ---------------- */
     function generateIdea(){
@@ -515,8 +547,7 @@
       const content=entries.map(e=>`<h3>${e.date} — ${e.time}</h3><p>${e.text.replace(/\n/g,'<br/>')}</p><hr/>`).join('');
       openPrintable('Journal',content);
     }
-  </script>
-    <!-- Habits Script -->
+  </script>  <!-- Habits Script -->
   <script>
     /* ---------------- HABITS ---------------- */
     function getHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
@@ -590,8 +621,7 @@
         wrap.appendChild(div);
       });
     }
-  </script>
-    <!-- Clock Script -->
+  </script>  <!-- Clock Script -->
   <script>
     /* ---------------- CLOCK ---------------- */
     let timer=null, timeLeft=1500, running=false;
@@ -652,8 +682,7 @@
         if(running) pauseTimer(); else startTimer();
       }
     });
-  </script>
-    <!-- Dock + Layout + Drag-and-Drop Script -->
+  </script>  <!-- Dock + Layout + Drag-and-Drop Script -->
   <script>
     /* ---------------- DRAG & DROP ---------------- */
     const grid=document.getElementById('grid');
@@ -740,8 +769,7 @@
       applyLayoutPreset(preset);
       document.getElementById('layoutNote').textContent=`Layout: ${preset.charAt(0).toUpperCase()+preset.slice(1)}`;
     });
-  </script>
-    <!-- Initialization Script -->
+  </script>  <!-- Initialization Script -->
   <script>
     /* ---------------- INIT ---------------- */
     function init(){
