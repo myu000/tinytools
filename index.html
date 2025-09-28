@@ -500,173 +500,196 @@
   </script>
   <!-- MUSIC LOGIC -->
   <script src="https://www.youtube.com/iframe_api"></script>
-  <script>
-  /* ---------------- MUSIC ---------------- */
-  let ytPlayer, currentPlaylist = [], currentIndex = 0;
-  window.playerReady = false;
+  <script src="https://www.youtube.com/iframe_api"></script>
+<script>
+/* ---------------- MUSIC ---------------- */
+let ytPlayer, currentPlaylist = [], currentIndex = 0;
+window.playerReady = false;
 
-  function onYouTubeIframeAPIReady() {
-    ytPlayer = new YT.Player('musicPlayer', {
-      height: '300',
-      width: '100%',
-      videoId: '',
-      playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1 },
-      events: {
-        'onReady': () => {
-          window.playerReady = true;
-          document.querySelectorAll('#music .btn').forEach(btn=>{
-            if(btn.textContent.includes("Play")) btn.disabled = false;
-          });
-        },
-        'onStateChange': onPlayerStateChange
-      }
-    });
-  }
-
-  // Initially disable Play buttons until ready
-  document.addEventListener('DOMContentLoaded', ()=>{
-    document.querySelectorAll('#music .btn').forEach(btn=>{
-      if(btn.textContent.includes("Play")) btn.disabled = true;
-    });
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('musicPlayer', {
+    height: '300',
+    width: '100%',
+    videoId: '',
+    playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1 },
+    events: {
+      'onReady': () => {
+        window.playerReady = true;
+        enableMusicPlayButtons();
+        renderPlaylist();
+      },
+      'onStateChange': onPlayerStateChange
+    }
   });
+}
 
-  function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.ENDED) {
-      currentIndex++;
-      if (currentIndex >= currentPlaylist.length) currentIndex = 0;
-      if (currentPlaylist.length) ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
+function enableMusicPlayButtons() {
+  document.querySelectorAll('#music .btn').forEach(btn=>{
+    if(btn.textContent.includes("Play")) btn.disabled = false;
+  });
+}
+
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.ENDED) {
+    currentIndex++;
+    if (currentIndex >= currentPlaylist.length) currentIndex = 0;
+    if (currentPlaylist.length) {
+      ytPlayer.loadVideoById(currentPlaylist[currentIndex]);
+      renderPlaylist(); // update highlight
     }
   }
+}
 
-  function extractId(url) {
-    try {
-      const u = new URL(url);
-      if (u.hostname.includes("youtu.be")) return u.pathname.split("/")[1];
-      if (u.hostname.includes("youtube.com")) {
-        if (u.searchParams.has("v")) return u.searchParams.get("v");
-        if (u.pathname.includes("/embed/")) return u.pathname.split("/embed/")[1].split(/[?&]/)[0];
-      }
-    } catch (e) {
-      if (/^[\w-]{11}$/.test(url)) return url;
+function extractId(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtu.be")) return u.pathname.split("/")[1];
+    if (u.hostname.includes("youtube.com")) {
+      if (u.searchParams.has("v")) return u.searchParams.get("v");
+      if (u.pathname.includes("/embed/")) return u.pathname.split("/embed/")[1].split(/[?&]/)[0];
     }
-    return "";
+  } catch (e) {
+    if (/^[\w-]{11}$/.test(url)) return url;
   }
+  return "";
+}
 
-  function getPlaylists() { return JSON.parse(localStorage.getItem('playlists') || '{}'); }
-  function setPlaylists(obj) { localStorage.setItem('playlists', JSON.stringify(obj)); }
+function getPlaylists() { return JSON.parse(localStorage.getItem('playlists') || '{}'); }
+function setPlaylists(obj) { localStorage.setItem('playlists', JSON.stringify(obj)); }
 
-  function createPlaylist() {
-    const name = document.getElementById('playlistName').value.trim();
-    if (!name) return;
-    const pls = getPlaylists();
-    if (!pls[name]) pls[name] = [];
-    setPlaylists(pls);
-    document.getElementById('playlistName').value = "";
-    renderPlaylists();
+function createPlaylist() {
+  const name = document.getElementById('playlistName').value.trim();
+  if (!name) return;
+  const pls = getPlaylists();
+  if (!pls[name]) pls[name] = [];
+  setPlaylists(pls);
+  document.getElementById('playlistName').value = "";
+  renderPlaylists();
+}
+
+function deletePlaylist() {
+  const name = document.getElementById('playlistSelect').value;
+  if (!name) return;
+  const pls = getPlaylists();
+  delete pls[name];
+  setPlaylists(pls);
+  renderPlaylists();
+  document.getElementById('playlistTracks').innerHTML = "";
+}
+
+function renderPlaylists() {
+  const pls = getPlaylists();
+  const sel = document.getElementById('playlistSelect');
+  sel.innerHTML = "";
+  const names = Object.keys(pls);
+  if (!names.length) {
+    const opt = document.createElement('option');
+    opt.value = "";
+    opt.textContent = "No playlists";
+    sel.appendChild(opt);
+    renderPlaylist();
+    return;
   }
+  names.forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = n;
+    sel.appendChild(opt);
+  });
+  // Select first playlist if none selected
+  if (!sel.value) sel.value = names[0];
+  renderPlaylist();
+}
 
-  function deletePlaylist() {
-    const name = document.getElementById('playlistSelect').value;
-    if (!name) return;
-    const pls = getPlaylists();
-    delete pls[name];
-    setPlaylists(pls);
-    renderPlaylists();
-    document.getElementById('playlistTracks').innerHTML = "";
-  }
-
-  function renderPlaylists() {
-    const pls = getPlaylists();
-    const sel = document.getElementById('playlistSelect');
-    sel.innerHTML = "";
-    const names = Object.keys(pls);
-    if (!names.length) {
-      const opt = document.createElement('option');
-      opt.value = "";
-      opt.textContent = "No playlists";
-      sel.appendChild(opt);
-      return;
+function renderPlaylist() {
+  const pls = getPlaylists();
+  const name = document.getElementById('playlistSelect').value;
+  const list = document.getElementById('playlistTracks');
+  list.innerHTML = "";
+  if (!name || !pls[name]) return;
+  pls[name].forEach((id, i) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    // highlight currently playing
+    if (currentPlaylist === pls[name] && i === currentIndex) {
+      row.style.background = "#e0f7fa";
+      row.style.borderRadius = "8px";
     }
-    names.forEach(n => {
-      const opt = document.createElement('option');
-      opt.value = n;
-      opt.textContent = n;
-      sel.appendChild(opt);
-    });
-    renderPlaylist();
-  }
+    row.innerHTML = `
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
+      <button class="btn" onclick="playTrack('${name}',${i})" ${!window.playerReady ? "disabled" : ""}>Play</button>
+      <button class="btn secondary" onclick="removeTrack('${name}',${i})">Remove</button>
+    `;
+    list.appendChild(row);
+  });
+}
 
-  function renderPlaylist() {
-    const pls = getPlaylists();
-    const name = document.getElementById('playlistSelect').value;
-    const list = document.getElementById('playlistTracks');
-    list.innerHTML = "";
-    if (!name || !pls[name]) return;
-    pls[name].forEach((id, i) => {
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.innerHTML = `
-        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">https://youtu.be/${id}</span>
-        <button class="btn" onclick="playTrack('${name}',${i})">Play</button>
-        <button class="btn secondary" onclick="removeTrack('${name}',${i})">Remove</button>
-      `;
-      list.appendChild(row);
-    });
-  }
+function addTrack() {
+  const name = document.getElementById('playlistSelect').value;
+  const raw = document.getElementById('musicUrl').value.trim();
+  if (!name || !raw) return;
+  const id = extractId(raw);
+  if (!id) { alert("Invalid YouTube link"); return; }
+  const pls = getPlaylists();
+  if (!pls[name]) pls[name] = [];
+  pls[name].push(id);
+  setPlaylists(pls);
+  document.getElementById('musicUrl').value = "";
+  renderPlaylist();
+}
 
-  function addTrack() {
-    const name = document.getElementById('playlistSelect').value;
-    const raw = document.getElementById('musicUrl').value.trim();
-    if (!name || !raw) return;
-    const id = extractId(raw);
-    if (!id) { alert("Invalid YouTube link"); return; }
-    const pls = getPlaylists();
-    if (!pls[name]) pls[name] = [];
-    pls[name].push(id);
-    setPlaylists(pls);
-    document.getElementById('musicUrl').value = "";
-    renderPlaylist();
-  }
+function removeTrack(name, i) {
+  const pls = getPlaylists();
+  if (!pls[name]) return;
+  pls[name].splice(i, 1);
+  setPlaylists(pls);
+  renderPlaylist();
+}
 
-  function removeTrack(name, i) {
-    const pls = getPlaylists();
-    if (!pls[name]) return;
-    pls[name].splice(i, 1);
-    setPlaylists(pls);
-    renderPlaylist();
-  }
+function playPlaylist() {
+  if (!window.playerReady || !ytPlayer) { alert("Player not ready yet"); return; }
+  const name = document.getElementById('playlistSelect').value;
+  const pls = getPlaylists();
+  if (!name || !pls[name] || !pls[name].length) { alert("No tracks in playlist."); return; }
+  currentPlaylist = pls[name];
+  currentIndex = 0;
+  ytPlayer.loadVideoById(currentPlaylist[0]);
+  renderPlaylist();
+}
 
-  function playPlaylist() {
-    if (!window.playerReady || !ytPlayer) { alert("Player not ready yet"); return; }
-    const name = document.getElementById('playlistSelect').value;
-    const pls = getPlaylists();
-    if (!name || !pls[name] || !pls[name].length) return;
-    currentPlaylist = pls[name];
-    currentIndex = 0;
+function playTrack(name, i) {
+  if (!window.playerReady || !ytPlayer) { alert("Player not ready yet"); return; }
+  const pls = getPlaylists();
+  currentPlaylist = pls[name] || [];
+  currentIndex = i;
+  ytPlayer.loadVideoById(currentPlaylist[i]);
+  renderPlaylist();
+}
+
+function shufflePlay() {
+  const name = document.getElementById('playlistSelect').value;
+  const pls = getPlaylists();
+  if (!name || !pls[name] || !pls[name].length) { alert("No tracks in playlist."); return; }
+  currentPlaylist = [...pls[name]];
+  for (let i = currentPlaylist.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [currentPlaylist[i], currentPlaylist[j]] = [currentPlaylist[j], currentPlaylist[i]];
+  }
+  currentIndex = 0;
+  if (window.playerReady) {
     ytPlayer.loadVideoById(currentPlaylist[0]);
+    renderPlaylist();
   }
+}
 
-  function playTrack(name, i) {
-    if (!window.playerReady || !ytPlayer) { alert("Player not ready yet"); return; }
-    const pls = getPlaylists();
-    currentPlaylist = pls[name] || [];
-    currentIndex = i;
-    ytPlayer.loadVideoById(currentPlaylist[i]);
-  }
-
-  function shufflePlay() {
-    const name = document.getElementById('playlistSelect').value;
-    const pls = getPlaylists();
-    if (!name || !pls[name] || !pls[name].length) return;
-    currentPlaylist = [...pls[name]];
-    for (let i = currentPlaylist.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [currentPlaylist[i], currentPlaylist[j]] = [currentPlaylist[j], currentPlaylist[i]];
-    }
-    currentIndex = 0;
-    if (window.playerReady) ytPlayer.loadVideoById(currentPlaylist[0]);
-  }
-  </script>
+// Ensure Play buttons are disabled until API ready
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.querySelectorAll('#music .btn').forEach(btn=>{
+    if(btn.textContent.includes("Play")) btn.disabled = true;
+  });
+  renderPlaylists();
+});
+</script>
   <!-- WRITING TILE: Prompts, To-Do, Free, Brainstorm, Journal -->
   <script>
   // Robust Writing Tile
