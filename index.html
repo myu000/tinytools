@@ -169,16 +169,6 @@
       <button id="shuffleWallpaper" class="button">Shuffle</button>
       <button id="themeToggle" class="button primary">Theme</button>
     </div>
-    <div class="layout-controls">
-      <select id="layoutSelect" class="select">
-        <option value="balanced">Balanced</option>
-        <option value="focus">Focus</option>
-        <option value="writing">Writing</option>
-        <option value="music">Music</option>
-      </select>
-      <button id="applyLayout" class="button">Apply layout</button>
-      <span id="layoutNote">Layout: Balanced</span>
-    </div>
   </header>
 
   <div class="page">
@@ -1181,41 +1171,7 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
 
     resetTimer();
 
-    const savedLayout = localStorage.getItem('layout') || 'balanced';
-    document.getElementById('layoutSelect').value = savedLayout;
-    applyLayout(savedLayout);
-  });
-
   /* ---------------- LAYOUT PRESETS ---------------- */
-  function applyLayout(mode){
-    const grid = document.getElementById('grid');
-    const tiles = grid.querySelectorAll('.tile');
-    tiles.forEach(tile => tile.style.display = "");
-
-    if(mode === "focus"){
-      document.getElementById('music').style.display = "none";
-      document.getElementById('writing').style.display = "none";
-      document.getElementById('habits').style.display = "none";
-    }
-    if(mode === "writing"){
-      document.getElementById('music').style.display = "none";
-      document.getElementById('habits').style.display = "none";
-      document.getElementById('clock').style.display = "none";
-    }
-    if(mode === "music"){
-      document.getElementById('writing').style.display = "none";
-      document.getElementById('habits').style.display = "none";
-      document.getElementById('clock').style.display = "none";
-    }
-
-    document.getElementById('layoutNote').textContent = "Layout: " + mode.charAt(0).toUpperCase() + mode.slice(1);
-    localStorage.setItem('layout', mode);
-  }
-
-  document.getElementById('applyLayout').addEventListener('click', () => {
-    const mode = document.getElementById('layoutSelect').value;
-    applyLayout(mode);
-  });
   </script>
 
   <!-- Part 9: Autosave & Safety -->
@@ -1467,6 +1423,7 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
   </script>
 </body>
 </html>
+
 
 
 
