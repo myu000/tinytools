@@ -1409,7 +1409,6 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
   window.addEventListener('load', () => {
     safeRenderAll();
     const savedLayout = localStorage.getItem('layout') || 'balanced';
-    applyLayout(savedLayout);
     document.getElementById('layoutSelect').value = savedLayout;
     document.getElementById('layoutNote').textContent = "Layout: " + savedLayout.charAt(0).toUpperCase() + savedLayout.slice(1);
   });
@@ -1423,6 +1422,7 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
   </script>
 </body>
 </html>
+
 
 
 
