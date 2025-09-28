@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tiny Tools — Creative & Focus Hub</title>
+  <title id="pageTitle">Tiny Tools — Creative & Focus Hub</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <link href="https://fonts.googleapis.com/css2?family=Sansita:wght@400;700&family=Jura:wght@400;600&family=Forum&display=swap" rel="stylesheet">
   <style>
@@ -36,6 +36,7 @@
       font-family: 'Forum', serif;
       color: var(--text);
       background: var(--bg) center/cover fixed no-repeat;
+      transition: background 0.3s;
     }
     header {
       background: rgba(57, 91, 80, 0.92);
@@ -45,6 +46,11 @@
       grid-template-columns: 1fr auto auto;
       gap: 12px;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px 0 rgba(80,80,80,0.10);
+      transition: background 0.3s;
     }
     .brand { display: flex; gap: 10px; align-items: baseline; }
     .brand h1 { margin: 0; font-family: 'Sansita', sans-serif; }
@@ -55,6 +61,7 @@
       border-radius: 12px;
       padding: 10px 12px;
       cursor: pointer;
+      transition: background 0.18s;
     }
     .select { background: var(--select-bg); color: var(--text); }
     .button { background: var(--secondary); color: #fff; }
@@ -66,6 +73,7 @@
       max-width: 1400px;
       margin: 30px auto;
       padding: 0 24px;
+      transition: margin-top 0.2s;
     }
     @media (max-width: 1100px) {
       .page { grid-template-columns: 1fr; }
@@ -75,11 +83,13 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: var(--tile-gap);
+      transition: gap 0.2s;
     }
     .dock {
       background: rgba(0, 0, 0, 0.08);
       border-radius: 16px;
       padding: 16px;
+      min-height: 200px;
     }
     .dock h4 { margin: 0 0 10px; font-family: 'Sansita', sans-serif; }
     .dock-area { display: grid; gap: 12px; }
@@ -90,6 +100,8 @@
       border-radius: var(--tile-radius);
       padding: var(--tile-pad);
       box-shadow: var(--shadow-1);
+      min-width: 0;
+      transition: box-shadow 0.2s, background 0.2s;
     }
     .tile-header {
       display: flex;
@@ -107,6 +119,7 @@
       cursor: pointer;
       padding: 6px;
       border-radius: 8px;
+      transition: background 0.18s;
     }
     .tile-menu {
       position: absolute;
@@ -140,6 +153,7 @@
       border: none;
       border-radius: 12px;
       padding: 10px;
+      transition: box-shadow 0.15s;
     }
     .btn { background: var(--primary); color: #fff; cursor: pointer; }
     .btn.secondary { background: var(--secondary); }
@@ -149,10 +163,14 @@
     .thumb img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; border-radius: 12px; }
     .player iframe { width: 100%; height: 300px; border: 0; }
     #timeDisplay { font-family: 'Jura', sans-serif; font-size: 2rem; text-align: center; }
+    .habit-icon { width: 32px; height: 32px; vertical-align: middle; margin-right: 6px; }
+    .muted { color: #888; }
+    .fade-in { animation: fade-in .35s; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(18px);} to { opacity: 1; transform: none;} }
   </style>
 </head>
 <body>
-  <header>
+  <header id="mainHeader">
     <div class="brand">
       <h1>Tiny Tools</h1>
       <span>Creative & Focus Hub</span>
@@ -169,8 +187,8 @@
       <button id="shuffleWallpaper" class="button">Shuffle</button>
       <button id="themeToggle" class="button primary">Theme</button>
     </div>
+    <span id="clockTitleBar" style="margin-left:16px; font-family:'Jura',sans-serif; font-size:1.12em;"></span>
   </header>
-
   <div class="page">
     <main id="grid" class="grid">
       <!-- Wallpapers Tile -->
@@ -189,7 +207,6 @@
         </div>
         <div id="wallpaperThumbs" class="thumbs"></div>
       </section>
-
       <!-- Music Tile -->
       <section id="music" class="card tile" data-tile="music">
         <div class="tile-header">
@@ -207,7 +224,7 @@
         </div>
         <div class="row">
           <select id="playlistSelect" class="select-inline" onchange="renderPlaylist()"></select>
-          <button class="btn" onclick="renderPlaylists()">Refresh</button>
+          <!-- No refresh button here -->
           <button class="btn primary" onclick="playPlaylist()">Play</button>
           <button class="btn secondary" onclick="shufflePlay()">Shuffle</button>
         </div>
@@ -221,51 +238,46 @@
 
       <!-- Writing Tile -->
       <section id="writing" class="card tile" data-tile="writing">
-  <div class="tile-header">
-    <h3 class="tile-title">Writing</h3>
-    <button class="dots-btn">⋯</button>
-    <div class="tile-menu">
-      <button onclick="shrinkTile('writing')">Move to dock</button>
-      <button onclick="localStorage.clear(); location.reload()">Clear local data</button>
-    </div>
-  </div>
-
-  <div class="row">
-    <select id="writerMode" class="select-inline" onchange="renderWriterMode()">
-      <option value="prompts">Prompts</option>
-      <option value="todo">To‑Do</option>
-      <option value="free">Free</option>
-      <option value="brainstorm">Brainstorm</option>
-      <option value="journal">Journal</option>
-    </select>
-  </div>
-
-  <div id="writerArea" class="stack"></div>
-
-  <!-- Brainstorm Mode -->
-<div id="brainstormVisible" class="stack" style="display:none;">
-  <p id="ideaText" class="small"></p>
-  <div class="row">
-    <button class="btn" onclick="generateIdea()">Generate idea</button>
-    <button class="btn secondary" onclick="clearIdeas()">Clear</button>
-    <button class="btn" onclick="saveBrainstorm()">Save Notes</button>
-    <button class="btn secondary" onclick="exportBrainstorm()">Export Notes</button>
-  </div>
-  <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
-</div>
-
-  <!-- Journal Mode -->
-  <div id="journalVisible" class="stack" style="display:none;">
-    <textarea id="journalText" placeholder="Today's entry..."></textarea>
-    <div class="row">
-      <button class="btn" onclick="saveJournal()">Save entry</button>
-      <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
-      <button class="btn" onclick="exportJournalPrintable()">Printable</button>
-    </div>
-    <div id="journalEntries" class="stack"></div>
-  </div>
-</section>
-
+        <div class="tile-header">
+          <h3 class="tile-title">Writing</h3>
+          <button class="dots-btn">⋯</button>
+          <div class="tile-menu">
+            <button onclick="shrinkTile('writing')">Move to dock</button>
+            <button onclick="localStorage.clear(); location.reload()">Clear local data</button>
+          </div>
+        </div>
+        <div class="row">
+          <select id="writerMode" class="select-inline" onchange="renderWriterMode()">
+            <option value="prompts">Prompts</option>
+            <option value="todo">To‑Do</option>
+            <option value="free">Free</option>
+            <option value="brainstorm">Brainstorm</option>
+            <option value="journal">Journal</option>
+          </select>
+        </div>
+        <div id="writerArea" class="stack"></div>
+        <!-- Brainstorm Mode -->
+        <div id="brainstormVisible" class="stack" style="display:none;">
+          <p id="ideaText" class="small"></p>
+          <div class="row">
+            <button class="btn" onclick="generateIdea()">Generate idea</button>
+            <button class="btn secondary" onclick="clearIdeas()">Clear</button>
+            <button class="btn" onclick="saveBrainstorm()">Save Notes</button>
+            <button class="btn secondary" onclick="exportBrainstorm()">Export Notes</button>
+          </div>
+          <textarea id="brainstormDraft" placeholder="Notes..."></textarea>
+        </div>
+        <!-- Journal Mode -->
+        <div id="journalVisible" class="stack" style="display:none;">
+          <textarea id="journalText" placeholder="Today's entry..."></textarea>
+          <div class="row">
+            <button class="btn" onclick="saveJournal()">Save entry</button>
+            <button class="btn secondary" onclick="exportJournal()">Export All (TXT)</button>
+            <button class="btn" onclick="exportJournalPrintable()">Printable</button>
+          </div>
+          <div id="journalEntries" class="stack"></div>
+        </div>
+      </section>
       <!-- Habits Tile -->
       <section id="habits" class="card tile" data-tile="habits">
         <div class="tile-header">
@@ -284,58 +296,57 @@
 
       <!-- Clock Tile -->
       <section id="clock" class="card tile" data-tile="clock">
+        <div class="tile-header">
+          <h3 class="tile-title">Clock</h3>
+          <button class="dots-btn">⋯</button>
+          <div class="tile-menu">
+            <button onclick="shrinkTile('clock')">Move to dock</button>
+          </div>
+        </div>
         <div class="row">
-  <select id="modeSelect" class="select-inline" onchange="switchMode()">
-    <option value="pomodoro">Pomodoro</option>
-    <option value="stopwatch">Stopwatch</option>
-    <option value="countdown">Countdown</option>
-    <option value="timer">Timer</option>
-  </select>
-  <button class="btn" onclick="startTimer()">Start</button>
-  <button class="btn secondary" onclick="pauseTimer()">Pause</button>
-  <button class="btn" onclick="resetTimer()">Reset</button>
-</div>
-
-<!-- Pomodoro inputs -->
-<div class="row" id="pomodoroInputs">
-  <label class="input">Work (min)
-    <input id="pomodoroWork" type="number" min="1" value="25" style="width:70px;background:transparent;border:none;">
-  </label>
-  <label class="input">Break (min)
-    <input id="pomodoroBreak" type="number" min="1" value="5" style="width:70px;background:transparent;border:none;">
-  </label>
-</div>
-
-<!-- Countdown input -->
-<div class="row" id="countdownInputs" style="display:none;">
-  <label class="input">Countdown (min)
-    <input id="countdownMinutes" type="number" min="1" value="5" style="width:70px;background:transparent;border:none;">
-  </label>
-</div>
-
-<!-- Timer input -->
-<div class="row" id="timerInputs" style="display:none;">
-  <label class="input">Timer (mm:ss)
-    <input id="timerMM" type="number" min="0" value="0" style="width:50px;background:transparent;border:none;">
-    <span>:</span>
-    <input id="timerSS" type="number" min="0" value="30" style="width:50px;background:transparent;border:none;">
-  </label>
-</div>
-
-<div id="timeDisplay">25:00</div>
-<p id="stats">Completed Pomodoros: 0</p>
+          <select id="modeSelect" class="select-inline" onchange="switchMode()">
+            <option value="pomodoro">Pomodoro</option>
+            <option value="stopwatch">Stopwatch</option>
+            <option value="countdown">Countdown</option>
+            <option value="timer">Timer</option>
+          </select>
+          <button class="btn" onclick="startTimer()">Start</button>
+          <button class="btn secondary" onclick="pauseTimer()">Pause</button>
+          <button class="btn" onclick="resetTimer()">Reset</button>
+        </div>
+        <!-- Pomodoro inputs -->
+        <div class="row" id="pomodoroInputs">
+          <label class="input">Work (min)
+            <input id="pomodoroWork" type="number" min="1" value="25" style="width:70px;background:transparent;border:none;">
+          </label>
+          <label class="input">Break (min)
+            <input id="pomodoroBreak" type="number" min="1" value="5" style="width:70px;background:transparent;border:none;">
+          </label>
+        </div>
+        <!-- Countdown input -->
+        <div class="row" id="countdownInputs" style="display:none;">
+          <label class="input">Countdown (min)
+            <input id="countdownMinutes" type="number" min="1" value="5" style="width:70px;background:transparent;border:none;">
+          </label>
+        </div>
+        <!-- Timer input -->
+        <div class="row" id="timerInputs" style="display:none;">
+          <label class="input">Timer (mm:ss)
+            <input id="timerMM" type="number" min="0" value="0" style="width:50px;background:transparent;border:none;">
+            <span>:</span>
+            <input id="timerSS" type="number" min="0" value="30" style="width:50px;background:transparent;border:none;">
+          </label>
+        </div>
+        <div id="timeDisplay">25:00</div>
+        <p id="stats">Completed Pomodoros: 0</p>
       </section>
-       </main>
-    
-
+    </main>
     <!-- Dock Sidebar -->
     <aside class="dock">
       <h4>Mini dock</h4>
       <div id="dockArea" class="dock-area"></div>
     </aside>
   </div>
- 
-
   <!-- Part 2: Wallpapers + Theme + Menus -->
   <script>
   /* ---------------- WALLPAPERS ---------------- */
@@ -488,8 +499,7 @@
 
   document.addEventListener('keydown', e => { if (e.key === "Escape") closeAllMenus(); });
   </script>
-
-  <!-- Part 3: Music Logic -->
+  <!-- MUSIC LOGIC -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
   /* ---------------- MUSIC ---------------- */
@@ -497,30 +507,29 @@
   window.playerReady = false;
 
   function onYouTubeIframeAPIReady() {
-  ytPlayer = new YT.Player('musicPlayer', {
-    height: '300',
-    width: '100%',
-    videoId: '',
-    playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1 },
-    events: {
-      'onReady': () => {
-        window.playerReady = true;
-        // Enable Play buttons once ready
-        document.querySelectorAll('#music .btn').forEach(btn=>{
-          if(btn.textContent.includes("Play")) btn.disabled = false;
-        });
-      },
-      'onStateChange': onPlayerStateChange
-    }
-  });
-}
+    ytPlayer = new YT.Player('musicPlayer', {
+      height: '300',
+      width: '100%',
+      videoId: '',
+      playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1 },
+      events: {
+        'onReady': () => {
+          window.playerReady = true;
+          document.querySelectorAll('#music .btn').forEach(btn=>{
+            if(btn.textContent.includes("Play")) btn.disabled = false;
+          });
+        },
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
 
-// Initially disable Play buttons until ready
-document.addEventListener('DOMContentLoaded', ()=>{
-  document.querySelectorAll('#music .btn').forEach(btn=>{
-    if(btn.textContent.includes("Play")) btn.disabled = true;
+  // Initially disable Play buttons until ready
+  document.addEventListener('DOMContentLoaded', ()=>{
+    document.querySelectorAll('#music .btn').forEach(btn=>{
+      if(btn.textContent.includes("Play")) btn.disabled = true;
+    });
   });
-});
 
   function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.ENDED) {
@@ -659,21 +668,25 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if (window.playerReady) ytPlayer.loadVideoById(currentPlaylist[0]);
   }
   </script>
-  
-  <!-- Part 4: Writing Logic -->
+  <!-- WRITING TILE: Prompts, To-Do, Free, Brainstorm, Journal -->
   <script>
-  /* ---------------- WRITING ---------------- */
+  // Robust Writing Tile
+  function renderWriterMode() {
+    const modeSel = document.getElementById('writerMode');
+    const area = document.getElementById('writerArea');
+    const brainstormVis = document.getElementById('brainstormVisible');
+    const journalVis = document.getElementById('journalVisible');
+    if (!modeSel || !area) return;
 
-function renderWriterMode() {
-  const mode = document.getElementById('writerMode').value;
-  const area = document.getElementById('writerArea');
-  area.innerHTML = "";
+    const mode = modeSel.value;
+    if (brainstormVis) brainstormVis.style.display = (mode === "brainstorm") ? "block" : "none";
+    if (journalVis) journalVis.style.display = (mode === "journal") ? "block" : "none";
+    area.innerHTML = "";
 
-  document.getElementById('brainstormVisible').style.display = (mode === "brainstorm") ? "block" : "none";
-  document.getElementById('journalVisible').style.display = (mode === "journal") ? "block" : "none";
+    // Prompts mode
+    // Replace the "prompts" mode block in your renderWriterMode() function with this:
 
-  /* ---------- PROMPTS MODE ---------- */
-  if (mode === "prompts") {
+if (mode === "prompts") {
     const saved = JSON.parse(localStorage.getItem('promptResponses') || '{}');
     const promptArea = document.createElement('div');
     promptArea.className = "stack";
@@ -726,432 +739,503 @@ function renderWriterMode() {
     area.appendChild(genreRow);
   }
 
-  /* ---------- TO-DO MODE ---------- */
-  if (mode === "todo") {
-    const list = JSON.parse(localStorage.getItem('todoList') || '[]');
-    const input = document.createElement('input');
-    input.className = "input";
-    input.placeholder = "Add task";
-    const addBtn = document.createElement('button');
-    addBtn.className = "btn";
-    addBtn.textContent = "Add";
-    addBtn.onclick = () => {
-      if (input.value.trim()) {
-        list.push(input.value.trim());
-        localStorage.setItem('todoList', JSON.stringify(list));
-        renderWriterMode();
-      }
-    };
-    area.appendChild(input);
-    area.appendChild(addBtn);
-    list.forEach((task, i) => {
-      const row = document.createElement('div');
-      row.className = "row";
-      row.innerHTML = `<span style="flex:1;">${task}</span>`;
-      const del = document.createElement('button');
-      del.className = "btn secondary";
-      del.textContent = "✕";
-      del.onclick = () => {
-        list.splice(i, 1);
-        localStorage.setItem('todoList', JSON.stringify(list));
-        renderWriterMode();
+    // To-Do mode
+    if (mode === "todo") {
+      let list = JSON.parse(localStorage.getItem('todoList') || '[]');
+      const input = document.createElement('input');
+      input.className = "input";
+      input.placeholder = "Add task";
+      const addBtn = document.createElement('button');
+      addBtn.className = "btn";
+      addBtn.textContent = "Add";
+      addBtn.onclick = () => {
+        if (input.value.trim()) {
+          list.push(input.value.trim());
+          localStorage.setItem('todoList', JSON.stringify(list));
+          renderWriterMode();
+        }
       };
-      row.appendChild(del);
-      area.appendChild(row);
-    });
+      area.appendChild(input);
+      area.appendChild(addBtn);
+      list.forEach((task, i) => {
+        const row = document.createElement('div');
+        row.className = "row";
+        row.innerHTML = `<span style="flex:1;">${task}</span>`;
+        const del = document.createElement('button');
+        del.className = "btn secondary";
+        del.textContent = "✕";
+        del.onclick = () => {
+          list.splice(i, 1);
+          localStorage.setItem('todoList', JSON.stringify(list));
+          renderWriterMode();
+        };
+        row.appendChild(del);
+        area.appendChild(row);
+      });
+    }
+
+    // Free mode
+    if (mode === "free") {
+      const ta = document.createElement('textarea');
+      ta.placeholder = "Start writing...";
+      ta.value = localStorage.getItem('freeDraft') || "";
+      area.appendChild(ta);
+
+      const btnRow = document.createElement('div');
+      btnRow.className = "row";
+      const saveBtn = document.createElement('button');
+      saveBtn.className = "btn";
+      saveBtn.textContent = "Save Draft";
+      saveBtn.onclick = () => {
+        localStorage.setItem('freeDraft', ta.value);
+        alert("Draft saved ✅");
+      };
+      const discardBtn = document.createElement('button');
+      discardBtn.className = "btn secondary";
+      discardBtn.textContent = "Discard Draft";
+      discardBtn.onclick = () => {
+        ta.value = "";
+        localStorage.removeItem('freeDraft');
+        alert("Draft discarded 🗑️");
+      };
+      const exportBtn = document.createElement('button');
+      exportBtn.className = "btn";
+      exportBtn.textContent = "Export Draft";
+      exportBtn.onclick = () => {
+        const text = ta.value.trim();
+        if (!text) { alert("Nothing to export."); return; }
+        const blob = new Blob([text], { type: "text/plain" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = "free_draft.txt";
+        link.click();
+      };
+      btnRow.appendChild(saveBtn);
+      btnRow.appendChild(discardBtn);
+      btnRow.appendChild(exportBtn);
+      area.appendChild(btnRow);
+    }
   }
 
-  /* ---------- FREE MODE ---------- */
-  if (mode === "free") {
-    const ta = document.createElement('textarea');
-    ta.placeholder = "Start writing...";
-    ta.value = localStorage.getItem('freeDraft') || "";
-    area.appendChild(ta);
-
-    const btnRow = document.createElement('div');
-    btnRow.className = "row";
-
-    const saveBtn = document.createElement('button');
-    saveBtn.className = "btn";
-    saveBtn.textContent = "Save Draft";
-    saveBtn.onclick = () => {
-      localStorage.setItem('freeDraft', ta.value);
-      alert("Draft saved ✅");
+  function generateGenrePrompt(genre) {
+    const genres = {
+      fantasy: [
+        "Describe a hidden portal in an ordinary place.",
+        "Invent a magical creature with a tragic flaw.",
+        "Write about a kingdom ruled by dreams.",
+        "Create a spell that backfires in an unexpected way."
+      ],
+      mystery: [
+        "A locked room. A missing key. What happened?",
+        "Write a scene where a detective finds the wrong clue.",
+        "Describe a character who knows too much.",
+        "Invent a mystery that unfolds in reverse."
+      ],
+      romance: [
+        "Two strangers meet during a power outage.",
+        "Describe a love letter that was never sent.",
+        "Write about a relationship built on a lie.",
+        "Invent a moment where silence says everything."
+      ],
+      "sci-fi": [
+        "Design a future where memories are traded.",
+        "Write about a robot who dreams of freedom.",
+        "Describe a planet where time runs backward.",
+        "Invent a technology that changes emotions."
+      ],
+      drama: [
+        "Write a confrontation between parent and child.",
+        "Describe a moment of quiet betrayal.",
+        "Invent a scene where someone confesses too late.",
+        "Create a story where the truth is unbearable."
+      ],
+      reflective: [
+        "Write about a moment that changed your perspective.",
+        "Describe a place that feels like home.",
+        "What does vulnerability mean to you?",
+        "Write a letter to your future self.",
+        "Reflect on a decision you regret — or don’t."
+      ]
     };
-
-    const discardBtn = document.createElement('button');
-    discardBtn.className = "btn secondary";
-    discardBtn.textContent = "Discard Draft";
-    discardBtn.onclick = () => {
-      ta.value = "";
-      localStorage.removeItem('freeDraft');
-      alert("Draft discarded 🗑️");
-    };
-
-    const exportBtn = document.createElement('button');
-    exportBtn.className = "btn";
-    exportBtn.textContent = "Export Draft";
-    exportBtn.onclick = () => {
-      const text = ta.value.trim();
-      if (!text) { alert("Nothing to export."); return; }
-      const blob = new Blob([text], { type: "text/plain" });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = "free_draft.txt";
-      link.click();
-    };
-
-    btnRow.appendChild(saveBtn);
-    btnRow.appendChild(discardBtn);
-    btnRow.appendChild(exportBtn);
-    area.appendChild(btnRow);
+    const pool = genre === "random"
+      ? Object.values(genres).flat()
+      : genres[genre] || genres.fantasy;
+    const random = pool[Math.floor(Math.random() * pool.length)];
+    const timestamp = new Date().toLocaleString();
+    return `${random} (${timestamp})`;
   }
-}
 
-/* ---------- PROMPTS HELPERS ---------- */
-function generateGenrePrompt(genre) {
-  const genres = {
-    fantasy: [
-      "Describe a hidden portal in an ordinary place.",
-      "Invent a magical creature with a tragic flaw.",
-      "Write about a kingdom ruled by dreams.",
-      "Create a spell that backfires in an unexpected way."
-    ],
-    mystery: [
-      "A locked room. A missing key. What happened?",
-      "Write a scene where a detective finds the wrong clue.",
-      "Describe a character who knows too much.",
-      "Invent a mystery that unfolds in reverse."
-    ],
-    romance: [
-      "Two strangers meet during a power outage.",
-      "Describe a love letter that was never sent.",
-      "Write about a relationship built on a lie.",
-      "Invent a moment where silence says everything."
-    ],
-    "sci-fi": [
-      "Design a future where memories are traded.",
-      "Write about a robot who dreams of freedom.",
-      "Describe a planet where time runs backward.",
-      "Invent a technology that changes emotions."
-    ],
-    drama: [
-      "Write a confrontation between parent and child.",
-      "Describe a moment of quiet betrayal.",
-      "Invent a scene where someone confesses too late.",
-      "Create a story where the truth is unbearable."
-    ],
-    reflective: [
-      "Write about a moment that changed your perspective.",
-      "Describe a place that feels like home.",
-      "What does vulnerability mean to you?",
-      "Write a letter to your future self.",
-      "Reflect on a decision you regret — or don’t."
-    ]
-  };
-
-  const pool = genre === "random"
-    ? Object.values(genres).flat()
-    : genres[genre] || genres.fantasy;
-
-  const random = pool[Math.floor(Math.random() * pool.length)];
-  const timestamp = new Date().toLocaleString();
-  return `${random} (${timestamp})`;
-}
-
-function showResponses() {
-  const saved = JSON.parse(localStorage.getItem('promptResponses') || '{}');
-  const area = document.getElementById('writerArea');
-  area.innerHTML = "<h4>Saved Responses</h4>";
-
-  const list = document.createElement('div');
-  list.className = "stack";
-
-  Object.keys(saved).forEach((prompt, i) => {
-    const row = document.createElement('div');
-    row.className = "stack";
-    const checkbox = document.createElement('input');
-    checkbox.type = "checkbox";
-    checkbox.id = "resp-" + i;
-    const label = document.createElement('label');
-    label.htmlFor = "resp-" + i;
-    label.textContent = prompt;
-    const ta = document.createElement('textarea');
-    ta.value = saved[prompt];
-    ta.readOnly = true;
-
-    const delBtn = document.createElement('button');
-    delBtn.className = "btn secondary";
-    delBtn.textContent = "Delete";
-    delBtn.onclick = () => {
-      delete saved[prompt];
-      localStorage.setItem('promptResponses', JSON.stringify(saved));
-      showResponses();
-    };
-
-    row.appendChild(checkbox);
-    row.appendChild(label);
-    row.appendChild(ta);
-    row.appendChild(delBtn);
-    list.appendChild(row);
+  document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('writerMode')) renderWriterMode();
   });
 
-  area.appendChild(list);
+  // --- Brainstorm tile logic ---
+  function generateIdea() {
+    const ideas = [
+      "Invent a gadget that solves a common daily annoyance.",
+      "Describe a character who finds a message in a bottle.",
+      "Imagine a world where everyone wakes up with a different memory each day.",
+      "Write a scene where an unexpected guest arrives at midnight.",
+      "Describe a city where pets rule and humans obey.",
+      "What if time only moved backwards for one person?",
+      "Describe a plant that grows laughter instead of fruit.",
+      "Imagine a door that appears only on rainy days.",
+      "Describe a friendship that starts with a misunderstanding.",
+      "Invent a tradition unique to a secret society."
+    ];
+    const random = ideas[Math.floor(Math.random() * ideas.length)];
+    const ideaText = document.getElementById('ideaText');
+    if (ideaText) ideaText.textContent = random;
+  }
+  window.generateIdea = generateIdea;
 
-    const exportBtn = document.createElement('button');
-  exportBtn.className = "btn";
-  exportBtn.textContent = "Export Selected";
-  exportBtn.onclick = () => {
-    const checkboxes = list.querySelectorAll("input[type=checkbox]:checked");
-    let text = "";
-    checkboxes.forEach(cb => {
-      const label = cb.nextSibling.textContent;
-      text += label + "\n" + saved[label] + "\n\n";
-    });
-    if (!text) { 
-      alert("No responses selected."); 
-      return; 
-    }
-    const blob = new Blob([text], { type: "text/plain" });
-    const link = document.createElement('a');
+  function clearIdeas() {
+    const ideaText = document.getElementById('ideaText');
+    const brainstormDraft = document.getElementById('brainstormDraft');
+    if (ideaText) ideaText.textContent = "";
+    if (brainstormDraft) brainstormDraft.value = "";
+  }
+  window.clearIdeas = clearIdeas;
+
+  function saveBrainstorm() {
+    const notes = document.getElementById('brainstormDraft').value.trim();
+    if (!notes) { alert("Nothing to save."); return; }
+    let arr = JSON.parse(localStorage.getItem('brainstormNotes') || '[]');
+    arr.unshift({date: new Date().toLocaleString(), notes});
+    localStorage.setItem('brainstormNotes', JSON.stringify(arr));
+    document.getElementById('brainstormDraft').value = "";
+    alert("Notes saved!");
+  }
+  window.saveBrainstorm = saveBrainstorm;
+
+  function exportBrainstorm() {
+    let arr = JSON.parse(localStorage.getItem('brainstormNotes') || '[]');
+    if (!arr.length) { alert("Nothing to export."); return; }
+    let text = arr.map(e => `[${e.date}]\n${e.notes}`).join("\n\n");
+    let blob = new Blob([text], {type: "text/plain"});
+    let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = "selected_responses.txt";
+    link.download = "brainstorm_notes.txt";
     link.click();
-  };
+  }
+  window.exportBrainstorm = exportBrainstorm;
 
-  area.appendChild(exportBtn);
-
-  const backBtn = document.createElement('button');
-  backBtn.className = "btn secondary";
-  backBtn.textContent = "Back to Prompts";
-  backBtn.onclick = () => {
-    renderWriterMode(); // reload prompts mode
-  };
-
-  area.appendChild(backBtn);
-}
-    function saveJournal(){
-const text = document.getElementById('journalText').value.trim();
-if (!text) return;
-const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-const date = new Date().toLocaleDateString();
-entries.unshift({date,text});
-localStorage.setItem('journalEntries', JSON.stringify(entries));
-document.getElementById('journalText').value="";
-renderJournalEntries();
-toast("Entry saved");
-}
-
-function renderJournalEntries(){
-const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-const list = document.getElementById('journalEntries');
-if (!list) return;
-list.innerHTML="";
-if (!entries.length){
-  const p=document.createElement('p');
-  p.className='muted';
-  p.textContent="No entries yet.";
-  list.appendChild(p);
-  return;
-}
-entries.forEach((entry,i)=>{
-  const div=document.createElement('div');
-  div.className='stack';
-  const top=document.createElement('div');
-  top.className='row';
-  const date=document.createElement('strong');
-  date.textContent = entry.date;
-  const del=document.createElement('button');
-  del.className='btn secondary';
-  del.textContent='Delete';
-  del.onclick=()=>{
-    const arr=JSON.parse(localStorage.getItem('journalEntries')||'[]');
-    arr.splice(i,1);
+  // --- Journal mode logic ---
+  function saveJournal() {
+    const entry = document.getElementById('journalText').value.trim();
+    if (!entry) { alert("Nothing to save."); return; }
+    let arr = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+    arr.unshift({date: new Date().toLocaleDateString(), entry});
     localStorage.setItem('journalEntries', JSON.stringify(arr));
+    document.getElementById('journalText').value = "";
     renderJournalEntries();
-  };
-  top.appendChild(date);
-  top.appendChild(del);
-  const p=document.createElement('p');
-  p.textContent = entry.text;
-  div.appendChild(top);
-  div.appendChild(p);
-  list.appendChild(div);
-});
-}
-     const originalSaveJournal = saveJournal;
-  saveJournal = function(){
-    originalSaveJournal();
-    localStorage.removeItem('journalDraft');
-  };
-  </script>
+  }
+  window.saveJournal = saveJournal;
 
-  <!-- Part 5: Habits + Dock -->
+  function exportJournal() {
+    let arr = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+    if (!arr.length) { alert("Nothing to export."); return; }
+    let text = arr.map(e => `[${e.date}]\n${e.entry}`).join("\n\n");
+    let blob = new Blob([text], {type: "text/plain"});
+    let link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "journal_entries.txt";
+    link.click();
+  }
+  window.exportJournal = exportJournal;
+
+  function exportJournalPrintable() {
+    let arr = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+    if (!arr.length) { alert("Nothing to export."); return; }
+    let html = "<html><head><title>Journal Entries</title></head><body><h1>Journal Entries</h1>";
+    arr.forEach(e => {
+      html += `<h3>${e.date}</h3><p>${e.entry.replace(/\n/g,"<br>")}</p><hr>`;
+    });
+    html += "</body></html>";
+    let win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.print();
+  }
+  window.exportJournalPrintable = exportJournalPrintable;
+
+  function renderJournalEntries() {
+    const list = document.getElementById('journalEntries');
+    if (!list) return;
+    let arr = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+    list.innerHTML = "";
+    arr.forEach(e => {
+      const div = document.createElement('div');
+      div.className = "stack";
+      div.innerHTML = `<strong>${e.date}</strong><div>${e.entry.replace(/\n/g,"<br>")}</div>`;
+      list.appendChild(div);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', renderJournalEntries);
+  </script>
+  <!-- HABITS TILE LOGIC (streak, check-in, seedling/tree) -->
   <script>
-  /* ---------------- HABITS ---------------- */
-  function addHabit(){
+  const treeStages = [
+    "🌱", // 0-1 streak
+    "🌿", // 2-3 streak
+    "🌳", // 4-6 streak
+    "🎄"  // 7+ streak
+  ];
+  function renderHabits() {
+    const list = document.getElementById('habitList');
+    let habits = JSON.parse(localStorage.getItem('habitList') || '[]');
+    let checkins = JSON.parse(localStorage.getItem('habitCheckins') || '{}');
+    list.innerHTML = "";
+    if (!habits.length) {
+      const p = document.createElement('p');
+      p.className = 'muted';
+      p.textContent = "No habits yet.";
+      list.appendChild(p);
+      return;
+    }
+    habits.forEach((habit, i) => {
+      const row = document.createElement('div');
+      row.className = "row";
+      row.style.alignItems = "center";
+      let streak = calcStreak(checkins[habit] || []);
+      let icon = treeStages[streak >= 7 ? 3 : streak >= 4 ? 2 : streak >= 2 ? 1 : 0];
+      const iconSpan = document.createElement('span');
+      iconSpan.className = "habit-icon";
+      iconSpan.style.fontSize = "1.6em";
+      iconSpan.textContent = icon;
+      row.appendChild(iconSpan);
+
+      const nameSpan = document.createElement('span');
+      nameSpan.style.flex = "1";
+      nameSpan.textContent = habit;
+      row.appendChild(nameSpan);
+
+      const streakSpan = document.createElement('span');
+      streakSpan.style.marginRight = "10px";
+      streakSpan.textContent = `Streak: ${streak}`;
+      row.appendChild(streakSpan);
+
+      const checkinBtn = document.createElement('button');
+      checkinBtn.className = "btn";
+      checkinBtn.textContent = "Check-in";
+      checkinBtn.onclick = () => {
+        let arr = checkins[habit] || [];
+        const today = (new Date()).toLocaleDateString();
+        if (!arr.includes(today)) arr.unshift(today);
+        checkins[habit] = arr;
+        localStorage.setItem('habitCheckins', JSON.stringify(checkins));
+        renderHabits();
+      };
+      row.appendChild(checkinBtn);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = "btn secondary";
+      delBtn.textContent = "✕";
+      delBtn.onclick = () => {
+        habits.splice(i, 1);
+        delete checkins[habit];
+        localStorage.setItem('habitList', JSON.stringify(habits));
+        localStorage.setItem('habitCheckins', JSON.stringify(checkins));
+        renderHabits();
+      };
+      row.appendChild(delBtn);
+
+      list.appendChild(row);
+    });
+  }
+  function calcStreak(arr) {
+    if (!arr || !arr.length) return 0;
+    let streak = 0;
+    let d = new Date();
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === d.toLocaleDateString()) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+  function addHabit() {
     const input = document.getElementById('habitInput');
     const text = input.value.trim();
     if (!text) return;
-    const habits = JSON.parse(localStorage.getItem('habitList') || '[]');
+    let habits = JSON.parse(localStorage.getItem('habitList') || '[]');
+    if (habits.includes(text)) return;
     habits.push(text);
     localStorage.setItem('habitList', JSON.stringify(habits));
     input.value = "";
     renderHabits();
   }
-
-  function renderHabits(){
-    const list = document.getElementById('habitList');
-    list.innerHTML = "";
-    const habits = JSON.parse(localStorage.getItem('habitList') || '[]');
-    habits.forEach((habit, i) => {
-      const row = document.createElement('div');
-      row.className = "row";
-      row.innerHTML = `<span style="flex:1;">${habit}</span>`;
-      const del = document.createElement('button');
-      del.className = "btn secondary";
-      del.textContent = "✕";
-      del.onclick = () => {
-        habits.splice(i, 1);
-        localStorage.setItem('habitList', JSON.stringify(habits));
-        renderHabits();
-      };
-      row.appendChild(del);
-      list.appendChild(row);
-    });
-  }
-
-  /* ---------------- DOCKING ---------------- */
-  function shrinkTile(id){
-    const tile = document.getElementById(id);
-    if (!tile) return;
-    tile.style.display = "none";
-
-    const clone = document.createElement('div');
-    clone.className = "card";
-    clone.innerHTML = `<h4>${id.charAt(0).toUpperCase() + id.slice(1)}</h4>`;
-
-    const restoreBtn = document.createElement('button');
-    restoreBtn.className = "btn";
-    restoreBtn.textContent = "Restore";
-    restoreBtn.onclick = () => {
-      tile.style.display = "";
-      clone.remove();
-    };
-
-    clone.appendChild(restoreBtn);
-    document.getElementById('dockArea').appendChild(clone);
-  }
+  document.addEventListener('DOMContentLoaded', renderHabits);
   </script>
 
-  <!-- Part 6: Clock -->
-<script>
-/* ---------------- CLOCK (clean Pomodoro) ---------------- */
-let timerInterval;
-let timeLeft = 0;
-let running = false;
-let mode = "pomodoro";
-let pomodoroCount = 0;
-let isBreak = false;
+  <!-- DOCK & CLOCK DOCKING/TITLE LOGIC -->
+  <script>
+  let isClockDocked = false;
+  function shrinkTile(tile) {
+    let section = document.querySelector(`section[data-tile="${tile}"]`);
+    if (!section) return;
+    section.style.display = "none";
+    let icon = document.createElement('button');
+    icon.className = "btn";
+    icon.style.display = "flex";
+    icon.style.alignItems = "center";
+    icon.style.gap = "6px";
+    icon.style.marginBottom = "6px";
+    if (tile === "clock") {
+      icon.innerHTML = ' <span>Clock</span>';
+      isClockDocked = true;
+      updateClockTitleBar();
+    } else if (tile === "habits") {
+      icon.innerHTML = ' <span>Habits</span>';
+    } else if (tile === "writing") {
+      icon.innerHTML = ' <span>Writing</span>';
+    } else if (tile === "music") {
+      icon.innerHTML = ' <span>Music</span>';
+    } else if (tile === "wallpapers") {
+      icon.innerHTML = ' <span>Wallpapers</span>';
+    }
+    icon.onclick = function() {
+      section.style.display = "";
+      icon.remove();
+      if (tile === "clock") {
+        isClockDocked = false;
+        updateClockTitleBar();
+      }
+    };
+    document.getElementById('dockArea').appendChild(icon);
+  }
+  function updateClockTitleBar(timeStr) {
+    const el = document.getElementById('clockTitleBar');
+    if (!isClockDocked) {
+      el.textContent = "";
+      document.title = "Tiny Tools — Creative & Focus Hub";
+      return;
+    }
+    let t = timeStr || document.getElementById('timeDisplay').textContent;
+    el.textContent = t ? ` ${t}` : "";
+    document.title = `${t} — Tiny Tools`;
+  }
+  function overrideTimeDisplay() {
+    const disp = document.getElementById('timeDisplay');
+    let orig = disp.textContent;
+    Object.defineProperty(disp, 'textContent', {
+      set: function(v) {
+        this.innerHTML = v;
+        if (isClockDocked) updateClockTitleBar(v);
+      },
+      get: function() { return this.innerHTML; }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', overrideTimeDisplay);
+  </script>
 
-function switchMode(){
-  mode = document.getElementById('modeSelect').value;
-  resetTimer();
-}
+  <!-- CLOCK LOGIC -->
+  <script>
+  let timerInterval;
+  let timeLeft = 0;
+  let running = false;
+  let mode = "pomodoro";
+  let pomodoroCount = 0;
+  let isBreak = false;
 
-function startTimer(){
-  if(running) return;
-  running = true;
-
-  if(mode === "pomodoro"){
-    const workMins = parseInt(document.getElementById('pomodoroWork').value) || 25;
-    const breakMins = parseInt(document.getElementById('pomodoroBreak').value) || 5;
-    timeLeft = (isBreak ? breakMins : workMins) * 60;
-  } else if(mode === "countdown"){
-    timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
-  } else if(mode === "timer"){
-    const mm = parseInt(document.getElementById('timerMM').value) || 0;
-    const ss = parseInt(document.getElementById('timerSS').value) || 0;
-    timeLeft = mm * 60 + ss;
-  } else if(mode === "stopwatch"){
-    timeLeft = 0;
+  function switchMode(){
+    mode = document.getElementById('modeSelect').value;
+    resetTimer();
+    document.getElementById('pomodoroInputs').style.display = (mode==="pomodoro")?"flex":"none";
+    document.getElementById('countdownInputs').style.display = (mode==="countdown")?"flex":"none";
+    document.getElementById('timerInputs').style.display = (mode==="timer")?"flex":"none";
   }
 
-  updateDisplay();
-  timerInterval = setInterval(tick, 1000);
-}
+  function startTimer(){
+    if(running) return;
+    running = true;
 
-function tick(){
-  if(mode === "stopwatch"){
-    timeLeft++;
+    if(mode === "pomodoro"){
+      const workMins = parseInt(document.getElementById('pomodoroWork').value) || 25;
+      const breakMins = parseInt(document.getElementById('pomodoroBreak').value) || 5;
+      timeLeft = (isBreak ? breakMins : workMins) * 60;
+    } else if(mode === "countdown"){
+      timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
+    } else if(mode === "timer"){
+      const mm = parseInt(document.getElementById('timerMM').value) || 0;
+      const ss = parseInt(document.getElementById('timerSS').value) || 0;
+      timeLeft = mm * 60 + ss;
+    } else if(mode === "stopwatch"){
+      timeLeft = 0;
+    }
+
     updateDisplay();
-  } else {
-    if(timeLeft > 0){
-      timeLeft--;
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  function tick(){
+    if(mode === "stopwatch"){
+      timeLeft++;
       updateDisplay();
-      if(timeLeft === 0){
-        clearInterval(timerInterval);
-        running = false;
-        if(mode === "pomodoro"){
-          if(!isBreak){
-            pomodoroCount++;
-            document.getElementById('stats').textContent = "Completed Pomodoros: " + pomodoroCount;
-            alert("Work session done! Time for a break.");
+    } else {
+      if(timeLeft > 0){
+        timeLeft--;
+        updateDisplay();
+        if(timeLeft === 0){
+          clearInterval(timerInterval);
+          running = false;
+          if(mode === "pomodoro"){
+            if(!isBreak){
+              pomodoroCount++;
+              document.getElementById('stats').textContent = "Completed Pomodoros: " + pomodoroCount;
+              alert("Work session done! Time for a break.");
+            } else {
+              alert("Break over! Back to work.");
+            }
+            isBreak = !isBreak;
+            startTimer(); // auto‑start next cycle
           } else {
-            alert("Break over! Back to work.");
+            alert("Time's up!");
           }
-          isBreak = !isBreak;
-          startTimer(); // auto‑start next cycle
-        } else {
-          alert("Time's up!");
         }
       }
     }
   }
-}
 
-function pauseTimer(){
-  clearInterval(timerInterval);
-  running = false;
-}
-
-function resetTimer(){
-  clearInterval(timerInterval);
-  running = false;
-  if(mode === "pomodoro"){
-    const workMins = parseInt(document.getElementById('pomodoroWork').value) || 25;
-    timeLeft = workMins * 60;
-    isBreak = false;
-  } else if(mode === "countdown"){
-    timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
-  } else if(mode === "timer"){
-    const mm = parseInt(document.getElementById('timerMM').value) || 0;
-    const ss = parseInt(document.getElementById('timerSS').value) || 0;
-    timeLeft = mm * 60 + ss;
-  } else if(mode === "stopwatch"){
-    timeLeft = 0;
+  function pauseTimer(){
+    clearInterval(timerInterval);
+    running = false;
   }
-  updateDisplay();
-}
 
-function updateDisplay(){
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  document.getElementById('timeDisplay').textContent =
-    String(minutes).padStart(2,'0') + ":" + String(seconds).padStart(2,'0');
-}
-</script>
-<script>
-document.getElementById('modeSelect').addEventListener('change', ()=>{
-  document.getElementById('pomodoroInputs').style.display = (mode==="pomodoro")?"flex":"none";
-  document.getElementById('countdownInputs').style.display = (mode==="countdown")?"flex":"none";
-  document.getElementById('timerInputs').style.display = (mode==="timer")?"flex":"none";
-});
-</script>
-  <!-- Part 8: Initialization + Layout presets -->
+  function resetTimer(){
+    clearInterval(timerInterval);
+    running = false;
+    if(mode === "pomodoro"){
+      const workMins = parseInt(document.getElementById('pomodoroWork').value) || 25;
+      timeLeft = workMins * 60;
+      isBreak = false;
+    } else if(mode === "countdown"){
+      timeLeft = parseInt(document.getElementById('countdownMinutes').value) * 60;
+    } else if(mode === "timer"){
+      const mm = parseInt(document.getElementById('timerMM').value) || 0;
+      const ss = parseInt(document.getElementById('timerSS').value) || 0;
+      timeLeft = mm * 60 + ss;
+    } else if(mode === "stopwatch"){
+      timeLeft = 0;
+    }
+    updateDisplay();
+  }
+
+  function updateDisplay(){
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('timeDisplay').textContent =
+      String(minutes).padStart(2,'0') + ":" + String(seconds).padStart(2,'0');
+  }
+  </script>
+
+  <!-- WALLPAPER INIT + WRITING INIT + PAGE INIT -->
   <script>
-  /* ---------------- INITIALIZATION ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
+    // Theme, wallpaper, env, custom wallpapers
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
 
@@ -1162,272 +1246,12 @@ document.getElementById('modeSelect').addEventListener('change', ()=>{
     applyEnvBackground(savedEnv);
     loadCustomWallpapers();
 
-    renderWriterMode();
-    renderJournalEntries();
-
-    renderHabits();
-
-    renderPlaylists();
-
-    resetTimer();
-
-  /* ---------------- LAYOUT PRESETS ---------------- */
-  </script>
-
-  <!-- Part 9: Autosave & Safety -->
-  <script>
-  /* ---------------- AUTOSAVE & SAFETY ---------------- */
-
-  function initFreeDraftAutosave(){
-    const ta = document.querySelector('#writerArea textarea');
-    if(ta){
-      ta.value = localStorage.getItem('freeDraft') || "";
-      ta.addEventListener('input', () => {
-        localStorage.setItem('freeDraft', ta.value);
-      });
-    }
-  }
-
-  function initJournalAutosave(){
-    const jt = document.getElementById('journalText');
-    if(jt){
-      jt.value = localStorage.getItem('journalDraft') || "";
-      jt.addEventListener('input', () => {
-        localStorage.setItem('journalDraft', jt.value);
-      });
-    }
-  }
-
-  function restoreJournalDraft(){
-    const jt = document.getElementById('journalText');
-    if(jt){
-      jt.value = localStorage.getItem('journalDraft') || "";
-    }
-  }
-
-  function initHabitsAutosave(){
-    renderHabits();
-  }
-
-  function backupJournalEntries(){
-    const entries = localStorage.getItem('journalEntries');
-    if(entries){
-      const backups = JSON.parse(localStorage.getItem('journalBackups') || '[]');
-      backups.unshift({ ts: Date.now(), data: entries });
-      if(backups.length > 5) backups.pop();
-      localStorage.setItem('journalBackups', JSON.stringify(backups));
-    }
-  }
-
-  function restoreJournalBackup(index=0){
-    const backups = JSON.parse(localStorage.getItem('journalBackups') || '[]');
-    if(backups[index]){
-      localStorage.setItem('journalEntries', backups[index].data);
-      renderJournalEntries();
-      alert("Journal restored from backup #" + (index+1));
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    initFreeDraftAutosave();
-    initJournalAutosave();
-    restoreJournalDraft();
-    initHabitsAutosave();
-    setInterval(backupJournalEntries, 60000);
-  });
-  </script>
-
-  <!-- Part 10: UI polish & accessibility -->
-  <script>
-  /* ---------------- UI POLISH & ACCESSIBILITY ---------------- */
-  document.querySelectorAll('.dots-btn').forEach(btn => {
-    btn.setAttribute('aria-haspopup', 'true');
-    btn.setAttribute('aria-expanded', 'false');
-    btn.addEventListener('keydown', e => {
-      if(e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        btn.click();
-      }
-    });
-  });
-
-  function updateMenuAria(){
-    document.querySelectorAll('.dots-btn').forEach(btn => {
-      const menu = btn.nextElementSibling;
-      btn.setAttribute('aria-expanded', menu.classList.contains('open'));
-    });
-  }
-  document.addEventListener('click', updateMenuAria);
-  document.addEventListener('keydown', updateMenuAria);
-
-  const style = document.createElement('style');
-  style.textContent = `
-    button:focus, select:focus, input:focus, textarea:focus {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-  `;
-  document.head.appendChild(style);
-
-  document.getElementById('habitInput').addEventListener('keydown', e => {
-    if(e.key === "Enter"){
-      e.preventDefault();
-      addHabit();
-    }
-  });
-
-  document.addEventListener('keydown', e => {
-    if(e.target && e.target.placeholder === "Add task" && e.key === "Enter"){
-      e.preventDefault();
-      const addBtn = e.target.nextSibling;
-      if (addBtn && addBtn.click) addBtn.click();
-    }
-  });
-
-  document.getElementById('playlistName').addEventListener('keydown', e => {
-    if(e.key === "Enter"){
-      e.preventDefault();
-      createPlaylist();
-    }
-  });
-
-  document.getElementById('musicUrl').addEventListener('keydown', e => {
-    if(e.key === "Enter"){
-      e.preventDefault();
-      addTrack();
-    }
-  });
-  </script>
-
-  <!-- Part 11: Notifications & Feedback -->
-  <script>
-  /* ---------------- NOTIFICATIONS & FEEDBACK ---------------- */
-  const notifContainer = document.createElement('div');
-  notifContainer.style.position = 'fixed';
-  notifContainer.style.bottom = '20px';
-  notifContainer.style.right = '20px';
-  notifContainer.style.display = 'flex';
-  notifContainer.style.flexDirection = 'column';
-  notifContainer.style.gap = '10px';
-  notifContainer.style.zIndex = '9999';
-  document.body.appendChild(notifContainer);
-
-  function showNotification(message, type="info"){
-    const note = document.createElement('div');
-    note.textContent = message;
-    note.style.padding = "10px 16px";
-    note.style.borderRadius = "12px";
-    note.style.fontFamily = "Jura, sans-serif";
-    note.style.color = "#fff";
-    note.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-    note.style.opacity = "0";
-    note.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-    note.style.transform = "translateY(10px)";
-    if(type==="success") note.style.background = "var(--accent)";
-    else if(type==="error") note.style.background = "#b33";
-    else note.style.background = "var(--primary)";
-    notifContainer.appendChild(note);
-    requestAnimationFrame(()=>{ note.style.opacity="1"; note.style.transform="translateY(0)"; });
-    setTimeout(()=>{ note.style.opacity="0"; note.style.transform="translateY(10px)"; setTimeout(()=> note.remove(),300); },2500);
-  }
-
-  if(typeof addHabit === "function"){
-    const prev = addHabit;
-    addHabit = function(){ prev(); showNotification("Habit added ✅","success"); };
-  }
-  if(typeof saveJournal === "function"){
-    const prev = saveJournal;
-    saveJournal = function(){ prev(); showNotification("Journal entry saved ✍️","success"); };
-  }
-  if(typeof exportJournal === "function"){
-    const prev = exportJournal;
-    exportJournal = function(){ prev(); showNotification("Journal exported 📄","info"); };
-  }
-  if(typeof exportJournalPrintable === "function"){
-    const prev = exportJournalPrintable;
-    exportJournalPrintable = function(){ prev(); showNotification("Printable journal opened 🖨️","info"); };
-  }
-  if(typeof createPlaylist === "function"){
-    const prev = createPlaylist;
-    createPlaylist = function(){ prev(); showNotification("Playlist created 🎶","success"); };
-  }
-  if(typeof deletePlaylist === "function"){
-    const prev = deletePlaylist;
-    deletePlaylist = function(){ prev(); showNotification("Playlist deleted 🗑️","error"); };
-  }
-  if(typeof addTrack === "function"){
-    const prev = addTrack;
-    addTrack = function(){ prev(); showNotification("Track added 🎵","success"); };
-  }
-  if(typeof removeTrack === "function"){
-    const prev = removeTrack;
-    removeTrack = function(name,i){ prev(name,i); showNotification("Track removed ❌","error"); };
-  }
-
-  document.getElementById('shuffleWallpaper').addEventListener('click',()=>{ showNotification("Wallpaper shuffled 🖼️","info"); });
-  document.getElementById('wallpaperUpload').addEventListener('change',()=>{ showNotification("Wallpaper uploaded 🌄","success"); });
-  document.getElementById('clearCustomWallpapers').addEventListener('click',()=>{ showNotification("Custom wallpapers cleared 🗑️","error"); });
-  document.getElementById('deleteCustomWallpapers').addEventListener('click',()=>{ showNotification("Custom wallpapers deleted 🗑️","error"); });
-
-  if(typeof startTimer === "function"){
-    const prev = startTimer;
-    startTimer = function(){ prev(); showNotification("Timer started ⏱️","info"); };
-  }
-  if(typeof pauseTimer === "function"){
-    const prev = pauseTimer;
-    pauseTimer = function(){ prev(); showNotification("Timer paused ⏸️","info"); };
-  }
-  if(typeof resetTimer === "function"){
-    const prev = resetTimer;
-    resetTimer = function(){ prev(); showNotification("Timer reset 🔄","info"); };
-  }
-  </script>
-
-  <!-- Part 12: Final polish & wrap-up -->
-  <script>
-  /* ---------------- FINAL POLISH ---------------- */
-  function safeParse(key, fallback){
-    try { return JSON.parse(localStorage.getItem(key)) || fallback; }
-    catch(e){ return fallback; }
-  }
-
-  function safeRenderAll(){
-    try { renderWriterMode(); } catch(e){}
-    try { renderJournalEntries(); } catch(e){}
-    try { renderHabits(); } catch(e){}
-    try { renderPlaylists(); } catch(e){}
-    try { resetTimer(); } catch(e){}
-  }
-
-  if(!localStorage.getItem('lastWallpaper')){
-    setBackground("https://i.pinimg.com/736x/bc/f3/25/bcf325624cde6c52a9e115097c98f867.jpg");
-  }
-  if(!localStorage.getItem('theme')){
-    document.documentElement.setAttribute('data-theme','light');
-  }
-
-  window.addEventListener('load', () => {
-    safeRenderAll();
-    const savedLayout = localStorage.getItem('layout') || 'balanced';
-    document.getElementById('layoutSelect').value = savedLayout;
-    document.getElementById('layoutNote').textContent = "Layout: " + savedLayout.charAt(0).toUpperCase() + savedLayout.slice(1);
-  });
-
-  window.addEventListener('error', (e) => {
-    console.warn("Tiny Tools error caught:", e.message);
-    if (typeof showNotification === "function") {
-      showNotification("Something went wrong ⚠️","error");
-    }
+    if (document.getElementById('writerMode')) renderWriterMode();
+    renderJournalEntries && renderJournalEntries();
+    renderHabits && renderHabits();
+    renderPlaylists && renderPlaylists();
+    resetTimer && resetTimer();
   });
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
